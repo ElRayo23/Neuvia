@@ -1,0 +1,1 @@
+Schlüssel mit A, der als Studierendenausweis dient. Öffnet Türen.

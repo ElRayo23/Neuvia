@@ -1,0 +1,5 @@
+[[Oktane]] der [[Arkanbiologie]]
+
+In jungen Jahren aufstrebender Biologe, der die Blutforschung vorantrieb. Seit Vater [[Zarim Legweak, der Erste]] übernahm die meisten Aufgaben der Familienführung. Nach seinem Tod (er lebte 300 Jahre) musste er die Familiengeschäfte übernehmen, bis sein Sohn [[Zarim Legweak, der Dritte]] geboren wurde. Er übernahm in jungen Jahren Verantwortung, sodass der Vater zurück in die Forschung gehen konnte.
+
+Der Professor ist an der Akademie angesehen. Grund dafür ist sein Charisma und seine Politik. Er steht für die Stärkung der [[kilianische Garde]] durch bessere Verfolgungsmöglichkeiten. Blutmagie zum Tracken funktioniert folgendermaßen: zwei Komponente sind nötig. Einmal das Blut und einmal die Physionomie. Die Magie scannt einen Körper nach beiden, sobald das Band getan ist. Wenn nur Blut nötig wäre, dann könnte man Blut in Tieren hineingeben und der Überwachung entkommen. Wenn nur Physionomie nötig wäre, würde man Shapeshiftern es leicht machen.

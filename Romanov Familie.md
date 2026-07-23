@@ -1,0 +1,1 @@
+Herrscherfamilie über den [[Akademiedistrikt]] und [[Das Kilianische Imperium]]. Die Familie besteht aus Menschen, gelegentlich Zwerge und Halblinge. 

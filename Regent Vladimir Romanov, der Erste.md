@@ -1,0 +1,1 @@
+Vater von [[Regent Vladimir Romanov, der Zweite]], zugehörig der [[Romanov Familie]]. 

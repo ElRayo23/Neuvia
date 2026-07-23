@@ -1,0 +1,1 @@
+Das Bermuda Dreieck zwischen [[Königreich Tandreol]], [[Das Sumanische Ordensreich]] und [[Floptropica]] 

@@ -1,0 +1,1 @@
+Stamm aus dem [[Ayada Clan]] und hat in seinem Büro eine Zeichnung von [[Usula Ayada alias Panzerfaust des Nordens]]. 

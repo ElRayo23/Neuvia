@@ -1,0 +1,1 @@
+Studenten, Mitarbeiter und Professoren der AKDA wählen [[Oktane]] alle 4 Jahre. Jeder Stadtteil rotiert halbjährlich; das heißt die Bürger wählen alle 6 Monate Oktane für rotierende Bezirke. Popularität und Forschungsergebnisse sind wichtig.
