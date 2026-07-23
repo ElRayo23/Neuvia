@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Oktett.md",
+                "file": "Testdatei.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Oktett"
+              "title": "Testdatei"
             }
           }
         ],
@@ -214,6 +214,7 @@
   },
   "active": "f60fa7c8dbcc36b5",
   "lastOpenFiles": [
+    "Oktett.md",
     "Pridisteshka Clan.md",
     "Testdatei.md",
     "Arkanbiologie.md",
@@ -239,7 +240,6 @@
     "Das Kilianische Imperium.md",
     "Ayada Clan.md",
     "Norddistrikt.md",
-    "Ma Clan.md",
     "Sessions",
     "Pasted image 20260625125957.jpg",
     "Unbenannt.canvas",
