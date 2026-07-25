@@ -1,4 +1,2 @@
 Raum gekrümmt, statt Himmel gibt es oben weiter die City Skyline, hellgraue (positiv) brutalistische Aesthetic, Bibliotheken surreal verbunden mit schwebenden Regalen, in der Stadt fliegende Menschen/Gebäude. Gänge, die sich wiederholen, Treppen die nirgendwohin führen
 schwebende Türen
-
-Besonderheit: Labyrinthe
