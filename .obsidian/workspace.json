@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Chronomantie.md",
+                "file": "Trivia.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Chronomantie"
+              "title": "Trivia"
             }
           }
         ]
@@ -31,10 +31,14 @@
             "id": "6f8258cbd9600998",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph-Ansicht"
+              "type": "markdown",
+              "state": {
+                "file": "Prof. Zarim Legweak, der Zweite.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Prof. Zarim Legweak, der Zweite"
             }
           }
         ]
@@ -197,12 +201,17 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "3afde76573579828",
+  "active": "6f8258cbd9600998",
   "lastOpenFiles": [
-    "Pasted image 20260725201436.jpg",
     "AKDA.md",
     "Trivia.md",
+    "Pasted image 20260725202146.jpg",
+    "Pasted image 20260725202024.jpg",
     "Chronomantie.md",
+    "Pasted image 20260725201952.jpg",
+    "Pasted image 20260725201907.jpg",
+    "Pasted image 20260725201844.jpg",
+    "Pasted image 20260725201436.jpg",
     "Pasted image 20260725200801.jpg",
     "Pasted image 20260725200722.jpg",
     "Pasted image 20260725200630.png",
@@ -230,7 +239,6 @@
     "Distrikte.md",
     "Das Kilianische Imperium.md",
     "Sessions",
-    "Pasted image 20260625125957.jpg",
     "Unbenannt.canvas",
     "Ilitza",
     "Turros Junior/TJ",
