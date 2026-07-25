@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Arkanbiologie.md",
+                "file": "Trivia.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Arkanbiologie"
+              "title": "Trivia"
             }
           }
         ]
@@ -197,16 +197,21 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "6f8258cbd9600998",
+  "active": "3afde76573579828",
   "lastOpenFiles": [
+    "AKDA.md",
+    "Chronomantie.md",
+    "Pasted image 20260725200801.jpg",
+    "Pasted image 20260725200722.jpg",
+    "Pasted image 20260725200630.png",
+    "Pasted image 20260725200516.jpg",
+    "Arkanbiologie.md",
+    "Divinologie.md",
+    "Trivia.md",
+    "Dunamantie.md",
     "Testdatei.md",
     "Oktett.md",
     "Pridisteshka Clan.md",
-    "Arkanbiologie.md",
-    "AKDA.md",
-    "Divinologie.md",
-    "Dunamantie.md",
-    "Trivia.md",
     "Präsident der AKDA.md",
     "Bürgermeister.md",
     "Auxweis.md",
@@ -223,8 +228,6 @@
     "Legweak Familie.md",
     "Distrikte.md",
     "Das Kilianische Imperium.md",
-    "Ayada Clan.md",
-    "Norddistrikt.md",
     "Sessions",
     "Pasted image 20260625125957.jpg",
     "Unbenannt.canvas",
