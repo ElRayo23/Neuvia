@@ -2,7 +2,7 @@
 
 [[Prof. Dr. Asmidir Viadin]] unterrichtete bis zu seiner Untersuchungshaft probabilistische Manipulation
 
-Stadt in blau und Kupfer, Darkpunk
+Stadt in blau und Kupfer, Darkpunk, ein riesiger Clocktower in der Stadtmitte
 
 Besonderheit: Haste Zones, worin man schneller lernt (wenn man drin ist, sieht die Außenwelt langsam aus), Gambling City
 
