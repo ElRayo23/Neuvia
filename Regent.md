@@ -1,0 +1,1 @@
+Der Titel des quasi Königs in [[Das Kilianische Imperium]]. Vor rund 300 Jahren wurde die Royalität abgeschafft, damit das Imperium dem Volk gehört.

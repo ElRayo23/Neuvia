@@ -1,1 +1,1 @@
-Die  Clans sind: [[Pridisteshka Clan]], [[Viadin Clan]], [[Ma Clan]] und [[Ayada Clan]].
+Die Clans sind: [[Pridisteshka Clan]], [[Viadin Clan]], [[Ma Clan]] und [[Ayada Clan]].

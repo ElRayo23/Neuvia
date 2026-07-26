@@ -8,3 +8,8 @@ Versuchssubjekt 1: [[Orion Astella]]
 Subjekt 2: [[Karia Plik]]
 Runologischer Ingineur: [[Sedev Ishta]]
 Mathematische Modelle: [[Enis Tenma]]
+
+
+Protokoll für die Rückkehr von [[Orion Astella]]:
+- Überprüfung von Krankheiten/Druckänderungen/Lebensbedingungen
+- 
