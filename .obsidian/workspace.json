@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sessions/Ideen.md",
+                "file": "Baba Yaga.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Ideen"
+              "title": "Baba Yaga"
             }
           }
         ]
@@ -90,8 +90,7 @@
               "title": "Lesezeichen"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -171,8 +170,11 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "3afde76573579828",
+  "active": "6f8258cbd9600998",
   "lastOpenFiles": [
+    "Edgar Sefge.md",
+    "Baba Yaga.md",
+    "Sessions/Ideen.md",
     "Oktett.md",
     "Kali Allagatas Moongrave.md",
     "Jun. Prof. Galina Etrewa.md",
@@ -198,10 +200,7 @@
     "Sultanat Miran.md",
     "Pridisteshka Clan.md",
     "Prof. Zarim Legweak, der Zweite.md",
-    "Testdatei.md",
-    "Prof. Kalip Ayada.md",
     "Pasted image 20260726182535.jpg",
-    "Prof. Dr. Philomena Cunk.md",
     "Pasted image 20260726182451.jpg",
     "Pasted image 20260726182305.jpg",
     "Pasted image 20260726182214.jpg",
