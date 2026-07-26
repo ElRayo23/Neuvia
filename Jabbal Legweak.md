@@ -1,1 +1,1 @@
-Ein arroganter Absolventder[[AKDA]]
+Ein arroganter Absolvent der [[AKDA]]
