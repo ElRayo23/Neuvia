@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Geoarkanologie.md",
+                "file": "Die Verwaltung.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Geoarkanologie"
+              "title": "Die Verwaltung"
             }
           }
         ]
@@ -69,7 +69,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "verwa",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -90,7 +90,8 @@
               "title": "Lesezeichen"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -199,14 +200,19 @@
   },
   "active": "3afde76573579828",
   "lastOpenFiles": [
-    "Arkanit.md",
-    "Geoarkanologie.md",
     "AKDA.md",
+    "Legweak Anwesen.md",
+    "Pasted image 20260726175918.jpg",
+    "Die Verwaltung.md",
+    "Geoarkanologie.md",
+    "Trivia.md",
+    "Pasted image 20260726175512.jpg",
+    "Pasted image 20260726175327.jpg",
+    "Arkanit.md",
     "Antike Arkanologie.md",
     "Pasted image 20260726174821.jpg",
     "Pasted image 20260726174759.jpg",
     "Legweak Familie.md",
-    "Legweak Anwesen.md",
     "Pasted image 20260726174607.jpg",
     "Pasted image 20260726174552.jpg",
     "Oktane.md",
@@ -216,12 +222,8 @@
     "Pasted image 20260726173818.jpg",
     "Arkanbiologie.md",
     "Pasted image 20260726133659.jpg",
-    "Pasted image 20260726133538.jpg",
-    "Pasted image 20260726133514.jpg",
     "Divinologie.md",
     "Dunamantie.md",
-    "Trivia.md",
-    "Pasted image 20260726132903.jpg",
     "Baba Yaga.md",
     "Sultanat Miran.md",
     "Prof. Zarim Legweak, der Zweite.md",
@@ -233,8 +235,6 @@
     "Auxweis.md",
     "Prof. Dr. Marina Prey.md",
     "Akademiedistrikt.md",
-    "Sessions/Ideen.md",
-    "Projekt Wiedergeburt.md",
     "Sessions",
     "Unbenannt.canvas",
     "Ilitza",
