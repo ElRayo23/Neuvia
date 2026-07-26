@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Jun. Prof. Galina Etrewa.md",
+                "file": "Sessions/Ideen.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Jun. Prof. Galina Etrewa"
+              "title": "Ideen"
             }
           }
         ]
@@ -69,7 +69,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "verwa",
+                "query": "party",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -90,7 +90,8 @@
               "title": "Lesezeichen"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -123,34 +124,6 @@
             }
           },
           {
-            "id": "1b68c813b5fbde76",
-            "type": "leaf",
-            "state": {
-              "type": "outgoing-link",
-              "state": {
-                "linksCollapsed": false,
-                "unlinkedCollapsed": true
-              },
-              "icon": "links-going-out",
-              "title": "Ausgehende Links"
-            }
-          },
-          {
-            "id": "23023d5f086f029b",
-            "type": "leaf",
-            "state": {
-              "type": "tag",
-              "state": {
-                "sortOrder": "frequency",
-                "useHierarchy": true,
-                "showSearch": false,
-                "searchQuery": ""
-              },
-              "icon": "lucide-tags",
-              "title": "Tags"
-            }
-          },
-          {
             "id": "bb086c934f21daaa",
             "type": "leaf",
             "state": {
@@ -178,11 +151,12 @@
               "title": "Gliederung"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
-    "width": 300,
+    "width": 200,
     "collapsed": true
   },
   "left-ribbon": {
@@ -197,11 +171,13 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "6f8258cbd9600998",
+  "active": "3afde76573579828",
   "lastOpenFiles": [
-    "Jun. Prof. Galina Etrewa.md",
+    "Oktett.md",
     "Kali Allagatas Moongrave.md",
+    "Jun. Prof. Galina Etrewa.md",
     "Herzog Vasilis Allagatas.md",
+    "Sessions/1.md",
     "Herzogtum Ashtina.md",
     "Astella Files.md",
     "Orion Astella.md",
@@ -226,8 +202,6 @@
     "Prof. Kalip Ayada.md",
     "Pasted image 20260726182535.jpg",
     "Prof. Dr. Philomena Cunk.md",
-    "Prof. Dr. Asmidir Viadin.md",
-    "Prof. Dr. Marina Prey.md",
     "Pasted image 20260726182451.jpg",
     "Pasted image 20260726182305.jpg",
     "Pasted image 20260726182214.jpg",
