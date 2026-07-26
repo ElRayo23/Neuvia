@@ -1,0 +1,1 @@
+Abgekürzt: Rule City

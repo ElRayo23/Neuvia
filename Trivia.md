@@ -4,6 +4,6 @@
 
 Die Stadt ist rustikal, roter Backstein, Straßenlaternen gelblich, steinerne Wege, enge Gassen, Kupferverzierungen
 
-Besonderheit: 
+Besonderheit: Kulturzentrum mit gutem Essen und hochwertiger Kunst
 
 ![[Pasted image 20260725202024.jpg]]![[Pasted image 20260725202146.jpg]]![[Pasted image 20260725202738.jpg]]
