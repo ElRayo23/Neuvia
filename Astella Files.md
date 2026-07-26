@@ -12,4 +12,5 @@ Mathematische Modelle: [[Enis Tenma]]
 
 Protokoll für die Rückkehr von [[Orion Astella]]:
 - Überprüfung von Krankheiten/Druckänderungen/Lebensbedingungen
-- 
+- In Zusammenarbeit mit Marina und der Familie von Orion wurde eine Waffe geschmiedet, die ihm hilft, sich gegen die psychischen Angriffe der [[Beholder]]
+- Das Scheitern des Experiments wurde durch außerirdisches Leben verursacht. Bisher wurde dies ausgeschlossen, dass es außerhalb der Welt Leben gäbe. Die Beholder zeigten sich neugierig über diese Welt, zugleich aber aggressiv und invasiv. Sie versuchten, die Schwelle zu überqueren. Die Wesen waren äußerst intelligent und mächtig. Sie sprachen zum Teil verständlich, zum Teil waren sie verrückt, als wären sie aus der überschüssigen Madness der Welt geschaffen.
