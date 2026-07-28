@@ -10,3 +10,9 @@ Das führt zu seinen suizidalen Momenten, die er sich allerdings nichts erlauben
 
 Nur [[Prof. Zarim Legweak, der Zweite]] , [[Zarim Legweak, der Dritte]], und [[Ilyada Legweak]] wissen um Kolyas Überleben. Der Rest der Familie halten ihn für tot.
 
+![[Pasted image 20260728195527.png]]
+Bullets:
+Arkanit
+Salzsäure
+Smoke
+Ground Zero
