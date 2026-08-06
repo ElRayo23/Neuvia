@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "kilianische Garde.md",
+                "file": "Gardist Eldritch Knight.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "kilianische Garde"
+              "title": "Gardist Eldritch Knight"
             }
           }
         ]
@@ -201,8 +201,9 @@
   },
   "active": "b4a31a93fcca42b3",
   "lastOpenFiles": [
-    "Gardist Knight.md",
     "kilianische Garde.md",
+    "Gardist Eldritch Knight.md",
+    "Gardist Knight.md",
     "Sessions/28.7.6.md",
     "Unbenannt.md",
     "Prof. Dr. Marina Prey.md",
@@ -236,7 +237,6 @@
     "Baba Yaga.md",
     "Kali Allagatas Moongrave.md",
     "Jun. Prof. Galina Etrewa.md",
-    "Herzog Vasilis Allagatas.md",
     "Sessions",
     "Unbenannt.canvas",
     "Ilitza",
