@@ -9,5 +9,4 @@ Laut Folkloren ist ein Nicht-Vampir als Erstgeborener ein Omen des Untergangs. D
 
 [[Kolya Legweak alias Snegurotschka]] wurde offiziell geopfert, sodass die Familie vom "Bruch" des Fluchs ausgeht. Sie würden dem [[Zarim Legweak, der Dritte]] die Macht entziehen und seine Schwester [[Dilena Legweak]] würde mit ihrer Familie an die Macht kommen
 
-Die Familie hat Kontakte nach [[AKDA]]. [[Prof. Zarim Legweak, der Zweite]] unterrichtet Totenlehre und gehört zum [[Oktett]] als [[Oktane]] der [[Arkanbiologie]].
-
+Die Familie hat Kontakte nach [[AKDA]]. [[Prof. Zarim Legweak, der Zweite]] unterrichtet Totenlehre.
