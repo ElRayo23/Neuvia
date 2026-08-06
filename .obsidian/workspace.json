@@ -6,6 +6,7 @@
       {
         "id": "f205b7b27fae5e2b",
         "type": "tabs",
+        "dimension": 51.713197969543145,
         "children": [
           {
             "id": "b4a31a93fcca42b3",
@@ -26,6 +27,7 @@
       {
         "id": "fa0a40d8ab5c5873",
         "type": "tabs",
+        "dimension": 48.286802030456855,
         "children": [
           {
             "id": "6f8258cbd9600998",
@@ -201,6 +203,7 @@
   },
   "active": "b4a31a93fcca42b3",
   "lastOpenFiles": [
+    "dnd-spells.csv",
     "Pasted image 20260806221926.png",
     "Jurgens_Monster.json",
     "Sessions/28.7.6.md",
@@ -234,7 +237,6 @@
     "Pasted image 20260728194952.png",
     "rifleman-guard-feedback-is-appreciated-v0-13somg0mmrf61.webp",
     "Pasted image 20260728194724.png",
-    "Pasted image 20260728194543.png",
     "Sessions/4.7.6.md",
     "Baba Yaga.md",
     "Kali Allagatas Moongrave.md",
