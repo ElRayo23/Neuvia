@@ -1,1 +1,1 @@
-Ein arroganter Absolvent der [[AKDA]]
+Ein arroganter Absolvent der [[AKDA]]. Der zweitjüngste Sohn der [[Legweak Familie]]. 
