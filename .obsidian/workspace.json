@@ -12,12 +12,14 @@
             "id": "f413a2769b047a96",
             "type": "leaf",
             "state": {
-              "type": "csv-lite-view",
+              "type": "markdown",
               "state": {
-                "file": "dnd-spells.csv"
+                "file": "Jabbal Legweak.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "table",
-              "title": "dnd-spells"
+              "icon": "lucide-file",
+              "title": "Jabbal Legweak"
             }
           }
         ]
@@ -199,13 +201,36 @@
       "templates:Vorlage einfügen": false,
       "command-palette:Befehlspalette öffnen": false,
       "bases:Neue Base erstellen": false,
-      "markdown-table-editor:Open Markdown Table Editor": false
+      "markdown-table-editor:Open Markdown Table Editor": false,
+      "obsidian-import-json:JSON/CSV Importer": false
     }
   },
-  "active": "3f2045858aa13c8f",
+  "active": "f413a2769b047a96",
   "lastOpenFiles": [
-    "Jabbal Legweak.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/spells.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/rules-glossary.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/playing-the-game.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/monsters.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/monsters-A-Z.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/magic-items.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/gameplay-toolbox.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/feats.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/equipment.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/classes.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/character-origins.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/character-creation.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/animals.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/README.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/LICENSE",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/CONTRIBUTING.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/CHANGELOG.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master",
+    "dnd-5e-srd-markdown-master",
+    "dnd-5e-srd-markdown-master.zip",
+    "Nicht bestätigt 577769.crdownload",
+    "Jurgens_Monster 1.json",
     "dnd-spells.csv",
+    "Jabbal Legweak.md",
     "Pasted image 20260806221926.png",
     "Jurgens_Monster.json",
     "Sessions/28.7.6.md",
@@ -220,36 +245,14 @@
     "Pasted image 20260806211024.jpg",
     "Pasted image 20260806211001.jpg",
     "Arkanbiologie.md",
-    "Prof. Zarim Legweak, der Zweite.md",
-    "Legweak Familie.md",
-    "Oktane.md",
-    "Oktett.md",
-    "Dilena Legweak.md",
-    "Legweak Anwesen.md",
-    "Magiezeugnis.md",
-    "Norddistrikt.md",
-    "Edgar Sefge.md",
-    "Gardist Schütze.md",
-    "Karia Plik.md",
-    "Kolya Legweak alias Snegurotschka.md",
-    "Sessions/Ideen.md",
     "Pasted image 20260728195947.png",
     "Pasted image 20260728195527.png",
     "Pasted image 20260728195012.png",
     "Pasted image 20260728194952.png",
     "rifleman-guard-feedback-is-appreciated-v0-13somg0mmrf61.webp",
     "Pasted image 20260728194724.png",
-    "Sessions/4.7.6.md",
-    "Baba Yaga.md",
-    "Kali Allagatas Moongrave.md",
     "Sessions",
     "Unbenannt.canvas",
-    "Ilitza",
-    "Turros Junior/TJ",
-    "Turros Junior",
-    "Länder/Unbenannt",
-    "Länder",
-    "Unbenannt.base",
-    "Unbenannt 1.base"
+    "Ilitza"
   ]
 }
