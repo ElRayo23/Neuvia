@@ -1,0 +1,18 @@
+{
+	"siteVersion": "2.33.3",
+	"_meta": {
+		"sources": [
+			{
+				"json": "JurgensMonster",
+				"abbreviation": "JS",
+				"full": "Jurgens Monster",
+				"version": "1.0.0",
+				"edition": "classic"
+			}
+		],
+		"dateAdded": 1786046927,
+		"dateLastModified": 1786046927,
+		"edition": "classic"
+	},
+	"monster": []
+}
