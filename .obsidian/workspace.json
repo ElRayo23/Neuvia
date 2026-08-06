@@ -59,7 +59,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Dateiexplorer"
@@ -71,7 +73,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "kolya",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -92,7 +94,8 @@
               "title": "Lesezeichen"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -201,7 +204,7 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "b4a31a93fcca42b3",
+  "active": "4e7cbf5310280582",
   "lastOpenFiles": [
     "dnd-spells.csv",
     "Pasted image 20260806221926.png",
