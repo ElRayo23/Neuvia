@@ -6,7 +6,7 @@
       {
         "id": "fa0a40d8ab5c5873",
         "type": "tabs",
-        "dimension": 48.3502538071066,
+        "dimension": 48.350253807106604,
         "children": [
           {
             "id": "f413a2769b047a96",
@@ -198,9 +198,7 @@
       "daily-notes:Heutige Notiz öffnen": false,
       "templates:Vorlage einfügen": false,
       "command-palette:Befehlspalette öffnen": false,
-      "bases:Neue Base erstellen": false,
-      "markdown-table-editor:Open Markdown Table Editor": false,
-      "obsidian-import-json:JSON/CSV Importer": false
+      "bases:Neue Base erstellen": false
     }
   },
   "active": "f413a2769b047a96",
