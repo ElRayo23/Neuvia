@@ -12,12 +12,14 @@
             "id": "f413a2769b047a96",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "rifleman-guard-feedback-is-appreciated-v0-13somg0mmrf61.webp"
+                "file": "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/spells.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "rifleman-guard-feedback-is-appreciated-v0-13somg0mmrf61"
+              "icon": "lucide-file",
+              "title": "spells"
             }
           }
         ]
@@ -203,18 +205,19 @@
   },
   "active": "f413a2769b047a96",
   "lastOpenFiles": [
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/monsters-A-Z.md",
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/spells.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/rules-glossary.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/classes.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/equipment.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/magic-items.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/monsters.md",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/spells.md",
+    "rifleman-guard-feedback-is-appreciated-v0-13somg0mmrf61.webp",
+    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/monsters-A-Z.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/feats.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/CONTRIBUTING.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/gameplay-toolbox.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/playing-the-game.md",
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/rules-glossary.md",
     "Jabbal Legweak.md",
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/monsters.md",
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/magic-items.md",
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/classes.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/character-origins.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/character-creation.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/animals.md",
@@ -240,12 +243,10 @@
     "Pasted image 20260806211121.jpg",
     "Pasted image 20260806211024.jpg",
     "Pasted image 20260806211001.jpg",
-    "Arkanbiologie.md",
     "Pasted image 20260728195947.png",
     "Pasted image 20260728195527.png",
     "Pasted image 20260728195012.png",
     "Pasted image 20260728194952.png",
-    "rifleman-guard-feedback-is-appreciated-v0-13somg0mmrf61.webp",
     "Pasted image 20260728194724.png",
     "Sessions",
     "Unbenannt.canvas",
