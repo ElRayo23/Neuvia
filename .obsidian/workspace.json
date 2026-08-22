@@ -33,10 +33,14 @@
             "id": "6f8258cbd9600998",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph-Ansicht"
+              "type": "markdown",
+              "state": {
+                "file": "Legweak Anwesen.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Legweak Anwesen"
             }
           }
         ]
@@ -203,8 +207,13 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "f413a2769b047a96",
+  "active": "6f8258cbd9600998",
   "lastOpenFiles": [
+    "Legweak Familie.md",
+    "Asmodeus.md",
+    "Lydia Legweak.md",
+    "Ilyada Legweak.md",
+    "Jabbal Legweak.md",
     "Ma Clan.md",
     "Oktanwahl.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/dnd-spells.csv",
@@ -235,11 +244,6 @@
     "rifleman-guard-feedback-is-appreciated-v0-13somg0mmrf61.webp",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/monsters-A-Z.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/feats.md",
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/CONTRIBUTING.md",
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/gameplay-toolbox.md",
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/playing-the-game.md",
-    "Jabbal Legweak.md",
-    "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/character-origins.md",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/LICENSE",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master",
     "dnd-5e-srd-markdown-master",
