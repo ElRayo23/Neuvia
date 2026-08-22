@@ -5,8 +5,8 @@ Legweaks wollen einen Sitz im [[Oktett]] bei [[Arkanbiologie]]. Dafür beabsicht
 WIE SCHAFFEN SIE ES?
 [[Prof. Dr. Asmidir Viadin]] und [[Prof. Dr. Marina Prey]] stehen sich nahe. Das Bild von Marina für die Wiederwahl wäre ruiniert, wenn sie sich mit Kriminellen oder "verfehlten" Professoren abgibt. Dies soll der erste Erpressungsversuch sein, wodurch sie sich zurückziehen soll.
 
-Dies war der erste Plan. Durch die Unruhen im Portal und [[Orion Astella]], der aus dem Portal trat, ergab sich eine neue Möglichkeit. Marina kramte die Files heraus. In einem Moment der Unaufmerksamkeit wurden sie gestohlen.
-Jetzt wird die [[Legweak Familie]] die [[AKDA]] als fehlerhaften Ort der Forschung anzeigen und die [[Astella Files]] veröffentlichen, die sowohl Marina als auch die ganze Akademie belasten. Legweaks haben die Gewissheit, dass die [[Romanov Familie]] dies nicht zulassen würde.
+Dies war der erste Plan. Durch die Unruhen im Portal und [[Orion Astella]], der aus dem Portal trat, ergab sich eine neue Möglichkeit. Marina hat die Files.
+Jetzt wird die [[Legweak Familie]] die [[AKDA]] als fehlerhaften Ort der Forschung anzeigen und die [[Astella Files]] veröffentlichen (wenn sie sie kriegen), die sowohl Marina als auch die ganze Akademie belasten. Legweaks haben die Gewissheit, dass die [[Romanov Familie]] dies nicht zulassen würde.
 
 Dabei soll Asmidir in Haft bleiben, um nichts über den Prozess hinauszuplappern. Zeugen sollten zunächst vernichtet werden, jedoch würde deren Aussage dazu verhelfen, das Gericht zu überzeugen. In Wahrheit haben die Legweaks die Maschine sabotiert.
 

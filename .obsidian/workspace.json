@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Präsident der AKDA.md",
+                "file": "Projekt Wiedergeburt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Präsident der AKDA"
+              "title": "Projekt Wiedergeburt"
             }
           }
         ]
@@ -77,7 +77,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "acid splash",
+                "query": "projekt",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -98,7 +98,8 @@
               "title": "Lesezeichen"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -210,10 +211,11 @@
   "active": "f413a2769b047a96",
   "lastOpenFiles": [
     "Oktett.md",
+    "Oktane.md",
     "Präsident der AKDA.md",
+    "Pasted image 20260822200851.png",
     "Magiezeugnis.md",
     "Oktanwahl.md",
-    "Oktane.md",
     "Orion Astella.md",
     "Länder.md",
     "Tibia Dracodens.md",
@@ -243,7 +245,6 @@
     "Pasted image 20260815121850.png",
     "Pasted image 20260815121503.jpg",
     "Sessions/2-4.7.6.md",
-    "Sessions/28.7.6.md",
     "rifleman-guard-feedback-is-appreciated-v0-13somg0mmrf61.webp",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master/LICENSE",
     "dnd-5e-srd-markdown-master/dnd-5e-srd-markdown-master",
@@ -251,7 +252,6 @@
     "dnd-5e-srd-markdown-master.zip",
     "Nicht bestätigt 577769.crdownload",
     "Jurgens_Monster 1.json",
-    "Pasted image 20260806221926.png",
     "Jurgens_Monster.json",
     "Sessions",
     "Unbenannt.canvas",
