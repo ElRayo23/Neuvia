@@ -1,5 +1,5 @@
 Ein arroganter Absolvent der [[AKDA]]. Der zweitjüngste Sohn der [[Legweak Familie]]. 
-![[Pasted image 20260806221926.png]]
+![[Pasted image 20260806221926.png|653]]
 CHARM PERSON
 
 _Level 1 Enchantment (Bard, Druid, Sorcerer, Warlock, Wizard)_

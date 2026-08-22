@@ -14,4 +14,5 @@ Bestehend aus drei Stadtteilen, die immer größer werden nach unten hin:
 ![[Pasted image 20260822184348.png]]
 - Seredina (Mitte): viel Bewohnbarkeit, Alltagsleben, viel künstliches grün-gelbliches Licht, zum Teil von Nad reflektiert, Schulen, Läden
 ![[Pasted image 20260822183834.png]]
-- Wadu (in der Hölle): Wohnort für Duergar, Tieflinge, Duergar, Dragonborns. Viel Industrie und Lavaflüsse, heiß. 
+- Wadu (in der Hölle): Wohnort für Duergar, Tieflinge, Kobolde, Dragonborns. Viel Industrie und Lavaflüsse, heiß.
+- ![[Pasted image 20260822185145.png]]
