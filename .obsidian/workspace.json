@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Legweak Anwesen.md",
+                "file": "Prof. Zarim Legweak, der Zweite.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Legweak Anwesen"
+              "title": "Prof. Zarim Legweak, der Zweite"
             }
           }
         ]
@@ -203,14 +203,14 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "aba2832ae1213e94",
+  "active": "f413a2769b047a96",
   "lastOpenFiles": [
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/bestiary/giant/frost-giant.md",
-    "Legweak Anwesen.md",
-    "Krovya.md",
-    "Legweak Familie.md",
-    "Asmodeus.md",
     "Projekt Wiedergeburt.md",
+    "Legweak Familie.md",
+    "Legweak Anwesen.md",
+    "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/bestiary/giant/frost-giant.md",
+    "Krovya.md",
+    "Asmodeus.md",
     "Prof. Zarim Legweak, der Zweite.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/spells/bane.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/deities/greek-aphrodite.md",

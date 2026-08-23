@@ -6,7 +6,7 @@ In jungen Jahren aufstrebender Biologe, der die Blutforschung vorantrieb. Seit V
 
 Der Professor ist an der Akademie angesehen. Grund dafür ist sein Charisma und seine Politik. Er steht für die Stärkung der [[kilianische Garde]] durch bessere Verfolgungsmöglichkeiten. Blutmagie zum Tracken funktioniert folgendermaßen: zwei Komponente sind nötig. Einmal das Blut und einmal die Physionomie. Die Magie scannt einen Körper nach beiden, sobald das Band getan ist. Wenn nur Blut nötig wäre, dann könnte man Blut in Tieren hineingeben und der Überwachung entkommen. Wenn nur Physionomie nötig wäre, würde man Shapeshiftern es leicht machen.
 
-Der Professor scheint recht schwach. Das liegt daran, dass er wiederbelebt werden kann. Sein Kör
+Der Professor scheint recht schwach. Das liegt daran, dass er wiederbelebt werden kann. Im [[Legweak Anwesen]] im Keller kann er wieder zusammengebaut werden, aus den Leichenteilen der Gardisten.
 
 ![[Pasted image 20260823140915.png|685]]
 ![[bane|Bane]]
