@@ -6,7 +6,6 @@
       {
         "id": "fa0a40d8ab5c5873",
         "type": "tabs",
-        "dimension": 48.350253807106604,
         "children": [
           {
             "id": "f413a2769b047a96",
@@ -20,23 +19,6 @@
               },
               "icon": "lucide-file",
               "title": "4."
-            }
-          }
-        ]
-      },
-      {
-        "id": "5579327ab28e4a24",
-        "type": "tabs",
-        "dimension": 51.649746192893396,
-        "children": [
-          {
-            "id": "aba2832ae1213e94",
-            "type": "leaf",
-            "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph-Ansicht"
             }
           }
         ]
@@ -98,7 +80,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "98f659f079e22154",
@@ -205,8 +188,8 @@
   },
   "active": "f413a2769b047a96",
   "lastOpenFiles": [
-    "Pasted image 20260725202024.jpg",
     "Sessions/4..md",
+    "Pasted image 20260725202024.jpg",
     "Trivia.md",
     "Pasted image 20260725202738.jpg",
     "Prof. Elias Meinerz.md",
@@ -250,7 +233,6 @@
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/organization",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/npc",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/bestiary/undead/token/zombie.png",
     "Unbenannt.canvas"
   ]
 }
