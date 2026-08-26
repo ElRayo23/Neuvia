@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sessions/4..md",
+                "file": "Arkanbiologie.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "4."
+              "title": "Arkanbiologie"
             }
           }
         ]
@@ -187,9 +187,19 @@
   },
   "active": "f413a2769b047a96",
   "lastOpenFiles": [
-    "Prof. Elias Meinerz.md",
-    "Sessions/4..md",
+    "Sessions/Ideen.md",
+    "Arkanbiologie.md",
+    "Prof. Dr. Marina Prey.md",
+    "AKDA.md",
+    "Geoarkanologie.md",
+    "Antike Arkanologie.md",
+    "Chronomantie.md",
+    "Divinologie.md",
+    "Dunamantie.md",
     "Trivia.md",
+    "Kampus-Gorod.md",
+    "Sessions/4..md",
+    "Prof. Elias Meinerz.md",
     "Prof. Kalip Ayada.md",
     "USB Stick.md",
     "Pasted image 20260725202024.jpg",
@@ -208,11 +218,7 @@
     "Asmodeus.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/spells/bane.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/deities/greek-aphrodite.md",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/spells/spells.md",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/feats/grappler.md",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/feats/feats.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/feats",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/tools/xentis-dnd-beyond-character-sheets-json-puller.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/tools",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session/_attachments/vix-session.png",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/npc/_attachments/vix-npc.png",
@@ -220,15 +226,9 @@
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/item/_attachments/vix-item.png",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/adventure/_attachments/vix-adventure.png",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session/_attachments",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session/vix-session.md",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/organization/vix-organization.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/npc/_attachments",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/npc/vix-npc.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/location/_attachments",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/location/vix-location.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/item/_attachments",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/item/vix-item.md",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/character/vix-character.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/adventure/_attachments",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/organization",
