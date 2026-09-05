@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sessions/Ideen.md",
+                "file": "Kolya Legweak alias Snegurotschka.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Ideen"
+              "title": "Kolya Legweak alias Snegurotschka"
             }
           }
         ]
@@ -55,7 +55,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#chrono",
+                "query": "kolya",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": true,
@@ -76,7 +76,8 @@
               "title": "Lesezeichen"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -187,11 +188,11 @@
   },
   "active": "f413a2769b047a96",
   "lastOpenFiles": [
+    "Sessions/Ideen.md",
     "Sessions/4..md",
     "Astella Files.md",
     "Prof. Dr. Marina Prey.md",
     "Arkanbiologie.md",
-    "Sessions/Ideen.md",
     "AKDA.md",
     "Geoarkanologie.md",
     "Antike Arkanologie.md",
