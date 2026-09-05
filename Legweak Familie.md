@@ -1,5 +1,5 @@
 Die Legweak Familie herrscht über einen der 5 [[Distrikte]] namentlich [[Der freie Norden]]
-Sie sind Vampire und Blutmagier. Sie leben im [[Legweak Anwesen]] Es ist mysteriös wie sie vor 30 Jahren nach dem [[Tod von Regent Vladimir]] an die Macht gekommen sind. Sie haben den [[Ayada Clan]] mit königlichem Befehl verscheucht und in Kämpfen dezimiert, um den kompletten freien Norden zu beherrschen.
+Sie sind Vampire und Blutmagier. Sie leben im [[Legweak Anwesen]] Es ist mysteriös wie sie vor 30 Jahren nach dem [[Tod von Regent Vladimir]] an die Macht gekommen sind. Sie haben dem jungen Regenten [[Regent Vladimir Romanov, der Zweite]] dabei geholfen, politische Gegner auszuschalten. Sie haben den [[Ayada Clan]] mit königlichem Befehl verscheucht und in Kämpfen dezimiert, um den kompletten freien Norden zu beherrschen.
 
 Nachkommen ohne Talent oder ohne Vampirismus werden im Haus als Diener gehalten. Davon gibt es Dutzende. 
 

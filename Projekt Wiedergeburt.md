@@ -4,7 +4,7 @@ Legweaks wollen einen Sitz im [[Oktett]] bei [[Arkanbiologie]].
 
 
 WIE SCHAFFEN SIE ES?
-Dafür beabsichtigen sie die Erpressung der [[AKDA]] und damit eine Verhandlung mit der [[Romanov Familie]], die nicht für die Öffentlichkeit zugänglich sein soll.
+Dafür beabsichtigen sie die Erpressung der [[AKDA]] und damit eine Verhandlung mit der [[Romanov Familie]], die nicht für die Öffentlichkeit zugänglich sein soll. [[Regent Vladimir Romanov, der Zweite]] hat offizielle Kontakte gesenkt.
 [[Prof. Dr. Asmidir Viadin]] und [[Prof. Dr. Marina Prey]] stehen sich nahe. Das Bild von Marina für die Wiederwahl wäre ruiniert, wenn sie sich mit Kriminellen oder "verfehlten" Professoren abgibt. Dies soll der erste Erpressungsversuch sein, wodurch sie sich zurückziehen soll.
 
 Dies war der erste Plan. Durch die Unruhen im Portal und [[Orion Astella]], der aus dem Portal trat, ergab sich eine neue Möglichkeit. Marina hat die Files.
