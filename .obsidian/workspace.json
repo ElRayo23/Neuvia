@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Kolya Legweak alias Snegurotschka.md",
+                "file": "Sessions/5..md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Kolya Legweak alias Snegurotschka"
+              "title": "5."
             }
           },
           {
@@ -27,16 +27,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Legweak Familie.md",
+                "file": "Sessions/5..md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Legweak Familie"
+              "title": "5."
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -91,8 +90,7 @@
               "title": "Lesezeichen"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -201,21 +199,27 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "0c3bda20b185b0d9",
+  "active": "f413a2769b047a96",
   "lastOpenFiles": [
+    "Sessions/4..md",
+    "Pridisteshka Clan.md",
+    "Stämme des Nordens.md",
+    "Ma Clan.md",
+    "Viadin Clan.md",
+    "Sessions/5..md",
+    "Kolya Legweak alias Snegurotschka.md",
+    "Sessions/Ideen.md",
+    "Arkanbiologie aka Arbi.md",
+    "purpur distrikt.md",
+    "Legweak Familie.md",
     "Pasted image 20260905175823.png",
     "Projekt Wiedergeburt.md",
     "Usula Ayada alias Panzerfaust des Nordens.md",
-    "Kolya Legweak alias Snegurotschka.md",
-    "Legweak Familie.md",
     "Regent Vladimir Romanov, der Zweite.md",
     "Pasted image 20260905172641.png",
     "Die Torwächter Götter.md",
-    "Sessions/Ideen.md",
-    "Sessions/4..md",
     "Astella Files.md",
     "Prof. Dr. Marina Prey.md",
-    "Arkanbiologie.md",
     "AKDA.md",
     "Geoarkanologie.md",
     "Antike Arkanologie.md",
@@ -225,22 +229,16 @@
     "Trivia.md",
     "Kampus-Gorod.md",
     "Prof. Elias Meinerz.md",
-    "Prof. Kalip Ayada.md",
-    "USB Stick.md",
     "Pasted image 20260725202024.jpg",
     "Pasted image 20260725202738.jpg",
     "Pasted image 20260825190116.png",
-    "Zarim Legweak, der Dritte.md",
     "expanded-vampires-by-sonixverse-labs-v0-skrsrdbf09i81.webp",
-    "Ilyada Legweak.md",
     "Pasted image 20260823161106.png",
-    "Prof. Zarim Legweak, der Zweite.md",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/feats",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/tools",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session/_attachments/vix-session.png",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/npc/_attachments/vix-npc.png",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/location/_attachments/vix-location.png",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/item/_attachments/vix-item.png",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session/_attachments",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/npc/_attachments",
     "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/location/_attachments",

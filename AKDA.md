@@ -4,7 +4,7 @@ Mit 8 Fakultäten, die gleichzeitig Städte sind:
 [[Trivia]] (für Trivialwissenschaften)
 [[Dunamantie]]
 [[Divinologie]]
-[[Arkanbiologie]]
+[[Arkanbiologie aka Arbi]]
 [[Chronomantie]]
 [[Runenlehre]]
 [[Antike Arkanologie]]

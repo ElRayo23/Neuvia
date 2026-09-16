@@ -1,4 +1,4 @@
-[[Oktane]] der [[Arkanbiologie]]. Unterrichtet hauptsächlich Meeresbiologie. Ihre letzte Arbeit widmete sich dem [[Unheilssturm]] und seinen Lebewesen, die in geisterhafter Form existieren.
+[[Oktane]] der [[Arkanbiologie aka Arbi]]. Unterrichtet hauptsächlich Meeresbiologie. Ihre letzte Arbeit widmete sich dem [[Unheilssturm]] und seinen Lebewesen, die in geisterhafter Form existieren.
 
 Verwickelt in den [[Astella Files]] durch ihren engen Freund [[Prof. Dr. Asmidir Viadin]]
 

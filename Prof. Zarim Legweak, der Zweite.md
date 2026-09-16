@@ -1,4 +1,4 @@
-Prof in [[Arkanbiologie]]
+Prof in [[Arkanbiologie aka Arbi]]
 [[Projekt Wiedergeburt]]
 
 

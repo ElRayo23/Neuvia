@@ -1,7 +1,7 @@
 [[Trivia]] 
 [[Dunamantie]]
 [[Divinologie]]
-[[Arkanbiologie]]
+[[Arkanbiologie aka Arbi]]
 [[Chronomantie]]
 [[Runenlehre]]
 [[Antike Arkanologie]]

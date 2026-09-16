@@ -1,6 +1,6 @@
 Von der [[Legweak Familie]] Familie initiiert. 
 WAS WOLLEN SIE?
-Legweaks wollen einen Sitz im [[Oktett]] bei [[Arkanbiologie]]. 
+Legweaks wollen einen Sitz im [[Oktett]] bei [[Arkanbiologie aka Arbi]]. 
 
 
 WIE SCHAFFEN SIE ES?
