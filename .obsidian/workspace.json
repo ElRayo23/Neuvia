@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Die Torwächter Götter.md",
+                "file": "Sessions/5..md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Die Torwächter Götter"
+              "title": "5."
             }
           },
           {
@@ -201,8 +201,8 @@
   },
   "active": "f413a2769b047a96",
   "lastOpenFiles": [
-    "Musen.md",
     "Die Torwächter Götter.md",
+    "Musen.md",
     "Eva.md",
     "Loki.md",
     "Dionysis.md",
