@@ -261,35 +261,3 @@ plugins:
     enabled: true
     options:
       enableCopyTool: false
-  - source: "@quartz-community/obsidian-plugin-excalidraw"
-    enabled: true
-    options:
-      enableInteraction: true
-      darkMode: auto
-      exportPadding: 20
-    order: 50
-layout:
-  groups:
-    toolbar:
-      priority: 35
-      direction: row
-      gap: 0.5rem
-  byPageType:
-    "404":
-      positions:
-        beforeBody: []
-        left: []
-        right: []
-    content: {}
-    folder:
-      exclude:
-        - reader-mode
-      positions:
-        right: []
-    tag:
-      exclude:
-        - reader-mode
-      positions:
-        right: []
-    canvas: {}
-    bases: {}
