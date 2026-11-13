@@ -54,7 +54,7 @@ jobs:
 
       - name: Install Quartz plugins
         working-directory: .quartz-runtime
-        run: npx quartz plugin install --from-config
+        run: npm run install-plugins
 
       - name: Build website
         working-directory: .quartz-runtime
