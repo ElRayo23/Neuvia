@@ -1,0 +1,77 @@
+name: Build and deploy Neuvia with Quartz
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Neuvia
+        uses: actions/checkout@v4
+
+      - name: Check out Quartz v5
+        uses: actions/checkout@v4
+        with:
+          repository: jackyzha0/quartz
+          ref: v5
+          path: .quartz-runtime
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: .quartz-runtime/package-lock.json
+
+      - name: Prepare Quartz site
+        run: |
+          cp .github/quartz/quartz.config.yaml .quartz-runtime/quartz.config.yaml
+          mkdir -p .quartz-runtime/content
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.obsidian/' \
+            --exclude='.github/' \
+            --exclude='.quartz-runtime/' \
+            --exclude='dnd-5e-srd-markdown.zip' \
+            ./ .quartz-runtime/content/
+
+      - name: Install dependencies
+        working-directory: .quartz-runtime
+        run: npm ci
+
+      - name: Install Quartz plugins
+        working-directory: .quartz-runtime
+        run: npx quartz plugin install --from-config
+
+      - name: Build website
+        working-directory: .quartz-runtime
+        run: npx quartz build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .quartz-runtime/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
