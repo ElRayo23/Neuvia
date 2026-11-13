@@ -109,12 +109,6 @@ plugins:
     order: 92
   - source: "@quartz-community/quartz-fonts"
     enabled: true
-  - source: "@quartz-themes/core"
-    enabled: true
-    options:
-      theme: its-theme
-      variation: ttrpg-dnd
-      mode: both
   - source: "@quartz-community/explicit-publish"
     enabled: false
   - source: "@quartz-community/unlisted-pages"
