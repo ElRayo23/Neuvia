@@ -48,6 +48,26 @@ jobs:
             --exclude='dnd-5e-srd-markdown.zip' \
             ./ .quartz-runtime/content/
 
+      - name: Add generated homepage if the vault has none
+        run: |
+          if [ ! -f .quartz-runtime/content/index.md ]; then
+            cat > .quartz-runtime/content/index.md <<'EOF'
+          ---
+          title: Neuvia
+          ---
+          # Neuvia
+
+          Willkommen im Neuvia-Wiki.
+
+          ## Bereiche
+
+          - [[Sessions]]
+          - [[dnd-5e-srd-markdown]]
+
+          Nutze die Suche oder den Explorer in der Seitenleiste, um weitere Notizen zu finden.
+          EOF
+          fi
+
       - name: Install dependencies
         working-directory: .quartz-runtime
         run: npm ci
