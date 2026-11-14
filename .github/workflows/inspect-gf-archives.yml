@@ -1,0 +1,27 @@
+name: Inspect Gravity Falls archives
+on:
+  push:
+    paths:
+      - ".github/workflows/inspect-gf-archives.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: List archive contents
+        run: |
+          python - <<'PY'
+          import zipfile, glob
+          for path in glob.glob("*.zip"):
+              with zipfile.ZipFile(path) as z:
+                  names = z.namelist()
+                  md = [n for n in names if n.lower().endswith(".md")]
+                  media = [n for n in names if n.lower().endswith((".png",".jpg",".jpeg",".webp",".avif",".pdf"))]
+                  print(f"ARCHIVE: {path}")
+                  print(f"ENTRIES: {len(names)} MARKDOWN: {len(md)} MEDIA: {len(media)}")
+                  for n in names[:80]:
+                      print("  " + n)
+          PY
