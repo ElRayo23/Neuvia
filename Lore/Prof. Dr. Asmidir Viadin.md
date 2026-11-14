@@ -3,3 +3,6 @@ unterrichtete bis zu seiner Untersuchungshaft probabilistische Manipulation an d
 Teil von ehemaliger Gruppe [[Violenti Victores]]
 
 Ist in Untersuchungshaft in [[Krovya]]. Wurde aus Versehen Teil des [[Projekt Wiedergeburt]]. 
+
+## Musik
+- [[Musik/Asmidir]]
