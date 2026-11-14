@@ -131,7 +131,7 @@ title: Monster
     if(!name||!source) throw new Error("Monstername oder Quelle fehlt in der URL.");
     const base="https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/bestiary/";
     const index=await (await fetch(base+"index.json")).json();
-    const file=Object.values(index).find(f=>f.toLowerCase()===source.toLowerCase()+".json"||f.toLowerCase()===source.toLowerCase());
+    const entry=Object.entries(index).find(([key])=>key.toLowerCase()===source.toLowerCase()); const file=entry?.[1];
     if(!file) throw new Error("Quelle nicht im 5etools-Index gefunden: "+source);
     const data=await (await fetch(base+file)).json();
     original=(data.monster||[]).find(m=>m.name===name&&String(m.source||"").toLowerCase()===source.toLowerCase());
