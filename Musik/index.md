@@ -4,7 +4,7 @@ title: Musik
 
 # Musik
 
-Hier liegen die Spotify-Playlists für Neuvia. Die Playlistnamen entsprechen den Namen auf Spotify.
+Hier liegen die eindeutig Neuvia- bzw. D&D-bezogenen Spotify-Playlists. Die Playlistnamen entsprechen den Namen auf Spotify.
 
 ## Regionen und Organisationen
 
@@ -21,13 +21,7 @@ Hier liegen die Spotify-Playlists für Neuvia. Die Playlistnamen entsprechen den
 - [[Kali Allagatas Moongrave]]
 - [[Turros]]
 
-## Weitere Playlists
+## Spielmusik
 
-- [[K.d.C]]
-- [[Creepy]]
-- [[Makima]]
-- [[El Phoenix]]
-- [[Hopecore]]
-- [[Experimenting]]
 - [[DnD Fest]]
 - [[DnD Storytelling]]
