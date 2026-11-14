@@ -1,0 +1,36 @@
+name: Inspect Notion exports
+
+on:
+  push:
+    paths:
+      - '.github/workflows/inspect-notion-exports.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: List ZIP contents
+        shell: bash
+        run: |
+          mkdir -p /tmp/export-inspection
+          for f in ./*.zip; do
+            [ -f "$f" ] || continue
+            base="$(basename "$f" .zip)"
+            {
+              echo "ARCHIVE: $(basename "$f")"
+              echo "SIZE: $(stat -c%s "$f") bytes"
+              echo "ENTRIES:"
+              unzip -Z1 "$f"
+              echo
+            } >> /tmp/export-inspection/manifest.txt
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: notion-export-manifest
+          path: /tmp/export-inspection/manifest.txt
+          if-no-files-found: error
