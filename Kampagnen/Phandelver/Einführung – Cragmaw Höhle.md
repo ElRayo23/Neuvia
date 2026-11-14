@@ -32,7 +32,6 @@ Fühling. Ein metallisches Rostgitter liegt auf dem bewaldeten Boden und eine Sp
 
 Zur Jagd schicken, Im Wald ein Kaninchen AC 13 zum Treffen (Stealth check DC15 dann Vorteil, oder vom Weitem)
 
-> **Notion-Anhang:** `ed97f5d630fcaa28548e8a245c8a05d6.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8049b549e1b0b22b3ce8)
 
 Sören und Sildar tauchen auf: 
 
@@ -42,7 +41,6 @@ Guter Schütze, gefährlicher Wald aber
 
 Dann heute Abend in der Taverne „Bier um Drei“
 
-> **Notion-Anhang:** `chris-dien-concept-env-pe-market-v3.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8049b549e1b0b22b3ce8)
 
 In der hitzigsten Sonne, 2 Stunden später auf dem Markt, diskutiert ein Gallus mit einer Verkäuferin Elfe über den Preis der Äpfel. 4 Silber für 5 Pfund (2,3 Kilo) (Leonies Character).
 
@@ -86,7 +84,6 @@ Karre langsam, man könnte nebenbei laufen
 
 falls jemand natur beobachtet, beinlose Krähe mit weißem Schnabel sieht sie an während sie ne tote Maus frisst
 
-> **Notion-Anhang:** `210cd4f76dea2b00112f2d65afcd33b5.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8049b549e1b0b22b3ce8)
 
 Den Weg beschreiben, 
 
@@ -159,7 +156,6 @@ Grol gebracht. Der menschliche Gefährte des Zwergen wird in der
 
 [Owlbear Rodeo](https://www.owlbear.rodeo/profile)
 
-> **Notion-Anhang:** `2018-07-23-goblin.png` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8049b549e1b0b22b3ce8)
 
 jacob
 
@@ -173,7 +169,6 @@ Leonard
 
 S1 3
 
-> **Notion-Anhang:** `Goblins-34919312-1642193253580.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8049b549e1b0b22b3ce8)
 
 Je nach Entscheidung, Cragmaw Höhle 
 
@@ -206,11 +201,8 @@ Deckung bieten (siehe „Deckung" im Regelbuch).</i>
 </i><i><b>Bach</b></i><i>. Der Bach, der durch den Komplex fließt, ist nur ungefähr 60 Zentimeter tief, kalt und langsam, sodass Kreaturen
 ohne Probleme hindurch waten können.</i>
 
-> **Notion-Anhang:** `Cragmaw-Hideout-Thumbnail.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8049b549e1b0b22b3ce8)
 
-> **Notion-Anhang:** `ca3c671b03e33c5d53b5b5447c2929aa.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8049b549e1b0b22b3ce8)
 
-> **Notion-Anhang:** `original.png` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8049b549e1b0b22b3ce8)
 
 <ol>
 <li>
@@ -263,3 +255,22 @@ Loot: Vorräte von Elise zurückbringen 50 GM, Klarg hat Schatz mit 600 GM, 110 
 → Nachricht: [[Sören Lackmann]] wird nach Burg Cragmaw beliefert
 
 ———- Level up ———————
+
+
+## Medien
+
+![2018-07-23-goblin.png](<Anhänge/Einführung Cragmaw Höhle/2018-07-23-goblin.png>)
+
+![210cd4f76dea2b00112f2d65afcd33b5.jpg](<Anhänge/Einführung Cragmaw Höhle/210cd4f76dea2b00112f2d65afcd33b5.jpg>)
+
+![ca3c671b03e33c5d53b5b5447c2929aa.jpg](<Anhänge/Einführung Cragmaw Höhle/ca3c671b03e33c5d53b5b5447c2929aa.jpg>)
+
+![chris-dien-concept-env-pe-market-v3.jpg](<Anhänge/Einführung Cragmaw Höhle/chris-dien-concept-env-pe-market-v3.jpg>)
+
+![Cragmaw-Hideout-Thumbnail.jpg](<Anhänge/Einführung Cragmaw Höhle/Cragmaw-Hideout-Thumbnail.jpg>)
+
+![ed97f5d630fcaa28548e8a245c8a05d6.jpg](<Anhänge/Einführung Cragmaw Höhle/ed97f5d630fcaa28548e8a245c8a05d6.jpg>)
+
+![Goblins-34919312-1642193253580.jpg](<Anhänge/Einführung Cragmaw Höhle/Goblins-34919312-1642193253580.jpg>)
+
+![original.png](<Anhänge/Einführung Cragmaw Höhle/original.png>)

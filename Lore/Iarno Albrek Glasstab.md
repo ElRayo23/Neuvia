@@ -6,7 +6,6 @@ title: "Iarno Albrek Glasstab"
 
 > Quelle: [Originalnotiz in Notion](https://app.notion.com/p/18b60f7443dc8071b260c08555bc3073)
 
-> **Notion-Anhang:** `cbc12c0204ceb10c7a3fd5d3593fb804.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8071b260c08555bc3073)
 
 [https://5e.tools/bestiary/iarno-glasstaff-albrek-pabtso.html](https://5e.tools/bestiary/iarno-glasstaff-albrek-pabtso.html)
 
@@ -75,3 +74,8 @@ Silence:
 
 - <b>Dagger (Melee):</b> +2 to hit, <b>1d4+2 piercing damage</b>
 - <b>Spellcasting (Bonus Action):</b> Iarno can cast <b>Misty Step</b> or <b>Shield</b> as a bonus action when needed.
+
+
+## Medien
+
+![cbc12c0204ceb10c7a3fd5d3593fb804.jpg](<Anhänge/Charaktere/Iarno Albrek Glasstab/cbc12c0204ceb10c7a3fd5d3593fb804.jpg>)

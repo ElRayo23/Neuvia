@@ -6,7 +6,6 @@ title: "Ylli Daran Edermath"
 
 > Quelle: [Originalnotiz in Notion](https://app.notion.com/p/18b60f7443dc80379170da044143f492)
 
-> **Notion-Anhang:** `f56d1357a41e2d9cc9824423e5c33b53.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc80379170da044143f492)
 
 Apfelbauer
 
@@ -25,3 +24,8 @@ Charakteren auch mitteilen, dass der Hauptunterschlupf der
 Rotbrenner unter dem Tresander-Anwesen liegt, der Ruine am
 östlichen Stadtrand.
 - sitzt im [[Stadtrat]], als ältester
+
+
+## Medien
+
+![f56d1357a41e2d9cc9824423e5c33b53.jpg](<Anhänge/Charaktere/Ylli Daran Edermath/f56d1357a41e2d9cc9824423e5c33b53.jpg>)

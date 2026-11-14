@@ -14,7 +14,6 @@ title: "Steinhügelherberge"
 
 [[Elsa Mautherb]] Mitarbeiterin
 
-> **Notion-Anhang:** `2e8e19a5e9a227c2d9e39d8da627a4b2.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/1c860f7443dc807a8392d1fb56a2ca6f)
 
 # <b>Food, Drink, and Lodging</b>
 
@@ -164,3 +163,8 @@ Finer-ish (bottle)
 </td>
 </tr>
 </table>
+
+
+## Medien
+
+![2e8e19a5e9a227c2d9e39d8da627a4b2.jpg](<Anhänge/Orte/Steinhügelherberge/2e8e19a5e9a227c2d9e39d8da627a4b2.jpg>)

@@ -12,7 +12,6 @@ title: "Barthens"
 
 [[Elmar Jr]] 
 
-> **Notion-Anhang:** `9f4a4ad46bb1800b8a959ba5fba6c0f8.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/1c860f7443dc80b1b7d7f4c6c4e7b76a)
 
 # <b>Adventuring Gear</b>
 
@@ -1155,3 +1154,8 @@ Whetstone
 </td>
 </tr>
 </table>
+
+
+## Medien
+
+![9f4a4ad46bb1800b8a959ba5fba6c0f8.jpg](<Anhänge/Orte/Barthens/9f4a4ad46bb1800b8a959ba5fba6c0f8.jpg>)

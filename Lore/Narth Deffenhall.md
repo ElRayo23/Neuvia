@@ -6,7 +6,6 @@ title: "Narth Deffenhall"
 
 > Quelle: [Originalnotiz in Notion](https://app.notion.com/p/19760f7443dc80d8bb5def76a4c17fa9)
 
-> **Notion-Anhang:** `df35760dae0324bbc3136459653337dc.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/19760f7443dc80d8bb5def76a4c17fa9)
 
 <ul>
 <li>
@@ -18,3 +17,8 @@ verlassen und ist verwundet und erschöpft wiedergekommen."
 lebt mit seiner Enkelin [[Molly]] 
 </li>
 </ul>
+
+
+## Medien
+
+![df35760dae0324bbc3136459653337dc.jpg](<Anhänge/Charaktere/Narth Deffenhall/df35760dae0324bbc3136459653337dc.jpg>)

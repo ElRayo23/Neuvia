@@ -6,7 +6,6 @@ title: "Trilena Steinhügel"
 
 > Quelle: [Originalnotiz in Notion](https://app.notion.com/p/1b360f7443dc80bea49fec4e0a777649)
 
-> **Notion-Anhang:** `8efbf04ed8967e064657f620e3a50631.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/1b360f7443dc80bea49fec4e0a777649)
 
 die Frau des Wirts: ,,Thel Dendrar, ein örtlicher
 Schnitzer, hat sich vor einem Zehntag mit den Rotbrennern
@@ -19,3 +18,8 @@ seine Frau, seine Tochter und sein Sohn auch verschwunden."
 Frau von [[Tobias Steinhügel]] 
 
 Mutter von Pip
+
+
+## Medien
+
+![8efbf04ed8967e064657f620e3a50631.jpg](<Anhänge/Charaktere/Trilena Steinhügel/8efbf04ed8967e064657f620e3a50631.jpg>)

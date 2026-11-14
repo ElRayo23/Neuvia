@@ -13,4 +13,7 @@ title: "Bergarbeiterbörse und Finanzamt"
 → durchschnittliches Einkommen der Geschäfte pro Monat: 20 GM
 → durchs. Leute:  10 GM
 
-> **Notion-Anhang:** `8c1ce55ebe96fc66c95fbf562f26a923.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/1c860f7443dc80929b84ca4d87f3d428)
+
+## Medien
+
+![8c1ce55ebe96fc66c95fbf562f26a923.jpg](<Anhänge/Orte/Bergarbeiterbörse und Finanzamt/8c1ce55ebe96fc66c95fbf562f26a923.jpg>)

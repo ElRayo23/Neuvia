@@ -8,6 +8,9 @@ title: "Holzwerkstatt"
 
 [[Freda Makka]] 
 
-[[Lanar Makka]] 
+[[Lanar Makka]]
 
-> **Notion-Anhang:** `natcha-ngamtweerat-img-1234.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/1c860f7443dc8068a4def861ec3f782a)
+
+## Medien
+
+![natcha-ngamtweerat-img-1234.jpg](<Anhänge/Orte/Holzwerkstatt/natcha-ngamtweerat-img-1234.jpg>)

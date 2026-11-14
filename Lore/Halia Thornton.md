@@ -6,7 +6,6 @@ title: "Halia Thornton"
 
 > Quelle: [Originalnotiz in Notion](https://app.notion.com/p/18b60f7443dc8071bc06f682ff089711)
 
-> **Notion-Anhang:** `8b9316d35788f676e1337fd70fce6ea0.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc8071bc06f682ff089711)
 
 Bergarbeiter-Börse und Stadt-Finanzenverwaltung
 
@@ -19,3 +18,8 @@ Bergarbeiter-Börse und Stadt-Finanzenverwaltung
 Zhentarim
 
 versucht die Stadt im Namen der Zhents zu übernehmen, sobald Glasstab aus dem Weg ist
+
+
+## Medien
+
+![8b9316d35788f676e1337fd70fce6ea0.jpg](<Anhänge/Charaktere/Halia Thornton/8b9316d35788f676e1337fd70fce6ea0.jpg>)

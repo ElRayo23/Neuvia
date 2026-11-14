@@ -14,7 +14,6 @@ title: "Velik"
 - 24 Jahre alt
 - Vollbart, schulterlange Haare
 
-> **Notion-Anhang:** `image.png` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18e60f7443dc809ab979dcfec895f8f3)
 
 ### <b>Velik – (CR 2)</b>
 
@@ -54,3 +53,8 @@ STR +5, CON +5
 
 - <b>Berserker Swing (3/day):</b> If Velik hits a target with a melee weapon attack, he can immediately make one additional attack against the same target.
 - <b>Shoulder Bash:</b> Velik shoves a creature within 5 feet. The target must succeed on a <b>DC 13 Strength</b> saving throw or be pushed 5 feet and knocked <b>prone</b>.
+
+
+## Medien
+
+![image.png](<Anhänge/Charaktere/Velik/image.png>)

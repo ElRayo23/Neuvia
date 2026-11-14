@@ -6,9 +6,7 @@ title: "Phandalin"
 
 > Quelle: [Originalnotiz in Notion](https://app.notion.com/p/18b60f7443dc806e9f05cec6606cd5db)
 
-> **Notion-Anhang:** `15m.png` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc806e9f05cec6606cd5db)
 
-> **Notion-Anhang:** `d3f241b31f1f7bc1057011d459448bc0.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc806e9f05cec6606cd5db)
 
 Grob: 
 
@@ -123,6 +121,13 @@ Nächsten Tag, sind Federn an [[Hoppi Gallopi]]
 - Rotbrenner entführen Familie, wo Truppe unterkommt, während Truppe weg
 → Nachricht “Die Einwohnerzahl darf nicht steigen. Entweder ihr geht aus der Stadt oder diese Familie geht in den Tod.”
 
-> **Notion-Anhang:** `Phandalin-Background.webp` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc806e9f05cec6606cd5db)
 
-> **Notion-Anhang:** `Phandalin.webp` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc806e9f05cec6606cd5db)
+## Medien
+
+![15m.png](<Anhänge/Phandalin/15m.png>)
+
+![d3f241b31f1f7bc1057011d459448bc0.jpg](<Anhänge/Phandalin/d3f241b31f1f7bc1057011d459448bc0.jpg>)
+
+![Phandalin-Background.webp](<Anhänge/Phandalin/Phandalin-Background.webp>)
+
+![Phandalin.webp](<Anhänge/Phandalin/Phandalin.webp>)

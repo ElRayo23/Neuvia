@@ -6,7 +6,6 @@ title: "Sildar Hallwinter"
 
 > Quelle: [Originalnotiz in Notion](https://app.notion.com/p/18b60f7443dc803fa10dca7c830a25ab)
 
-> **Notion-Anhang:** `sildar-hallwinter-lost-mine-of-phandelver-v0-w28vd3d1y3gd1.webp` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/18b60f7443dc803fa10dca7c830a25ab)
 
 <ul>
 <li>
@@ -98,3 +97,8 @@ Common
 ### Reactions
 
 <i><b>Parry.</b></i> When an attacker hits Sildar with a melee attack and Sildar can see the attacker, he can roll 1d6 and add the number rolled to his AC against the triggering attack, provided that he’s wielding a melee weapon.
+
+
+## Medien
+
+![sildar-hallwinter-lost-mine-of-phandelver-v0-w28vd3d1y3gd1.webp](<Anhänge/Charaktere/Sildar Hallwinter/sildar-hallwinter-lost-mine-of-phandelver-v0-w28vd3d1y3gd1.webp>)

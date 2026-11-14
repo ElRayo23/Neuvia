@@ -17,3 +17,8 @@ Kennt  [[Schwester Garaele]] , [[Asmael Beri]]  und [[Schroppen]] , Mitglieder v
 [[Sir Tikka Massala]]  und [[Asmael Beri]]  sind sich nach 60 Jahren (letzte Mission mit [[Schroppen]] ) begegnet und haben sich als Verstärkung angeboten. Nach der Mission kann Asma Schroppen besuchen, weil die gute Freunde waren
 
 Während Mission: Verbindung zu Harfnern muss geheim gehalten werden. (Harfner Symbol ist eine Harfe mit Mondsichel)-	Tikka Massala kommt den Zwergbrüdern näher, um eine besagte Lieferung zu begleiten und den Koboldüberfällen näher zu kommen (Kobold versteck ausfindig machen indem Kobold gefangen genommen wird)
+
+
+## Medien
+
+- [PDF: Leonie.pdf](<Anhänge/Charaktere/Sir Tikka Massala/Leonie.pdf>)

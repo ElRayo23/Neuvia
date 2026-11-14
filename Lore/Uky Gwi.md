@@ -30,3 +30,8 @@ Abbild von [[Velik]] aber dunkelbraune Haare
 
 - Vllt hat er Truesight iwann
 → “Du siehst mehr als andere”
+
+
+## Medien
+
+- [PDF: Jacob.pdf](<Anhänge/Charaktere/Uky Gwi/Jacob.pdf>)

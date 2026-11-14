@@ -15,6 +15,9 @@ Einführung der [[Rotbrenner]] als Stadtgarde → finanziert durch Brandweinsteu
 </li>
 </ul>
 
-> **Notion-Anhang:** `d1b287607ee13bd2bd925248c7f3f731.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/1c860f7443dc806e8631dab67d387c49)
 
-> **Notion-Anhang:** `maxresdefault.jpg` – nicht kopiert. [Originalnotiz öffnen](https://app.notion.com/p/1c860f7443dc806e8631dab67d387c49)
+## Medien
+
+![d1b287607ee13bd2bd925248c7f3f731.jpg](<Anhänge/Orte/Rathaus/d1b287607ee13bd2bd925248c7f3f731.jpg>)
+
+![maxresdefault.jpg](<Anhänge/Orte/Rathaus/maxresdefault.jpg>)
