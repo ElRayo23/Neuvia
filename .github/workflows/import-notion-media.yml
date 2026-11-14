@@ -1,4 +1,4 @@
-name: Import Notion media
+name: Import Notion media (one-time)
 
 on:
   push:
