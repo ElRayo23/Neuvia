@@ -205,7 +205,7 @@ Homebrew-Monster verwalten. Änderungen bleiben zunächst in diesem Browser, bis
     const blob = new Blob([JSON.stringify({schemaVersion:1,monsters},null,2)],{type:"application/json"});
     const url = URL.createObjectURL(blob), a=document.createElement("a");
     a.href=url; a.download="homebrew-monsters.json"; a.click(); URL.revokeObjectURL(url);
-    say("JSON exportiert. Ersetze damit Bestiary/homebrew.json im GitHub-Repository.");
+    say("JSON exportiert. Ersetze damit data/bestiary/homebrew.json im GitHub-Repository.");
   };
   $("nb-add").addEventListener("click",()=>{monsters.push(emptyMonster());selected=monsters.length-1;renderList();renderEditor();say("Neues Monster angelegt.");});
   $("nb-import").addEventListener("click",()=>$("nb-file").click());
@@ -215,6 +215,6 @@ Homebrew-Monster verwalten. Änderungen bleiben zunächst in diesem Browser, bis
   $("nb-list").addEventListener("click",e=>{const b=e.target.closest("[data-select]");if(!b)return;selected=Number(b.dataset.select);renderEditor();});
   fillCr();
   loadOfficialMonsters();
-  fetch("/Neuvia/Bestiary/homebrew.json").then(r=>{if(!r.ok)throw new Error("JSON-Datei nicht erreichbar");return r.json();}).then(importData).catch(err=>{monsters=[];loaded=true;renderList();renderEditor();say("Leere Startliste geladen ("+err.message+"). Du kannst Monster erstellen oder eine JSON-Datei importieren.");});
+  fetch("/Neuvia/data/bestiary/homebrew.json").then(r=>{if(!r.ok)throw new Error("JSON-Datei nicht erreichbar");return r.json();}).then(importData).catch(err=>{monsters=[];loaded=true;renderList();renderEditor();say("Leere Startliste geladen ("+err.message+"). Du kannst Monster erstellen oder eine JSON-Datei importieren.");});
 })();
 </script>
