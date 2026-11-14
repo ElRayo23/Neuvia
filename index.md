@@ -11,6 +11,7 @@ Willkommen im Neuvia-Wiki.
 - [[Kampagnen]]
 - [[Regelbuch]]
 - [[Lore]]
+- [[Musik]]
 
 Nutze die Suche oder den Explorer in der Seitenleiste, um weitere Notizen zu finden.
 
