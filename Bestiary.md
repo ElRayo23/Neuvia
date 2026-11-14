@@ -149,7 +149,7 @@ Homebrew-Monster verwalten. Änderungen bleiben zunächst in diesem Browser, bis
         const rawSize = Array.isArray(m.size) ? m.size.map(s=>sizeNames[s]||s).join("/") : (m.size||"Unknown");
         const rawCr = m.cr && typeof m.cr === "object" ? m.cr.cr : m.cr;
         const hash = encodeURIComponent((m.name+"_"+source).toLowerCase());
-        return {name:m.name,source,type:rawType,size:rawSize,cr:String(rawCr ?? "0"),url:"/Neuvia/Monster-Detail/#name="+encodeURIComponent(m.name)+"&source="+encodeURIComponent(source)};
+        return {name:m.name,source,type:rawType,size:rawSize,cr:String(rawCr ?? "0"),url:"https://5e.tools/bestiary.html#"+hash};
       }).filter(Boolean);
       renderList();
       say(officialMonsters.length+" 5etools-Monster aus "+files.length+" Quellen geladen.");
