@@ -15,6 +15,7 @@ Willkommen zum Neuvia Wiki
 - [[Regelbuch]]
 - [[Lore]]
 - [[Musik]]
+- <a href="/Neuvia/Bestiary/" data-no-spa>Bestiary (Homebrew-Monster)</a>
 
 Nutze die Suche oder den Explorer in der Seitenleiste, um weitere Notizen zu finden.
 
