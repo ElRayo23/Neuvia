@@ -52,8 +52,10 @@ title: Monster
   if (!root || root.dataset.initialized) return;
   root.dataset.initialized = "yes";
   const $ = id => root.querySelector("#"+id);
-  const params = new URLSearchParams(window.location.search);
-  const name = params.get("name"), source = params.get("source");
+  const queryParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const name = queryParams.get("name") || hashParams.get("name");
+  const source = queryParams.get("source") || hashParams.get("source");
   let original = null, edited = null;
   const say = message => $("md-feedback").textContent = message;
   const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
