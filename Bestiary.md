@@ -71,6 +71,7 @@ Homebrew-Monster verwalten. Änderungen bleiben zunächst in diesem Browser, bis
   const crValues = ["0","1/8","1/4","1/2", ...Array.from({length:30},(_,i)=>String(i+1))];
   const emptyMonster = () => ({name:"Neues Monster",size:"Medium",type:"Monstrosity",alignment:"Unaligned",cr:"1",ac:12,hp:20,speed:"30 ft.",abilities:{str:10,dex:10,con:10,int:10,wis:10,cha:10},traits:[],actions:[]});
   let monsters = [];
+  let officialMonsters = [];
   let selected = -1;
   let loaded = false;
   const say = (message) => { $("nb-status").textContent = message; };
@@ -93,19 +94,69 @@ Homebrew-Monster verwalten. Änderungen bleiben zunächst in diesem Browser, bis
     const query = $("nb-search").value.toLowerCase().trim();
     const type = $("nb-type").value, size = $("nb-size").value;
     const min = crNumber($("nb-mincr").value), max = crNumber($("nb-maxcr").value);
-    const matches = monsters.map((m,i)=>({m,i})).filter(({m}) =>
-      (!query || [m.name,m.type,m.alignment].join(" ").toLowerCase().includes(query)) &&
+    const all = [
+      ...monsters.map((m,i)=>({...m,_kind:"homebrew",_index:i})),
+      ...officialMonsters.map(m=>({...m,_kind:"official"}))
+    ];
+    const matches = all.filter(m =>
+      (!query || [m.name,m.type,m.alignment,m.source].join(" ").toLowerCase().includes(query)) &&
       (!type || m.type === type) && (!size || m.size === size) &&
       crNumber(m.cr) >= min && crNumber(m.cr) <= max
-    ).sort((a,b)=>a.m.name.localeCompare(b.m.name));
-    $("nb-count").textContent = matches.length + " von " + monsters.length + " Monstern";
-    $("nb-list").innerHTML = matches.length ? matches.map(({m,i}) =>
-      '<button class="nb-monster" data-select="'+i+'"><span><strong>'+esc(m.name)+'</strong><span class="nb-muted">'+esc(m.size)+' '+esc(m.type)+'</span></span><span class="nb-muted">CR '+esc(m.cr)+'</span></button>'
-    ).join("") : '<p class="nb-muted">Keine passenden Monster. Du kannst oben ein neues erstellen oder eine JSON-Datei importieren.</p>';
-    const types = [...new Set(monsters.map(m=>m.type).filter(Boolean))].sort();
+    ).sort((a,b)=>a.name.localeCompare(b.name));
+    $("nb-count").textContent = matches.length + " Treffer (" + monsters.length + " Homebrew, " + officialMonsters.length + " 5etools)";
+    $("nb-list").innerHTML = matches.length ? matches.map(m => {
+      const details = esc(m.size)+" "+esc(m.type);
+      const meta = "CR "+esc(m.cr)+(m.source ? " · "+esc(m.source) : "");
+      if (m._kind === "official") {
+        return '<a class="nb-monster" href="'+esc(m.url)+'" target="_blank" rel="noopener noreferrer"><span><strong>'+esc(m.name)+'</strong><span class="nb-muted">'+details+' · 5etools</span></span><span class="nb-muted">'+meta+' ↗</span></a>';
+      }
+      return '<button class="nb-monster" data-select="'+m._index+'"><span><strong>'+esc(m.name)+'</strong><span class="nb-muted">'+details+' · Homebrew</span></span><span class="nb-muted">'+meta+'</span></button>';
+    }).join("") : '<p class="nb-muted">Keine passenden Monster gefunden.</p>';
+    const types = [...new Set(all.map(m=>m.type).filter(Boolean))].sort();
     const oldType = $("nb-type").value;
-    $("nb-type").innerHTML = '<option value="">Alle Typen</option>' + types.map(t=>'<option>'+esc(t)+'</option>').join("");
+    $("nb-type").innerHTML = '<option value="">Alle Typen</option>' + types.map(t=>'<option value="'+esc(t)+'">'+esc(t)+'</option>').join("");
     $("nb-type").value = types.includes(oldType) ? oldType : "";
+  };
+  const loadOfficialMonsters = async () => {
+    const indexUrl = "https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/bestiary/index.json";
+    try {
+      $("nb-count").textContent = "Lade 5etools-Monster …";
+      const indexResponse = await fetch(indexUrl);
+      if (!indexResponse.ok) throw new Error("5etools-Quellenindex nicht erreichbar");
+      const sourceIndex = await indexResponse.json();
+      const files = [...new Set(Object.values(sourceIndex))];
+      const loadedMonsters = [];
+      for (let i=0; i<files.length; i+=8) {
+        const batch = await Promise.all(files.slice(i,i+8).map(async file => {
+          try {
+            const response = await fetch("https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/bestiary/"+file);
+            if (!response.ok) return [];
+            const data = await response.json();
+            return Array.isArray(data.monster) ? data.monster : [];
+          } catch (_) { return []; }
+        }));
+        batch.forEach(list => loadedMonsters.push(...list));
+        $("nb-count").textContent = "Lade 5etools-Monster … "+Math.min(i+8,files.length)+"/"+files.length+" Quellen";
+      }
+      const sizeNames = {T:"Tiny",S:"Small",M:"Medium",L:"Large",H:"Huge",G:"Gargantuan"};
+      const seen = new Set();
+      officialMonsters = loadedMonsters.map(m => {
+        const source = m.source || "";
+        const key = (m.name||"").toLowerCase()+"|"+source.toLowerCase();
+        if (!m.name || seen.has(key)) return null;
+        seen.add(key);
+        const rawType = typeof m.type === "string" ? m.type : (m.type && m.type.type) || "Unknown";
+        const rawSize = Array.isArray(m.size) ? m.size.map(s=>sizeNames[s]||s).join("/") : (m.size||"Unknown");
+        const rawCr = m.cr && typeof m.cr === "object" ? m.cr.cr : m.cr;
+        const hash = encodeURIComponent((m.name+"_"+source).toLowerCase());
+        return {name:m.name,source,type:rawType,size:rawSize,cr:String(rawCr ?? "0"),url:"https://5e.tools/bestiary.html#"+hash};
+      }).filter(Boolean);
+      renderList();
+      say(officialMonsters.length+" 5etools-Monster aus "+files.length+" Quellen geladen.");
+    } catch (error) {
+      say("5etools-Liste konnte nicht geladen werden: "+error.message);
+      renderList();
+    }
   };
   const parseLines = (text) => text.split("\n").map(line=>line.trim()).filter(Boolean).map(line=>{
     const p=line.split(" — "); return {name:p.shift(),desc:p.join(" — ")};
@@ -163,6 +214,7 @@ Homebrew-Monster verwalten. Änderungen bleiben zunächst in diesem Browser, bis
   ["nb-search","nb-type","nb-size","nb-mincr","nb-maxcr"].forEach(id=>$(id).addEventListener("input",renderList));
   $("nb-list").addEventListener("click",e=>{const b=e.target.closest("[data-select]");if(!b)return;selected=Number(b.dataset.select);renderEditor();});
   fillCr();
+  loadOfficialMonsters();
   fetch("/Neuvia/Bestiary/homebrew.json").then(r=>{if(!r.ok)throw new Error("JSON-Datei nicht erreichbar");return r.json();}).then(importData).catch(err=>{monsters=[];loaded=true;renderList();renderEditor();say("Leere Startliste geladen ("+err.message+"). Du kannst Monster erstellen oder eine JSON-Datei importieren.");});
 })();
 </script>
