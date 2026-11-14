@@ -8,7 +8,7 @@ Willkommen im Neuvia-Wiki.
 
 ## Bereiche
 
-- [[Sessions]]
+- [[Kampagnen]]
 - [[Regelbuch]]
 - [[Lore]]
 
