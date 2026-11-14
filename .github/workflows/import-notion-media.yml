@@ -129,7 +129,7 @@ jobs:
               for ext, relpath, name in assets:
                   safe = "<" + relpath.replace(">", "%3E") + ">"
                   if ext == ".pdf":
-                      block.append(f"- [\u{0x1F4C4:04X} {name}]({safe})")
+                      block.append(f"- [PDF: {name}]({safe})")
                   else:
                       block.append(f"![{name}]({safe})")
                       block.append("")
