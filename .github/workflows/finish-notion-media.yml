@@ -20,7 +20,15 @@ jobs:
       - name: Add the Phandelver overview map
         run: |
           mkdir -p "Lore/Anhänge/Orte/Phandelver"
-          unzip -p "36824d5c-819a-45a6-9b54-ca8f97731daa_ExportBlock-541f3eff-8820-4691-80dc-3e845a634b53.zip" "*/Private & Shared/Orte/3f317226845207.5635b51ebf59f.jpg" > "Lore/Anhänge/Orte/Phandelver/3f317226845207.5635b51ebf59f.jpg"
+          python - <<'PY'
+          import zipfile
+          z = zipfile.ZipFile("36824d5c-819a-45a6-9b54-ca8f97731daa_ExportBlock-541f3eff-8820-4691-80dc-3e845a634b53.zip")
+          matches = [n for n in z.namelist() if n.endswith("/Private & Shared/Orte/3f317226845207.5635b51ebf59f.jpg")]
+          if len(matches) != 1:
+              raise SystemExit(f"Expected one map image, found {len(matches)}")
+          with open("Lore/Anhänge/Orte/Phandelver/3f317226845207.5635b51ebf59f.jpg", "wb") as out:
+              out.write(z.read(matches[0]))
+          PY
           python - <<'PY'
           from pathlib import Path
           p = Path("Lore/Phandelver – Orte.md")
