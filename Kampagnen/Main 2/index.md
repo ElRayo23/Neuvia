@@ -1,6 +1,6 @@
 ---
 title: Main 2
-updated: 2026-11-15T00:24:05.470Z
+updated: 2026-11-15T00:51:57.181Z
 editedBy: ElRayo23
 generator: https://www.forkleaf.in
 ---
@@ -16,5 +16,3 @@ Aktuelle Sitzungsnotizen und Ideen der Main-2-Kampagne.
 - [[5.]]
 - [[6. Backrooms Vexon]]
 - [[Ideen]]
-
-Helo Die
