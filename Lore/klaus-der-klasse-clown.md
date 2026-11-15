@@ -1,14 +1,14 @@
 ---
 title: Klaus, der klasse Clown
 created: 2026-11-15T00:36:04.579Z
-updated: 2026-11-15T00:53:02.366Z
+updated: 2026-11-15T01:18:34.180Z
 editedBy: ElRayo23
 generator: https://www.forkleaf.in
 ---
 
 # Klaus, der klasse Clown
 
-Ein dicker Gnom mit wenig Gedächtnis aber großem Enthusiasmus. Er bastelt Tiere aus Luftballons. Er würde am liebsten mehr Publikum und Freunde haben. Er ist einsam seit er gestorben ist.
+Ein dicker Gnom mit wenig Gedächtnis aber großem Enthusiasmus. Er bastelt Tiere aus Luftballons. Er würde am liebsten mehr Publikum und Freunde haben. Er ist einsam seit er gestorben ist. 
 
 ![image.png](assets/2026-11-15-image-45f0.png)
 
