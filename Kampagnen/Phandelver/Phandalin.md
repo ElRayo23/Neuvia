@@ -51,65 +51,30 @@ Grob:
 → [[Molly]]  ”Ich habe den Eingang zum Anwesen der Rotbrenner gefunden und habe dort ein Monster gesehen mit weißem Gesicht”
 
 - Truppe trifft auf [[Rotbrenner]] entweder beim Schlafenden Riesen oder auf der Straße
-  <ul>
-  <li>
-  Wenn Straße, ist [[Pip]] dabei, sein Spielzeug wird kaputtgemacht
-  </li>
-  <li>
-   roter weiter Schal, [[Merry]] [[Alma]] [[Prasheen]]  Rotbrenner:
-Und zusätzlich: [[Velik]] und die Amsel
-  </li>
-  <li>
-  Velik motzt Uky an “du bist ne Schande, dass du dich hier überhaupt blicken lässt”
-  </li>
-  <li>
-  Nähert sich an aber Amsel stoppt das 
-  </li>
-  </ul>
+  - Wenn Straße, ist [[Pip]] dabei, sein Spielzeug wird kaputtgemacht
+  - Roter weiter Schal, [[Merry]] [[Alma]] [[Prasheen]] Rotbrenner:
+    - Und zusätzlich: [[Velik]] und die Amsel
+  - Velik motzt Uky an: „Du bist ne Schande, dass du dich hier überhaupt blicken lässt.“
+  - Nähert sich an, aber Amsel stoppt das
 
 - Temoe muss bei Halia Zahlung 100GM von Iarno abholen
 
 → bevor alle rausgehen, Temoe behalten und sagen “Abschaum erkennt sich gegenseitig”
 
-<ul>
-<li>
-“Was machst du hier? Verdächtig, wenn noch ein Zhent hier ist” Insight DC 12 sie ist gestresst
-</li>
-<li>
-“Komm mir nicht in die Quere” 
-</li>
-<li>
-Perception 16
-</li>
-<li>
-Briefe von [[Marlin]] “Die Zhents werden bald in Phandalin einmarschieren”
-</li>
-</ul>
+- „Was machst du hier? Verdächtig, wenn noch ein Zhent hier ist.“ Insight DC 12: Sie ist gestresst
+- „Komm mir nicht in die Quere.“
+- Perception 16
+- Briefe von [[Marlin]]: „Die Zhents werden bald in Phandalin einmarschieren.“
 
 - [[Tobias Steinhügel]] Begegnung
   - [[Trilena Steinhügel]] (Leonard kriegt Flashback) redet [[Freda Makka]] über Dendrar (direkt am Anfang von 2 Monaten, eine Woche da, Frau wurde angemacht, Mann hat sich quer gestellt, ganze Familie entführt und Mann zusammengeschlagen)(bei Halia hätten sie sich nicht getraut)
   - [[Lanar Makka]] und [[Elsa Mautherb]] über Garaele und Edermath Gerüchte
 
-<ul>
-<li>
-Eine Nacht, wird die Truppe wach von Alpträumen: [[Lizznar]] 
-
-<ul>
-<li>
-Tikka: 
-</li>
-<li>
-Hoppi: 
-</li>
-<li>
-Uky: von [[Velik]] geschlagen
-</li>
-<li>
-Temoe: 
-</li>
-</ul>
-</li>
-</ul>
+- Eine Nacht wird die Truppe von Alpträumen wach: [[Lizznar]]
+  - Tikka:
+  - Hoppi:
+  - Uky: von [[Velik]] geschlagen
+  - Temoe:
 
 Nächsten Tag, sind Federn an [[Hoppi Gallopi]] 
 [[Sir Tikka Massala]] hat Detect Thoughts
