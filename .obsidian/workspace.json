@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Lore/Possible Choices.md",
+                "file": "Kampagnen/Main 2/6. Backrooms Vexon.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Possible Choices"
+              "title": "6. Backrooms Vexon"
             }
           }
         ]
@@ -187,13 +187,17 @@
   },
   "active": "f413a2769b047a96",
   "lastOpenFiles": [
-    "Kampagnen/Main 2/6. Backrooms Vexon.md",
     "Lore/Possible Choices.md",
+    "Pasted image 20261115133538.png",
+    "Pasted image 20261115133445.png",
+    "Pasted image 20261115133413.png",
+    "Pasted image 20261115133330.png",
+    "Kampagnen/Main 2/6. Backrooms Vexon.md",
     "Lore/Skabatha Nachtschatten.md",
     "Lore/Prometheus.md",
-    "Tung Tung Tung Sahur.md",
+    "Lore/Tung Tung Tung Sahur.md",
     "Lore/Klaus, der klasse Clown.md",
-    "Pasted image 20261115130028.png",
+    "Lore/Anhänge/Charaktere/Pasted image 20261115130028.png",
     "Lore/Anhänge/Charaktere/Klarg, der Grottenschrat/4d4df6902acde020f21b601532b5430d.jpg",
     "Lore/Anhänge/Charaktere/Klarg, der Grottenschrat/bugbear_stat_block.jpg",
     "Regelbuch/dnd5e-markdown-main/compendium/spells/tashas-hideous-laughter.md",
@@ -220,9 +224,6 @@
     "Regelbuch/dnd5e-markdown-main/tools/xentis-dnd-beyond-character-sheets-json-puller.md",
     "Regelbuch/dnd5e-markdown-main/templates/session/_attachments/vix-session.png",
     "Regelbuch/dnd5e-markdown-main/templates/npc/_attachments/vix-npc.png",
-    "Regelbuch/dnd5e-markdown-main/templates/location/_attachments/vix-location.png",
-    "Regelbuch/dnd5e-markdown-main/templates/adventure/_attachments/vix-adventure.png",
-    "Regelbuch/dnd5e-markdown-main/templates/item/_attachments/vix-item.png",
     "Regelbuch/dnd5e-markdown-main/templates/session/vix-session.md",
     "Regelbuch/dnd5e-markdown-main/templates/organization/vix-organization.md",
     "Regelbuch/dnd5e-markdown-main/templates/npc/vix-npc.md",
@@ -231,8 +232,6 @@
     "Regelbuch/dnd5e-markdown-main/templates/character/vix-character.md",
     "Regelbuch/dnd5e-markdown-main/templates/character/slrvbs-infobox-multicolumn-5e-sheet-example-filled.md",
     "Regelbuch/dnd5e-markdown-main/templates/character/filbots-dnd-character-sheet.md",
-    "Regelbuch/dnd5e-markdown-main/templates/adventure/vix-adventure.md",
-    "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/zombie.png",
     "Unbenannt.canvas"
   ]
 }
