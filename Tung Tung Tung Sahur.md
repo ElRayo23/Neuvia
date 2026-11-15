@@ -11,12 +11,13 @@ CON +2
 INT -2  
 WIS +1  
 CHA -3
+Speed 20ft
 
 Resistant to physical dmg
 Vulnerable to fire damage
 
 Feat:
-Wenn Tung
+Wenn Tung unter 10 HP hat, doppelt sich sein Speed
 
 Action:  
 Bat: +5, 10ft, 3d4 bludg dmg
