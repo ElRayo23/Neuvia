@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Kampagnen/Phandelver/index.md",
+                "file": "Regelbuch/dnd5e-markdown-main/compendium/spells/tashas-hideous-laughter.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "tashas-hideous-laughter"
             }
           }
         ]
@@ -187,6 +187,15 @@
   },
   "active": "f413a2769b047a96",
   "lastOpenFiles": [
+    "Klaus, der klasse Clown.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/spells/acid-splash.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/spells/tashas-hideous-laughter.md",
+    "Pasted image 20261115125547.png",
+    "Lore/Possible Choices.md",
+    "Kampagnen/Main 2/6. Backrooms Vexon.md",
+    "Kampagnen/Phandelver/Tresendar Anwesen.md",
+    "Kampagnen/Phandelver/Kampagnenverlauf.md",
+    "Kampagnen/Phandelver/index.md",
     "Regelbuch/dnd5e-markdown-main/compendium/objects/objects.md",
     "Regelbuch/dnd5e-markdown-main/compendium/objects/generic-object.md",
     "Regelbuch/dnd5e-markdown-main/compendium/objects",
@@ -220,19 +229,10 @@
     "Regelbuch/dnd5e-markdown-main/rules/variant-rules/madness.md",
     "Regelbuch/dnd5e-markdown-main/rules/skills.md",
     "Regelbuch/dnd5e-markdown-main/rules/senses.md",
-    "Regelbuch/dnd5e-markdown-main/rules/diseases.md",
-    "Regelbuch/dnd5e-markdown-main/rules/damage-types.md",
-    "Regelbuch/dnd5e-markdown-main/rules/conditions.md",
-    "Regelbuch/dnd5e-markdown-main/rules/actions.md",
-    "Regelbuch/dnd5e-markdown-main/compendium/vehicles/vehicles.md",
-    "Regelbuch/dnd5e-markdown-main/compendium/vehicles/apparatus-of-kwalish.md",
-    "Regelbuch/dnd5e-markdown-main/compendium/traps-hazards/traps-hazards.md",
-    "Regelbuch/dnd5e-markdown-main/compendium/traps-hazards/sphere-of-annihilation.md",
     "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/zombie.png",
     "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/wraith.png",
     "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/will-o-wisp.png",
     "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/wight.png",
-    "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/warhorse-skeleton.png",
     "Unbenannt.canvas"
   ]
 }
