@@ -7,7 +7,7 @@ generator: https://www.forkleaf.in
 
 # Neuvia
 
-Willkommen zum Neuvia Wiki. [[Musi]]
+Willkommen zum Neuvia Wiki.
 
 ## Kategorien
 
