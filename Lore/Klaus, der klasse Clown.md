@@ -16,7 +16,7 @@ Vulnerable to psychic damage, especially fear
 
 Action:  
 Wasserballons: +5, 60ft, 2d6 Acid Damage, CON save bei Splash und Anfang jeder Runde ansonsten 1d4 poison zu Beginn der Runde des Gegners
-[[tashas-hideous-laughter]]
-[[acid-splash]]
+At will: [[tashas-hideous-laughter]]
+
 
 Mit freundlichen Grüßen,
