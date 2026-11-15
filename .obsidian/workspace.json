@@ -13,47 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Projekt Wiedergeburt.md",
+                "file": "Kampagnen/Phandelver/index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Projekt Wiedergeburt"
-            }
-          },
-          {
-            "id": "0c3bda20b185b0d9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Sessions/5..md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "5."
-            }
-          }
-        ],
-        "currentTab": 1
-      },
-      {
-        "id": "8ac2467d856fab74",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "12142f28d6f2b98a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Gardist Eldritch Knight.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Gardist Eldritch Knight"
+              "title": "index"
             }
           }
         ]
@@ -111,8 +76,7 @@
               "title": "Lesezeichen"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -221,54 +185,54 @@
       "bases:Neue Base erstellen": false
     }
   },
-  "active": "12142f28d6f2b98a",
+  "active": "f413a2769b047a96",
   "lastOpenFiles": [
-    "kilianische Garde.md",
-    "Gardist Schütze.md",
-    "Sessions/5..md",
-    "Projekt Wiedergeburt.md",
-    "Sessions/4..md",
-    "Sessions/Ideen.md",
-    "Die Torwächter Götter.md",
-    "Senya Mata.md",
-    "Musen.md",
-    "Eva.md",
-    "Loki.md",
-    "Dionysis.md",
-    "Ares.md",
-    "Thor.md",
-    "Pan.md",
-    "Demeter.md",
-    "Poseidon.md",
-    "Neptun.md",
-    "Eris.md",
-    "Thot.md",
-    "Delirium.md",
-    "Odin.md",
-    "Hekate.md",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/deities/egyptian-thoth.md",
-    "Athena.md",
-    "Kolya Legweak alias Snegurotschka.md",
-    "Pasted image 20260905175823.png",
-    "Pasted image 20260905172641.png",
-    "Pasted image 20260725202024.jpg",
-    "Pasted image 20260725202738.jpg",
-    "Pasted image 20260825190116.png",
-    "expanded-vampires-by-sonixverse-labs-v0-skrsrdbf09i81.webp",
-    "Pasted image 20260823161106.png",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/compendium/feats",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/tools",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session/_attachments/vix-session.png",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/npc/_attachments/vix-npc.png",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/location/_attachments/vix-location.png",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session/_attachments",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/npc/_attachments",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/location/_attachments",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/item/_attachments",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/adventure/_attachments",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/session",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/organization",
-    "dnd-5e-srd-markdown/dnd5e-markdown-main/templates/npc",
+    "Regelbuch/dnd5e-markdown-main/compendium/objects/objects.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/objects/generic-object.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/objects",
+    "Regelbuch/dnd5e-markdown-main/compendium/feats/grappler.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/feats/feats.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/feats",
+    "index.md",
+    "defe7533-e8c5-408b-8d63-89098766bef0_ExportBlock-5d785383-ddcc-4651-a435-2b0da284b727.zip",
+    "dc139e5e-4f09-48b2-bb2c-44f275a42965_ExportBlock-a377a79f-717f-4651-b1cd-776a940e95a4.zip",
+    "data/bestiary/homebrew.json",
+    "data/bestiary",
+    "data",
+    "c497aa96-2df8-4966-9966-b9ca32fbb819_ExportBlock-2f917f1d-b83a-4317-86b7-720234619d94.zip",
+    "afae5af8-dd24-452a-b7fe-44845addc597_ExportBlock-c68b2251-06e6-4dd8-97d0-3f64d816c02f.zip",
+    "a18a765f-d0ab-46a5-9c3a-ed562d831790_ExportBlock-4f9b0bff-67f4-4637-8eb4-c96dd693184a.zip",
+    "Regelbuch/dnd5e-markdown-main/tools/xentis-dnd-beyond-character-sheets-json-puller.md",
+    "Regelbuch/dnd5e-markdown-main/templates/session/_attachments/vix-session.png",
+    "Regelbuch/dnd5e-markdown-main/templates/npc/_attachments/vix-npc.png",
+    "Regelbuch/dnd5e-markdown-main/templates/location/_attachments/vix-location.png",
+    "Regelbuch/dnd5e-markdown-main/templates/adventure/_attachments/vix-adventure.png",
+    "Regelbuch/dnd5e-markdown-main/templates/item/_attachments/vix-item.png",
+    "Regelbuch/dnd5e-markdown-main/templates/session/vix-session.md",
+    "Regelbuch/dnd5e-markdown-main/templates/organization/vix-organization.md",
+    "Regelbuch/dnd5e-markdown-main/templates/npc/vix-npc.md",
+    "Regelbuch/dnd5e-markdown-main/templates/location/vix-location.md",
+    "Regelbuch/dnd5e-markdown-main/templates/item/vix-item.md",
+    "Regelbuch/dnd5e-markdown-main/templates/character/vix-character.md",
+    "Regelbuch/dnd5e-markdown-main/templates/character/slrvbs-infobox-multicolumn-5e-sheet-example-filled.md",
+    "Regelbuch/dnd5e-markdown-main/templates/character/filbots-dnd-character-sheet.md",
+    "Regelbuch/dnd5e-markdown-main/templates/adventure/vix-adventure.md",
+    "Regelbuch/dnd5e-markdown-main/rules/variant-rules/madness.md",
+    "Regelbuch/dnd5e-markdown-main/rules/skills.md",
+    "Regelbuch/dnd5e-markdown-main/rules/senses.md",
+    "Regelbuch/dnd5e-markdown-main/rules/diseases.md",
+    "Regelbuch/dnd5e-markdown-main/rules/damage-types.md",
+    "Regelbuch/dnd5e-markdown-main/rules/conditions.md",
+    "Regelbuch/dnd5e-markdown-main/rules/actions.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/vehicles/vehicles.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/vehicles/apparatus-of-kwalish.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/traps-hazards/traps-hazards.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/traps-hazards/sphere-of-annihilation.md",
+    "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/zombie.png",
+    "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/wraith.png",
+    "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/will-o-wisp.png",
+    "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/wight.png",
+    "Regelbuch/dnd5e-markdown-main/compendium/bestiary/undead/token/warhorse-skeleton.png",
     "Unbenannt.canvas"
   ]
 }
