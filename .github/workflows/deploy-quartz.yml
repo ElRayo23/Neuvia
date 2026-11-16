@@ -38,6 +38,9 @@ jobs:
           cache: npm
           cache-dependency-path: .quartz-runtime/package-lock.json
 
+      - name: Validate Neuvia admin script
+        run: node --check static/neuvia-admin.js
+
       - name: Prepare Quartz site
         run: |
           cp .github/quartz/quartz.config.yaml .quartz-runtime/quartz.config.yaml
@@ -219,7 +222,8 @@ jobs:
           from pathlib import Path
           import os
           root = Path(".quartz-runtime/public")
-          tag = '<script defer src="/Neuvia/static/neuvia-admin.js"></script>' if os.environ.get("GITHUB_REF_NAME") == "main" else '<script defer src="/static/neuvia-admin.js"></script>'
+          version = os.environ.get("GITHUB_SHA", "")
+          tag = f'<script defer src="/Neuvia/static/neuvia-admin.js?v={version}"></script>' if os.environ.get("GITHUB_REF_NAME") == "main" else f'<script defer src="/static/neuvia-admin.js?v={version}"></script>'
           for page in root.rglob("*.html"):
               html = page.read_text(encoding="utf-8")
               if tag not in html and "</head>" in html:
