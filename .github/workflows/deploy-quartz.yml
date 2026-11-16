@@ -89,7 +89,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import json, unicodedata, re
+          import json, unicodedata, re, os
           content = Path(".quartz-runtime/content")
           public = Path(".quartz-runtime/public/static")
           public.mkdir(parents=True, exist_ok=True)
@@ -204,6 +204,11 @@ jobs:
           link_entries.sort(key=lambda item: (item["title"].casefold(), item["path"].casefold()))
           (public / "neuvia-content-map.json").write_text(json.dumps(mapping, ensure_ascii=False), encoding="utf-8")
           (public / "neuvia-link-index.json").write_text(json.dumps(link_entries, ensure_ascii=False), encoding="utf-8")
+          build_info = {
+              "commit": os.environ.get("GITHUB_SHA", ""),
+              "branch": os.environ.get("GITHUB_REF_NAME", "")
+          }
+          (public / "neuvia-build.json").write_text(json.dumps(build_info), encoding="utf-8")
           print(f"Mapped {len(mapping)} unique Markdown page routes; omitted {len(collisions)} collisions.")
           print(f"Generated {len(link_entries)} Markdown link suggestions.")
           PY
