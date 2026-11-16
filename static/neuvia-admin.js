@@ -5,6 +5,7 @@
   const MAP_URL = adminScript ? new URL("neuvia-content-map.json", adminScript.src).toString() : "/static/neuvia-content-map.json";
   const LINK_URL = adminScript ? new URL("neuvia-link-index.json", adminScript.src).toString() : "/static/neuvia-link-index.json";
   const BUILD_URL = adminScript ? new URL("neuvia-build.json", adminScript.src).toString() : "/static/neuvia-build.json";
+  const WORKSPACE_URL = adminScript ? new URL("neuvia-workspace.js", adminScript.src).toString() : "/static/neuvia-workspace.js";
   const CONTROLLER_KEY = "__neuviaAdminEditor";
   if (window[CONTROLLER_KEY]) {
     window[CONTROLLER_KEY].ensureButton();
@@ -57,6 +58,28 @@
   ensureButton();
   document.addEventListener("nav",()=>{ensureButton();refreshSession();});
   function showMessage(message){const overlay=document.createElement("div");overlay.id="neuvia-admin-overlay";overlay.innerHTML='<div id="neuvia-admin-dialog"><h2>Neuvia-Editor</h2><p id="neuvia-admin-error"></p><button type="button" id="neuvia-admin-close">Schließen</button></div>';document.body.appendChild(overlay);overlay.querySelector("#neuvia-admin-error").textContent=message;overlay.querySelector("#neuvia-admin-close").onclick=()=>overlay.remove();}
+  let workspaceScriptPromise = null;
+  function openWorkspace(){
+    if(window.__neuviaWorkspace && typeof window.__neuviaWorkspace.open==="function"){
+      window.__neuviaWorkspace.open();
+      return;
+    }
+    if(!workspaceScriptPromise){
+      workspaceScriptPromise=new Promise((resolve,reject)=>{
+        const script=document.createElement("script");
+        const version=adminScript ? (new URL(adminScript.src).searchParams.get("v") || "") : "";
+        script.src=WORKSPACE_URL+(version ? "?v="+encodeURIComponent(version) : "");
+        script.async=true;
+        script.onload=()=>resolve();
+        script.onerror=()=>{workspaceScriptPromise=null;reject(new Error("Der Neuvia-Arbeitsbereich konnte nicht geladen werden."));};
+        document.head.appendChild(script);
+      });
+    }
+    workspaceScriptPromise.then(()=>{
+      if(window.__neuviaWorkspace && typeof window.__neuviaWorkspace.open==="function") window.__neuviaWorkspace.open();
+      else throw new Error("Der Neuvia-Arbeitsbereich wurde nicht korrekt initialisiert.");
+    }).catch(error=>showMessage(error.message));
+  }
   function loginDialog(){
     const overlay=document.createElement("div");overlay.id="neuvia-admin-overlay";
     overlay.innerHTML='<form id="neuvia-admin-dialog"><h2>Administrator-Anmeldung</h2><label for="neuvia-admin-password">Passwort</label><input id="neuvia-admin-password" type="password" autocomplete="current-password" required><div id="neuvia-admin-error" role="status"></div><button id="neuvia-admin-submit" type="submit">Anmelden</button><button type="button" id="neuvia-admin-cancel">Abbrechen</button></form>';
@@ -66,7 +89,7 @@
     overlay.querySelector("form").onsubmit=async e=>{
       e.preventDefault();const submit=overlay.querySelector("#neuvia-admin-submit"),error=overlay.querySelector("#neuvia-admin-error");
       submit.disabled=true;error.textContent="Prüfe Anmeldung …";
-      try{const data=await request("/api/login",{method:"POST",body:JSON.stringify({password:overlay.querySelector("input").value})});sessionStorage.setItem(KEY,data.token);button.textContent="Bearbeiten";overlay.remove();editCurrentPage();}
+      try{const data=await request("/api/login",{method:"POST",body:JSON.stringify({password:overlay.querySelector("input").value})});sessionStorage.setItem(KEY,data.token);button.textContent="Bearbeiten";overlay.remove();openWorkspace();}
       catch(err){error.textContent=err.message;submit.disabled=false;}
     };
     overlay.querySelector("input").focus();
@@ -242,7 +265,7 @@
       overlay.querySelector("textarea").focus();
     }catch(err){if(overlay)overlay.remove();showMessage(err.message);}
   }
-  button.onclick=()=>{if(!token()){loginDialog();return}editCurrentPage()};
+  button.onclick=()=>{if(!token()){loginDialog();return}openWorkspace()};
   // Quartz swaps page bodies and re-executes head scripts during SPA navigation.
   // Keep one persistent button and reattach it whenever the body is replaced.
   const observer = new MutationObserver(ensureButton);
