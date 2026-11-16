@@ -167,6 +167,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Check out Neuvia for Worker deployment
+        uses: actions/checkout@v4
+
       - name: Download Pages artifact for Cloudflare
         uses: actions/download-artifact@v4
         with:
