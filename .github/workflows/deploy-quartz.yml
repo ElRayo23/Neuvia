@@ -89,7 +89,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import json, unicodedata
+          import json, unicodedata, re
           content = Path(".quartz-runtime/content")
           public = Path(".quartz-runtime/public/static")
           public.mkdir(parents=True, exist_ok=True)
