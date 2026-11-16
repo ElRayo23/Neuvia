@@ -187,6 +187,12 @@ async function moveVaultPath(source, destination, token) {
   const sourceEntry = entries.find((entry) => entry.path === source);
   if (!sourceEntry) throw new Error("Die Quelldatei oder der Quellordner existiert nicht mehr.");
   const isFolder = sourceEntry.type === "tree";
+  if (isFolder && entries.some((entry) => entry.path.startsWith(source + "/") && !visiblePath(entry.path))) {
+    throw new Error("Der Ordner enthält ausgeblendete Dateien. Bitte verschiebe diese Inhalte nicht gemeinsam mit dem sichtbaren Ordner.");
+  }
+  if (isFolder && entries.some((entry) => entry.path.startsWith(source + "/") && entry.type === "commit")) {
+    throw new Error("Der Ordner enthält ein Git-Submodul, das nicht automatisch verschoben werden kann.");
+  }
   if (!isFolder && (sourceEntry.type !== "blob" || !visibleFile(source))) {
     throw new Error("Dieser Dateityp darf nicht verschoben werden.");
   }
@@ -494,7 +500,7 @@ export default {
         const result = await moveVaultPath(source, destination, env.GITHUB_TOKEN);
         return send({ ok: true, source, destination, commit: result.commit, movedFiles: result.count, folder: result.isFolder });
       } catch (error) {
-        const status = /zwischenzeitlich|Ziel existiert|Quelle|nicht verschoben|in sich selbst/i.test(error.message) ? 409 : 502;
+        const status = /zwischenzeitlich|Ziel|Quelle|nicht verschoben|in sich selbst|Dateiendung|ausgeblendete|Submodul/i.test(error.message) ? 409 : 502;
         return send({ error: error.message }, status);
       }
     }
