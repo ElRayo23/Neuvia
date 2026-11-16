@@ -335,6 +335,35 @@ export default {
       }
     }
 
+
+    if (url.pathname === "/api/publish" && request.method === "POST") {
+      if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
+      if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
+      const triggerPath = ".github/neuvia-publish-trigger.json";
+      try {
+        const check = await fetch(githubUrl(triggerPath) + "?ref=" + encodeURIComponent(BRANCH), {
+          headers: {
+            "Authorization": "Bearer " + env.GITHUB_TOKEN,
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "Neuvia-Admin-Editor",
+          },
+        });
+        let existing = {};
+        if (check.ok) existing = await check.json();
+        else if (check.status !== 404) throw new Error("GitHub konnte den Veröffentlichungsstatus nicht prüfen (HTTP " + check.status + ").");
+        const payload = JSON.stringify({ requestedAt: new Date().toISOString(), branch: BRANCH });
+        const data = await githubContentsWrite(triggerPath, {
+          message: "Neuvia: Veröffentlichung angefordert",
+          content: encodeBase64(payload),
+          ...(existing.sha ? { sha: existing.sha } : {}),
+        }, env.GITHUB_TOKEN);
+        return send({ ok: true, commit: data.commit?.sha || "" });
+      } catch (error) {
+        return send({ error: error.message || "Veröffentlichung konnte nicht gestartet werden." }, 502);
+      }
+    }
+
     return send({ error: "Not found" }, 404);
   },
 };
