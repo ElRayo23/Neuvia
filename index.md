@@ -21,9 +21,10 @@ Schau im Explorer oben links nach mehr Infos nach.
 ## Neuvia Landkarte
 
 <iframe
-  src="https://azgaar.github.io/Fantasy-Map-Generator/?maplink=https%3A%2F%2Fraw.githubusercontent.com%2FElRayo23%2FNeuvia%2Fmain%2FLore%2FChainland.map"
+  src="/Neuvia/static/karte.html"
+  title="Interaktive Karte von Chainland"
   width="100%"
-  height="750"
-  style="border: none; border-radius: 8px;"
+  height="860"
+  style="border: 0; border-radius: 10px; background: #17191d;"
   loading="lazy">
 </iframe>
