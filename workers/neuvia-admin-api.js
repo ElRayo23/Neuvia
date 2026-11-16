@@ -151,6 +151,105 @@ function safeUploadFilename(filename) {
 }
 
 
+
+async function githubJson(path, token, method = "GET", body) {
+  const result = await fetch(API + path, {
+    method,
+    headers: {
+      "Authorization": "Bearer " + token,
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "Neuvia-Admin-Editor",
+      ...(body ? { "Content-Type": "application/json" } : {}),
+    },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+  const data = await result.json().catch(() => ({}));
+  if (!result.ok) {
+    const detail = data.message || result.statusText || "Unbekannte GitHub-Antwort";
+    throw new Error("GitHub-API Fehler " + result.status + ": " + detail);
+  }
+  return data;
+}
+async function moveVaultPath(source, destination, token) {
+  const branch = await githubJson("/repos/" + OWNER + "/" + REPO + "/branches/" + encodeURIComponent(BRANCH), token);
+  const parentSha = branch.commit?.sha;
+  const baseTreeSha = branch.commit?.commit?.tree?.sha;
+  if (!parentSha || !baseTreeSha) throw new Error("GitHub hat den aktuellen Branch-Stand nicht vollständig geliefert.");
+
+  const treeData = await githubJson(
+    "/repos/" + OWNER + "/" + REPO + "/git/trees/" + baseTreeSha + "?recursive=1",
+    token
+  );
+  if (treeData.truncated) throw new Error("GitHub hat die Dateiliste gekürzt. Der Ordner ist für diese Aktion zu groß.");
+
+  const entries = treeData.tree || [];
+  const sourceEntry = entries.find((entry) => entry.path === source);
+  if (!sourceEntry) throw new Error("Die Quelldatei oder der Quellordner existiert nicht mehr.");
+  const isFolder = sourceEntry.type === "tree";
+  if (isFolder && destination.startsWith(source + "/")) {
+    throw new Error("Ein Ordner kann nicht in sich selbst verschoben werden.");
+  }
+  const moving = isFolder
+    ? entries.filter((entry) => entry.type === "blob" && entry.path.startsWith(source + "/"))
+    : (sourceEntry.type === "blob" ? [sourceEntry] : []);
+  if (!moving.length) throw new Error("Die Quelle enthält keine verschiebbaren Dateien.");
+
+  const destinations = moving.map((entry) => ({
+    source: entry.path,
+    path: isFolder ? destination + entry.path.slice(source.length) : destination,
+    mode: entry.mode,
+    type: entry.type,
+    sha: entry.sha,
+  }));
+  const existingPaths = new Set(entries.map((entry) => entry.path));
+  for (const target of destinations) {
+    if (existingPaths.has(target.path) || entries.some((entry) => entry.path.startsWith(target.path + "/"))) {
+      throw new Error("Am Ziel existiert bereits eine Datei oder ein Ordner: " + target.path);
+    }
+    const parentParts = target.path.split("/");
+    parentParts.pop();
+    let parent = "";
+    for (const segment of parentParts) {
+      parent = parent ? parent + "/" + segment : segment;
+      const conflicting = entries.find((entry) => entry.path === parent && entry.type === "blob");
+      if (conflicting) throw new Error("Der Zielpfad liegt innerhalb einer Datei: " + parent);
+    }
+  }
+
+  const changes = [];
+  for (const target of destinations) {
+    changes.push({ path: target.path, mode: target.mode, type: target.type, sha: target.sha });
+    changes.push({ path: target.source, mode: target.mode, type: target.type, sha: null });
+  }
+  const newTree = await githubJson(
+    "/repos/" + OWNER + "/" + REPO + "/git/trees",
+    token,
+    "POST",
+    { base_tree: baseTreeSha, tree: changes }
+  );
+  if (!newTree.sha) throw new Error("GitHub hat keinen neuen Dateibaum erstellt.");
+  const commit = await githubJson(
+    "/repos/" + OWNER + "/" + REPO + "/git/commits",
+    token,
+    "POST",
+    {
+      message: "Neuvia: " + (isFolder ? "Ordner" : "Datei") + " verschoben oder umbenannt",
+      tree: newTree.sha,
+      parents: [parentSha],
+    }
+  );
+  if (!commit.sha) throw new Error("GitHub hat keinen Verschiebe-Commit erstellt.");
+  await githubJson(
+    "/repos/" + OWNER + "/" + REPO + "/git/refs/heads/" + BRANCH,
+    token,
+    "PATCH",
+    { sha: commit.sha, force: false }
+  );
+  return { commit: commit.sha, count: moving.length, isFolder };
+}
+
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -369,6 +468,32 @@ export default {
       }
     }
 
+
+
+    if (url.pathname === "/api/move" && request.method === "POST") {
+      if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
+      if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
+      let body = {};
+      try { body = JSON.parse(await request.text()); } catch { return send({ error: "Ungültige Anfrage." }, 400); }
+      const source = String(body.source || "").replace(/\/+$/, "");
+      const destination = String(body.destination || "").replace(/\/+$/, "");
+      if (!source || !destination || source === destination) return send({ error: "Bitte unterschiedliche Quell- und Zielpfade angeben." }, 400);
+      if (!safeFolderPath(source) || !safeFolderPath(destination) || !visiblePath(source) || !visiblePath(destination)) {
+        return send({ error: "Dieser Datei- oder Ordnerpfad darf nicht verschoben werden." }, 400);
+      }
+      if (!visibleFile(source) && !source.split("/").pop().includes(".")) {
+        // Directory paths are allowed; file paths must use a supported visible extension.
+      } else if (!visibleFile(source)) {
+        return send({ error: "Dieser Dateityp darf nicht verschoben werden." }, 400);
+      }
+      try {
+        const result = await moveVaultPath(source, destination, env.GITHUB_TOKEN);
+        return send({ ok: true, source, destination, commit: result.commit, movedFiles: result.count, folder: result.isFolder });
+      } catch (error) {
+        const status = /zwischenzeitlich|Ziel existiert|Quelle|nicht verschoben|in sich selbst/i.test(error.message) ? 409 : 502;
+        return send({ error: error.message }, status);
+      }
+    }
 
     if (url.pathname === "/api/publish" && request.method === "POST") {
       if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
