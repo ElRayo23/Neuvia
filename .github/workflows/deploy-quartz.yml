@@ -89,8 +89,9 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import os
           root = Path(".quartz-runtime/public")
-          tag = '<script defer src="/Neuvia/static/neuvia-admin.js"></script>' if __import__("os").environ.get("GITHUB_REF_NAME") == "main" else '<script defer src="/static/neuvia-admin.js"></script>'
+          tag = '<script defer src="/Neuvia/static/neuvia-admin.js"></script>' if os.environ.get("GITHUB_REF_NAME") == "main" else '<script defer src="/static/neuvia-admin.js"></script>'
           for page in root.rglob("*.html"):
               html = page.read_text(encoding="utf-8")
               if tag not in html and "</head>" in html:
@@ -105,8 +106,8 @@ jobs:
         with:
           path: .quartz-runtime/public
 
-  deploy:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/neuvia-editor-test'
+  deploy-production:
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -114,19 +115,21 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy production to GitHub Pages
-        if: github.ref == 'refs/heads/main'
         id: deployment
         uses: actions/deploy-pages@v4
 
+  deploy-preview:
+    if: github.ref == 'refs/heads/neuvia-editor-test'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Download build artifact for Cloudflare
-        if: github.ref == 'refs/heads/neuvia-editor-test'
         uses: actions/download-artifact@v4
         with:
           name: github-pages
           path: .quartz-runtime/public
 
       - name: Deploy editor preview to Cloudflare Pages
-        if: github.ref == 'refs/heads/neuvia-editor-test'
         run: npx wrangler pages deploy .quartz-runtime/public --project-name=neuvia-editor-preview --branch=neuvia-editor-test
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
