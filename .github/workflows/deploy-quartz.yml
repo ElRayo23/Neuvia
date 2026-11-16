@@ -14,8 +14,9 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  # Preview runs should not queue behind stale builds; production deploys stay serialized.
+  group: pages-${{ github.ref_name }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 jobs:
   check-preview-content:
