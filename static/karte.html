@@ -7,13 +7,13 @@
 <style>
 :root{color-scheme:dark;--bg:#17191d;--panel:#22262d;--line:#3b414b;--text:#edf0f4;--muted:#aab2bd;--accent:#9bb8ce}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
-main{max-width:1500px;margin:auto;padding:14px}
+main{max-width:1900px;margin:auto;padding:14px}
 header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
 h1{font-size:1.25rem;margin:0;font-weight:650}.sub{color:var(--muted);font-size:.86rem}
 .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 input,select,button{background:#2b3038;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:8px 10px;font:inherit}
 input{min-width:190px}button{cursor:pointer}button:hover{border-color:var(--accent)}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:12px;align-items:start}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
 .map-shell{position:relative;aspect-ratio:1920/911;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:#466eab;touch-action:none;cursor:grab}
 .map-shell.dragging{cursor:grabbing}
 .map-world{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
@@ -24,7 +24,7 @@ input{min-width:190px}button{cursor:pointer}button:hover{border-color:var(--acce
 .pin-label{font:16px system-ui;fill:#fff;paint-order:stroke;stroke:#15191f;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
 .zoom{position:absolute;right:10px;top:10px;display:grid;gap:5px}.zoom button{width:36px;height:36px;padding:0;background:#17191dcc;font-size:20px}
 .hint{position:absolute;left:10px;bottom:10px;padding:5px 8px;border-radius:6px;background:#17191dcc;color:#eee;font-size:12px;pointer-events:none}
-.side{display:grid;gap:10px}.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px}
+.side{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px}
 .card h2{font-size:1rem;margin:0 0 8px}.muted{color:var(--muted)}.detail-name{font-size:1.1rem;font-weight:650;margin-bottom:3px}
 a{color:#b8d8ef;text-decoration:none}a:hover{text-decoration:underline}
 .stat{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid #ffffff12}.stat:last-child{border:0}
@@ -32,7 +32,7 @@ a{color:#b8d8ef;text-decoration:none}a:hover{text-decoration:underline}
 .result{display:flex;justify-content:space-between;text-align:left;width:100%;background:transparent;border:0;border-radius:5px;padding:6px 7px;font-size:.9rem}
 .result:hover{background:#ffffff10}.result small{color:var(--muted)}
 footer{color:var(--muted);font-size:.78rem;margin-top:9px}
-@media(max-width:850px){main{padding:8px}.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.card.detail{grid-column:1/-1}.map-shell{min-height:220px}}
+@media(max-width:850px){main{padding:8px}.side{grid-template-columns:1fr 1fr}.card.detail{grid-column:1/-1}.map-shell{min-height:220px}}
 @media(max-width:520px){.side{grid-template-columns:1fr}.card.detail{grid-column:auto}header{align-items:flex-start}.controls{width:100%}input{flex:1;min-width:0}select{max-width:100%}}
 </style>
 </head>
