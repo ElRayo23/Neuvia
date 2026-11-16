@@ -18,10 +18,6 @@ Willkommen zum Neuvia Wiki.
 
 Schau im Explorer oben links nach mehr Infos nach.
 
-## Alte Landkarte
-
-Die ursprüngliche Chainland-Karte im Azgaar Map Generator.
-
 <iframe
   src="https://azgaar.github.io/Fantasy-Map-Generator/?maplink=https%3A%2F%2Fraw.githubusercontent.com%2FElRayo23%2FNeuvia%2Fmain%2FLore%2FChainland.map"
   title="Ursprüngliche Chainland-Karte"
@@ -31,7 +27,6 @@ Die ursprüngliche Chainland-Karte im Azgaar Map Generator.
   loading="lazy">
 </iframe>
 
-[Alte Karte separat öffnen](https://azgaar.github.io/Fantasy-Map-Generator/?maplink=https%3A%2F%2Fraw.githubusercontent.com%2FElRayo23%2FNeuvia%2Fmain%2FLore%2FChainland.map)
 
 ## Neue interaktive Landkarte
 
