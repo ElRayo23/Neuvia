@@ -365,6 +365,7 @@
       const editor = overlay.querySelector(".nw-editor");
       editor.value = savedContent;
       editor.disabled = false;
+      hideSuggestions();
       const draft = readDraft(item.path);
       if (draft && typeof draft.content === "string" && draft.content !== savedContent) {
         const sameVersion = !!draft.sha && draft.sha === data.sha;
@@ -373,7 +374,7 @@
           : "Es gibt einen lokalen Entwurf, aber die GitHub-Datei wurde seitdem verändert. Entwurf trotzdem wiederherstellen? Der Sync wird dann zunächst wegen eines Versionskonflikts blockiert.";
         if (window.confirm(question)) {
           editor.value = draft.content;
-          if (!sameVersion) currentSha = draft.sha || "";
+          if (!sameVersion) currentSha = draft.sha || "__local_draft_without_base_sha__";
           status(sameVersion ? "Lokaler Entwurf wiederhergestellt" : "Älterer lokaler Entwurf wiederhergestellt – Versionskonflikt beachten", sameVersion ? "success" : "error");
           scheduleSave();
         } else {
