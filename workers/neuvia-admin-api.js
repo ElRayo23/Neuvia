@@ -252,7 +252,7 @@ export default {
       if (!safePath(path)) return send({ error: "Dieser Dateipfad darf nicht bearbeitet werden." }, 400);
       try {
         const file = await readFile(path, env.GITHUB_TOKEN);
-        return send({ path, content: file.content });
+        return send({ path, content: file.content, sha: file.sha });
       } catch (error) {
         return send({ error: error.message }, 502);
       }
@@ -272,6 +272,9 @@ export default {
 
       try {
         const current = await readFile(path, env.GITHUB_TOKEN);
+        if (body.sha && body.sha !== current.sha) {
+          return send({ error: "Diese Notiz wurde zwischenzeitlich geändert. Lade sie neu, bevor du weiter synchronisierst." }, 409);
+        }
         const result = await fetch(githubUrl(path), {
           method: "PUT",
           headers: {
@@ -296,7 +299,7 @@ export default {
             : "GitHub-API Fehler " + result.status + ": " + detail;
           return send({ error }, 502);
         }
-        return send({ ok: true, commit: data.commit?.sha || "" });
+        return send({ ok: true, commit: data.commit?.sha || "", sha: data.content?.sha || "" });
       } catch (error) {
         return send({ error: error.message }, 502);
       }
@@ -316,7 +319,7 @@ export default {
           message: "Neuvia-Notiz erstellt",
           content: encodeBase64(content),
         }, env.GITHUB_TOKEN);
-        return send({ ok: true, path, commit: data.commit?.sha || "" });
+        return send({ ok: true, path, commit: data.commit?.sha || "", sha: data.content?.sha || "" });
       } catch (error) {
         return send({ error: error.message }, 502);
       }
