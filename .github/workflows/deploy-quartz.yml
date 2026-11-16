@@ -41,6 +41,9 @@ jobs:
       - name: Prepare Quartz site
         run: |
           cp .github/quartz/quartz.config.yaml .quartz-runtime/quartz.config.yaml
+          if [ "$GITHUB_REF_NAME" = "neuvia-editor-test" ]; then
+            sed -i 's#baseUrl: elrayo23.github.io/Neuvia#baseUrl: neuvia-editor-preview.pages.dev#' .quartz-runtime/quartz.config.yaml
+          fi
           mkdir -p .quartz-runtime/content
           rsync -a \
             --exclude='.git/' \
@@ -87,7 +90,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           root = Path(".quartz-runtime/public")
-          tag = '<script defer src="/Neuvia/static/neuvia-admin.js"></script>'
+          tag = '<script defer src="/Neuvia/static/neuvia-admin.js"></script>' if __import__("os").environ.get("GITHUB_REF_NAME") == "main" else '<script defer src="/static/neuvia-admin.js"></script>'
           for page in root.rglob("*.html"):
               html = page.read_text(encoding="utf-8")
               if tag not in html and "</head>" in html:
@@ -103,13 +106,22 @@ jobs:
           path: .quartz-runtime/public
 
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/neuvia-editor-test'
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy production to GitHub Pages
+        if: github.ref == 'refs/heads/main'
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Deploy editor preview to Cloudflare Pages
+        if: github.ref == 'refs/heads/neuvia-editor-test'
+        working-directory: .quartz-runtime
+        run: npx wrangler pages deploy public --project-name=neuvia-editor-preview --branch=neuvia-editor-test
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
