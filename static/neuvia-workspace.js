@@ -750,6 +750,18 @@
     const currentPathLabel = element("div", "nw-current-path", "Wähle links eine Markdown-Datei aus");
     current.append(currentTitle, currentPathLabel);
     const topActions = element("div", "nw-top-actions");
+    const imagePicker = element("input");
+    imagePicker.type = "file";
+    imagePicker.accept = "image/png,image/jpeg,image/webp,image/gif,image/avif";
+    imagePicker.multiple = true;
+    imagePicker.hidden = true;
+    imagePicker.addEventListener("change", () => {
+      uploadImages(imagePicker.files);
+      imagePicker.value = "";
+    });
+    const imageButton = element("button", "nw-button", "Bild hinzufügen");
+    imageButton.type = "button";
+    imageButton.addEventListener("click", () => imagePicker.click());
     const sync = element("button", "nw-button nw-sync", "Sync");
     sync.type = "button";
     sync.addEventListener("click", async () => {
@@ -764,7 +776,7 @@
     const website = element("button", "nw-button", "Website");
     website.type = "button";
     website.addEventListener("click", () => { location.href = SITE_BASE; });
-    topActions.append(sync, publishButton, website);
+    topActions.append(imageButton, sync, publishButton, website);
     topbar.append(current, topActions);
 
     const editorWrap = element("div", "nw-editor-wrap");
@@ -777,6 +789,7 @@
     const suggestions = element("div", "nw-suggestions");
     suggestions.hidden = true;
     editorWrap.append(editor, dropHint, suggestions);
+    editorWrap.append(imagePicker);
 
     const footer = element("div", "nw-footer");
     const statusText = element("span", "nw-status", "Lade Workspace …");
