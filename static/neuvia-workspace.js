@@ -502,14 +502,13 @@
       status("Es wurden keine unterstützten Bilddateien gefunden.", "error");
       return;
     }
-    const embeds = [];
+    let uploaded = 0;
     try {
       for (const file of images) {
         status("Lade Bild hoch: " + file.name);
         const form = new FormData();
         form.append("file", file, file.name);
         const result = await request("/api/upload", { method: "POST", body: form });
-        embeds.push(result.embed);
         treeItems.push({
           name: basename(result.path),
           path: result.path,
@@ -517,13 +516,17 @@
           extension: extension(result.path),
           size: result.size || file.size,
         });
+        uploaded++;
+        renderTree();
+        insertAtCursor(result.embed + "\n");
       }
-      renderTree();
-      insertAtCursor((embeds.length ? embeds.join("\n") + "\n" : ""));
       status(images.length + (images.length === 1 ? " Bild hochgeladen" : " Bilder hochgeladen") + " – synchronisiere Notiz …", "success");
       await saveCurrent();
     } catch (error) {
-      status(error.message, "error");
+      if (uploaded && currentIsDirty()) {
+        try { await saveCurrent(); } catch {}
+      }
+      status(error.message + (uploaded ? " Bereits hochgeladene Bilder wurden eingefügt." : ""), "error");
     }
   }
 
@@ -719,7 +722,7 @@
     topbar.append(current, topActions);
 
     const editorWrap = element("div", "nw-editor-wrap");
-    const dropHint = element("div", "nw-drop-hint", "Bild hier ablegen");
+    const dropHint = element("div", "nw-drop-hint", "Bild hier ablegen – Einfügen an der Cursorposition");
     const editor = element("textarea", "nw-editor");
     editor.spellcheck = false;
     editor.disabled = true;
