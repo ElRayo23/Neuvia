@@ -274,7 +274,7 @@ export default {
       const path = body.path;
       const content = body.content;
       const message = String(body.message || "Neuvia-Seite aktualisiert").trim();
-      if (!safePath(path)) return send({ error: "Dieser Dateipfad darf nicht bearbeitet werden." }, 400);
+      if (!safePath(path) || !visiblePath(path)) return send({ error: "Dieser Dateipfad darf nicht bearbeitet werden." }, 400);
       if (typeof content !== "string" || enc.encode(content).length > 900000) return send({ error: "Der Inhalt ist zu groß für diesen Editor." }, 400);
       if (message.length < 3 || message.length > 100) return send({ error: "Die Commit-Nachricht muss 3 bis 100 Zeichen lang sein." }, 400);
 
