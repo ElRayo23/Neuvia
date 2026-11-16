@@ -502,7 +502,15 @@
         form.append("file", file, file.name);
         const result = await request("/api/upload", { method: "POST", body: form });
         embeds.push(result.embed);
+        treeItems.push({
+          name: basename(result.path),
+          path: result.path,
+          type: "file",
+          extension: extension(result.path),
+          size: result.size || file.size,
+        });
       }
+      renderTree();
       insertAtCursor((embeds.length ? embeds.join("\n") + "\n" : ""));
       status(images.length + (images.length === 1 ? " Bild hochgeladen" : " Bilder hochgeladen") + " – synchronisiere Notiz …", "success");
       await saveCurrent();
@@ -640,6 +648,7 @@
 
   async function openWorkspace() {
     if (overlay) return;
+    if (!style.isConnected) document.head.appendChild(style);
     if (!token()) {
       alert("Bitte zuerst als Administrator anmelden.");
       return;
