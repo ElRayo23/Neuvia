@@ -371,6 +371,30 @@ export default {
         branch: BRANCH,
       });
     }
+    // Public, read-only access to visible Markdown. This lets the website fetch
+    // the current source note without waiting for a Quartz rebuild.
+    if (url.pathname === "/api/public-note" && request.method === "GET") {
+      if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
+      const path = url.searchParams.get("path") || "";
+      if (!safePath(path) || !visiblePath(path)) return send({ error: "Diese Notiz darf nicht öffentlich geladen werden." }, 400);
+      try {
+        const file = await readFile(path, env.GITHUB_TOKEN);
+        return new Response(JSON.stringify({ path, content: file.content, sha: file.sha }), {
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Cache-Control": "no-store",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type,Authorization",
+            "X-Content-Type-Options": "nosniff",
+          },
+        });
+      } catch (error) {
+        const status = /nicht gefunden/i.test(error.message) ? 404 : 502;
+        return send({ error: error.message }, status);
+      }
+    }
+
     if (url.pathname === "/api/login" && request.method === "POST") {
       if (!env.ADMIN_PASSWORD || !env.SESSION_SECRET) return send({ error: "Admin-Anmeldung ist noch nicht konfiguriert." }, 503);
       let body = {};
