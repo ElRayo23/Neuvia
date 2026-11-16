@@ -3,6 +3,7 @@
 
   const API = "https://neuvia-admin-api.forkleafcustom.workers.dev";
   const SESSION_KEY = "neuviaAdminSession";
+  const DRAFT_PREFIX = "neuviaDraft:";
   const ADMIN_SCRIPT = Array.from(document.scripts).find((script) => script.src.includes("neuvia-admin.js"));
   const STATIC_BASE = ADMIN_SCRIPT ? new URL(".", ADMIN_SCRIPT.src).href : new URL("/static/", location.origin).href;
   const SITE_BASE = new URL("../", STATIC_BASE).href;
@@ -16,6 +17,28 @@
   }
 
   const token = () => sessionStorage.getItem(SESSION_KEY) || "";
+
+  function readDraft(path) {
+    try {
+      const raw = localStorage.getItem(DRAFT_PREFIX + path);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
+  function storeDraft() {
+    if (!currentPath || !overlay) return;
+    try {
+      localStorage.setItem(DRAFT_PREFIX + currentPath, JSON.stringify({
+        content: overlay.querySelector(".nw-editor").value,
+        sha: currentSha,
+        savedAt: Date.now()
+      }));
+    } catch {}
+  }
+
+  function clearDraft(path) {
+    try { localStorage.removeItem(DRAFT_PREFIX + path); } catch {}
+  }
   const normalize = (value) => String(value || "").normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("de").trim();
   const encodePath = (path) => path.split("/").map(encodeURIComponent).join("/");
@@ -170,8 +193,13 @@
       if (currentPath === path) {
         savedContent = snapshot;
         currentSha = data.sha || currentSha;
-        if (editor.value === snapshot) status("In GitHub gesichert", "success");
-        else scheduleSave();
+        if (editor.value === snapshot) {
+          clearDraft(path);
+          status("In GitHub gesichert", "success");
+        } else {
+          storeDraft();
+          scheduleSave();
+        }
       }
       return true;
     })();
@@ -337,10 +365,27 @@
       const editor = overlay.querySelector(".nw-editor");
       editor.value = savedContent;
       editor.disabled = false;
+      const draft = readDraft(item.path);
+      if (draft && typeof draft.content === "string" && draft.content !== savedContent) {
+        const sameVersion = !!draft.sha && draft.sha === data.sha;
+        const question = sameVersion
+          ? "Für diese Notiz gibt es einen lokalen, noch nicht synchronisierten Entwurf. Möchtest du ihn wiederherstellen?"
+          : "Es gibt einen lokalen Entwurf, aber die GitHub-Datei wurde seitdem verändert. Entwurf trotzdem wiederherstellen? Der Sync wird dann zunächst wegen eines Versionskonflikts blockiert.";
+        if (window.confirm(question)) {
+          editor.value = draft.content;
+          if (!sameVersion) currentSha = draft.sha || "";
+          status(sameVersion ? "Lokaler Entwurf wiederhergestellt" : "Älterer lokaler Entwurf wiederhergestellt – Versionskonflikt beachten", sameVersion ? "success" : "error");
+          scheduleSave();
+        } else {
+          clearDraft(item.path);
+        }
+      } else if (draft) {
+        clearDraft(item.path);
+      }
       editor.focus();
       updateCurrentHeader();
       renderTree();
-      status("Synchronisiert", "success");
+      if (!currentIsDirty()) status("Synchronisiert", "success");
     } catch (error) {
       status(error.message, "error");
     }
@@ -742,6 +787,7 @@
     document.body.append(overlay);
 
     editor.addEventListener("input", () => {
+      storeDraft();
       scheduleSave();
       renderSuggestions();
     });
