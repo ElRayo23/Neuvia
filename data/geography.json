@@ -1481,9 +1481,9 @@
       "id": "phandelver",
       "name": "Phandelver",
       "type": "small_region_or_mountain_range",
-      "parentId": "westsuman",
+      "parentId": null,
       "lorePath": null,
-      "reviewStatus": "type_ambiguous"
+      "reviewStatus": "type_and_parent_need_confirmation"
     },
     {
       "id": "purpur-distrikt",
