@@ -59,11 +59,21 @@ async function readFile(path, token) {
       "Authorization": "Bearer " + token,
       "Accept": "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "Neuvia-Admin-Editor",
     },
   });
-  const data = await result.json().catch(() => ({}));
-  if (!result.ok) throw new Error(result.status === 404 ? "Markdown-Datei nicht gefunden." : data.message || "GitHub-Datei konnte nicht gelesen werden.");
-  if (!data.content || !data.sha) throw new Error("Datei ist zu groß oder hat ein nicht unterstütztes Format.");
+  const raw = await result.text();
+  let data = {};
+  try { data = JSON.parse(raw); } catch {}
+  if (!result.ok) {
+    if (result.status === 404) throw new Error("Markdown-Datei nicht gefunden: " + path);
+    const detail = data.message || raw.trim().replace(/\s+/g, " ").slice(0, 180);
+    const requestId = result.headers.get("x-github-request-id");
+    throw new Error("GitHub-API Fehler " + result.status + (detail ? ": " + detail : "") + (requestId ? " (Request " + requestId + ")" : ""));
+  }
+  if (typeof data.content !== "string" || !data.sha || (data.type && data.type !== "file")) {
+    throw new Error("GitHub hat keine lesbare Datei geliefert (Typ: " + String(data.type || "unbekannt") + ", Größe: " + String(data.size ?? "unbekannt") + ").");
+  }
   const binary = atob(data.content.replace(/\s/g, ""));
   return {
     content: new TextDecoder().decode(Uint8Array.from(binary, (char) => char.charCodeAt(0))),
@@ -143,6 +153,7 @@ export default {
             "Authorization": "Bearer " + env.GITHUB_TOKEN,
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "Neuvia-Admin-Editor",
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -154,9 +165,10 @@ export default {
         });
         const data = await result.json().catch(() => ({}));
         if (!result.ok) {
+          const detail = data.message || result.statusText || "Unbekannte GitHub-Antwort";
           const error = result.status === 409 || result.status === 422
             ? "Die Datei wurde zwischenzeitlich geändert. Bitte Seite neu laden und erneut versuchen."
-            : data.message || "GitHub konnte die Änderung nicht speichern.";
+            : "GitHub-API Fehler " + result.status + ": " + detail;
           return send({ error }, 502);
         }
         return send({ ok: true, commit: data.commit?.sha || "" });
