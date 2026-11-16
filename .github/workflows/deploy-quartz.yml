@@ -64,8 +64,8 @@ jobs:
           deploy_worker = "workers/neuvia-admin-api.js" in changed or ".github/workflows/deploy-quartz.yml" in changed
           print(f"Changed files: {len(changed)}; preview build required: {should_build}; Worker deploy required: {deploy_worker}")
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-              output.write(f"should_build={str(should_build).lower()}\\n")
-              output.write(f"deploy_worker={str(deploy_worker).lower()}\\n")
+              output.write(f"should_build={str(should_build).lower()}\n")
+              output.write(f"deploy_worker={str(deploy_worker).lower()}\n")
           PY
   build:
     needs: check-preview-content
