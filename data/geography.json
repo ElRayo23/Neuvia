@@ -118,9 +118,9 @@
       "mapStateIndex": 60,
       "type": "state",
       "parentId": null,
-      "lorePath": "Musik/Haven.md",
+      "lorePath": null,
       "reviewStatus": "map_state_needs_review",
-      "loreLinkStatus": "linked"
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "neukilia",
