@@ -136,15 +136,15 @@ async function githubContentsWrite(path, body, token) {
   return data;
 }
 function safeUploadFilename(filename) {
-  const original = String(filename || "bild").normalize("NFC").split(/[\\\\/]/).pop();
+  const original = String(filename || "bild").normalize("NFC").split(/[\\/]/).pop();
   const dot = original.lastIndexOf(".");
   if (dot <= 0) throw new Error("Die Bilddatei braucht eine gültige Dateiendung.");
   const extension = original.slice(dot + 1).toLowerCase();
   if (!IMAGE_EXTENSIONS.has(extension)) throw new Error("Erlaubt sind PNG, JPG, WebP, GIF und AVIF.");
   const stem = original.slice(0, dot)
-    .replace(/[^\\p{L}\\p{N}._-]+/gu, "-")
+    .replace(/[^\p{L}\p{N}._-]+/gu, "-")
     .replace(/^-+|-+$/g, "")
-    .replace(/^\\.+/, "")
+    .replace(/^\.+/, "")
     .slice(0, 100);
   if (!stem) throw new Error("Der Bildname ist ungültig.");
   return stem + "." + extension;
