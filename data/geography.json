@@ -30,9 +30,9 @@
       "mapStateIndex": 52,
       "type": "state",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Rhaskan.md",
       "reviewStatus": "map_state_needs_review",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "tandreol",
@@ -41,9 +41,9 @@
       "mapStateIndex": 53,
       "type": "state",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Königreich Tandreol.md",
       "reviewStatus": "map_state_needs_review",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "ordensreich",
@@ -85,9 +85,9 @@
       "mapStateIndex": 57,
       "type": "state",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Der Inselbund Leydan.md",
       "reviewStatus": "map_state_needs_review",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "miran",
@@ -107,9 +107,9 @@
       "mapStateIndex": 59,
       "type": "free_state",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Die autonomen Regionen von Eisenherz.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "haven",
@@ -118,9 +118,9 @@
       "mapStateIndex": 60,
       "type": "state",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Die Handelsvereinigung Südkarims Haven.md",
       "reviewStatus": "map_state_needs_review",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "neukilia",
@@ -129,9 +129,9 @@
       "mapStateIndex": 61,
       "type": "state",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Neukilia.md",
       "reviewStatus": "map_state_needs_review",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "baskatal",
@@ -140,9 +140,9 @@
       "mapStateIndex": 62,
       "type": "state",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Despotat von Bas'Katal.md",
       "reviewStatus": "map_state_needs_review",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "zinesco",
@@ -151,9 +151,9 @@
       "mapStateIndex": 63,
       "type": "state",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Die Republik von Zinesco.md",
       "reviewStatus": "map_state_needs_review",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "tiamatatem",
@@ -162,9 +162,9 @@
       "mapStateIndex": 64,
       "type": "free_territory",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Tia Matatem.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "tortuga",
@@ -173,9 +173,9 @@
       "mapStateIndex": 65,
       "type": "free_island",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Tortuga.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "cvm",
@@ -184,9 +184,9 @@
       "mapStateIndex": 66,
       "type": "state",
       "parentId": "floptropica",
-      "lorePath": null,
+      "lorePath": "Lore/Capital Van Mar.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "fruhlingshof",
@@ -195,9 +195,9 @@
       "mapStateIndex": 67,
       "type": "state",
       "parentId": "floptropica",
-      "lorePath": null,
+      "lorePath": "Lore/Frühlingshof.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "sommerhof",
@@ -206,9 +206,9 @@
       "mapStateIndex": 68,
       "type": "state",
       "parentId": "floptropica",
-      "lorePath": null,
+      "lorePath": "Lore/Sommerhof.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "herbsthof",
@@ -217,9 +217,9 @@
       "mapStateIndex": 69,
       "type": "state",
       "parentId": "floptropica",
-      "lorePath": null,
+      "lorePath": "Lore/Herbsthof.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "winterhof",
@@ -228,9 +228,9 @@
       "mapStateIndex": 70,
       "type": "state",
       "parentId": "floptropica",
-      "lorePath": null,
+      "lorePath": "Lore/Winterhof.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "prismeer",
@@ -250,9 +250,9 @@
       "mapStateIndex": 72,
       "type": "state",
       "parentId": "floptropica",
-      "lorePath": null,
+      "lorePath": "Lore/Badussy Hof.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "islabonita",
@@ -261,9 +261,9 @@
       "mapStateIndex": 73,
       "type": "state",
       "parentId": "floptropica",
-      "lorePath": null,
+      "lorePath": "Lore/Isla Bonita.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "ryakmalek",
@@ -272,9 +272,9 @@
       "mapStateIndex": 74,
       "type": "state",
       "parentId": "floptropica",
-      "lorePath": null,
+      "lorePath": "Lore/Ryakmalek.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "atlantis",
@@ -283,9 +283,9 @@
       "mapStateIndex": 75,
       "type": "underwater_state",
       "parentId": null,
-      "lorePath": null,
+      "lorePath": "Lore/Königreich Atlantis.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "no_existing_lore_page"
+      "loreLinkStatus": "existing_page_even_if_empty"
     }
   ],
   "settlements": [
