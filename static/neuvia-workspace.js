@@ -195,7 +195,9 @@
         currentSha = data.sha || currentSha;
         if (editor.value === snapshot) {
           clearDraft(path);
-          status("In GitHub gesichert", "success");
+          status(data.unchanged
+            ? "Bereits synchronisiert – keine Änderungen."
+            : "Sync abgeschlossen · GitHub-Commit " + String(data.commit || "").slice(0, 7), "success");
         } else {
           storeDraft();
           scheduleSave();
@@ -459,7 +461,14 @@
     const before = editor.value.slice(0, cursor);
     const start = before.lastIndexOf("[[");
     if (start < 0 || before.slice(start + 2).includes("]]") || before.slice(start + 2).includes("\n")) return null;
-    return { start, end: cursor, query: before.slice(start + 2) };
+    const rawQuery = before.slice(start + 2);
+    const aliasSeparator = rawQuery.indexOf("|");
+    return {
+      start,
+      end: cursor,
+      query: aliasSeparator < 0 ? rawQuery : rawQuery.slice(0, aliasSeparator),
+      alias: aliasSeparator < 0 ? "" : rawQuery.slice(aliasSeparator)
+    };
   }
 
   function buildLinkCandidates(query) {
@@ -508,7 +517,7 @@
     if (!active || !item) return;
     const before = editor.value.slice(0, active.start);
     const after = editor.value.slice(active.end);
-    const insertion = "[[" + item.target + "]]";
+    const insertion = "[[" + item.target + (active.alias || "") + "]]";
     editor.value = before + insertion + after;
     const cursor = before.length + insertion.length;
     editor.setSelectionRange(cursor, cursor);
@@ -746,6 +755,32 @@
     destinationInput.select();
   }
 
+  function checkPublication(commit, attempt = 0) {
+    if (!overlay || attempt >= 100) {
+      if (overlay && attempt >= 100) status("Veröffentlichung läuft weiter. Der Status kann später erneut geprüft werden.", "normal");
+      return;
+    }
+    setTimeout(async () => {
+      if (!overlay) return;
+      try {
+        const result = await request("/api/publish-status?commit=" + encodeURIComponent(commit));
+        if (result.status === "completed") {
+          if (result.conclusion === "success") {
+            status("Veröffentlichung erfolgreich abgeschlossen.", "success");
+          } else {
+            status("Veröffentlichung fehlgeschlagen (" + String(result.conclusion || "unbekannt") + "). GitHub Actions prüfen.", "error");
+          }
+          return;
+        }
+        if (result.status === "in_progress") status("Website-Build läuft im Hintergrund …");
+        else status("Veröffentlichung wartet auf den Build …");
+      } catch (error) {
+        status("Veröffentlichung gestartet; Statusabfrage fehlgeschlagen: " + error.message, "error");
+      }
+      checkPublication(commit, attempt + 1);
+    }, 6000);
+  }
+
   async function publish() {
     const button = overlay.querySelector(".nw-publish");
     button.disabled = true;
@@ -754,21 +789,8 @@
       status("Starte Veröffentlichung …");
       const result = await request("/api/publish", { method: "POST", body: "{}" });
       if (!result.commit) throw new Error("GitHub hat keinen Veröffentlichungs-Commit zurückgegeben.");
-      status("Website wird gebaut und veröffentlicht …");
-      const deadline = Date.now() + 8 * 60 * 1000;
-      while (Date.now() < deadline) {
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        try {
-          const response = await fetch(BUILD_URL + "?t=" + Date.now(), { cache: "no-store" });
-          if (!response.ok) continue;
-          const build = await response.json();
-          if (build.commit === result.commit) {
-            status("Veröffentlicht – die öffentliche Website ist aktualisiert.", "success");
-            return;
-          }
-        } catch {}
-      }
-      status("In GitHub gespeichert. Der Build läuft noch oder konnte nicht bestätigt werden.", "error");
+      status("Veröffentlichung angestoßen. Du kannst weiterarbeiten; der Status wird im Hintergrund geprüft.", "success");
+      checkPublication(result.commit);
     } catch (error) {
       status(error.message, "error");
     } finally {
