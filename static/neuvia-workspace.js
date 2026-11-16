@@ -70,7 +70,7 @@
     "#neuvia-workspace .nw-current-path{font-size:11px;opacity:.58;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}",
     "#neuvia-workspace .nw-top-actions{display:flex;align-items:center;gap:7px;flex-shrink:0;}",
     "#neuvia-workspace .nw-editor-wrap{position:relative;display:flex;flex:1;min-height:0;}",
-    "#neuvia-workspace .nw-editor{display:block;width:100%;height:100%;min-height:0;resize:none;border:0;outline:0;padding:30px clamp(18px,5vw,64px) 48px;background:var(--light,#faf8f8);color:var(--dark,#2b2b2b);font:14px/1.72 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2;white-space:pre;overflow:auto;}",
+    "#neuvia-workspace .nw-editor{display:block;width:100%;height:100%;min-height:0;resize:none;border:0;outline:0;padding:30px clamp(18px,5vw,64px) 48px;background:var(--light,#faf8f8);color:var(--dark,#2b2b2b);font:14px/1.72 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2;white-space:pre-wrap;overflow-wrap:anywhere;overflow:auto;}",
     "#neuvia-workspace .nw-editor::placeholder{color:var(--gray,#999);}",
     "#neuvia-workspace .nw-drop-hint{display:none;position:absolute;inset:12px;z-index:3;align-items:center;justify-content:center;border:2px dashed var(--secondary,#284b63);border-radius:12px;background:var(--light,#faf8f8);opacity:.94;font-size:17px;font-weight:650;pointer-events:none;}",
     "#neuvia-workspace .nw-editor-wrap.nw-drag .nw-drop-hint{display:flex;}",
@@ -331,6 +331,7 @@
       status("Öffne " + item.name + " …");
       const data = await request("/api/file?path=" + encodeURIComponent(item.path));
       currentPath = item.path;
+      activeFolder = item.path.split("/").slice(0, -1).join("/");
       currentSha = data.sha || "";
       savedContent = data.content || "";
       const editor = overlay.querySelector(".nw-editor");
