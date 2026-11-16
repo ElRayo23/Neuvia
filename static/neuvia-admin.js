@@ -53,7 +53,10 @@
       const mapResponse=await fetch(MAP_URL,{cache:"no-store"});
       if(!mapResponse.ok)throw new Error("Seitenzuordnung fehlt. Bitte die Vorschau neu bauen lassen.");
       const map=await mapResponse.json();
-      const slug=(document.body.dataset.slug||"").replace(/^\/+|\/+$/g,"");
+      let route = decodeURIComponent(location.pathname).normalize("NFC");
+      const basePath = adminScript ? new URL(adminScript.src).pathname.replace(/\\/static\\/neuvia-admin\\.js$/, "").replace(/\\/+$/, "") : "";
+      if (basePath && (route === basePath || route.startsWith(basePath + "/"))) route = route.slice(basePath.length);
+      const slug = route.replace(/^\\/+|\\/+$/g, "").replace(/\\/index$/i, "").toLowerCase();
       const path=map[slug] || map[decodeURIComponent(slug)] || (slug===""?map[""]:null);
       if(!path)throw new Error("Für diese Seite wurde keine eindeutige Markdown-Datei gefunden.");
       const data=await request("/api/file?path="+encodeURIComponent(path));
@@ -78,5 +81,12 @@
   }
   banner.querySelector("#neuvia-edit-page").onclick=editCurrentPage;
   button.onclick=()=>{if(!token()){loginDialog();return}if(editMode){setMode(false);return}setMode(true)};
+  // Quartz navigates between pages without a full reload. Reattach the controls
+  // if its navigation lifecycle replaces nodes inside the document body.
+  const observer = new MutationObserver(() => {
+    if (!button.isConnected) document.body.appendChild(button);
+    if (!banner.isConnected) document.body.appendChild(banner);
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
   if(token()){request("/api/session").then(d=>{if(d.authenticated){button.textContent="Bearbeiten"}else{sessionStorage.removeItem(KEY)}}).catch(()=>sessionStorage.removeItem(KEY));}
 })();
