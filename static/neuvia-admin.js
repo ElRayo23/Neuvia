@@ -4,6 +4,13 @@
   const adminScript = document.querySelector('script[src*="neuvia-admin.js"]');
   const MAP_URL = adminScript ? new URL("neuvia-content-map.json", adminScript.src).toString() : "/static/neuvia-content-map.json";
   const LINK_URL = adminScript ? new URL("neuvia-link-index.json", adminScript.src).toString() : "/static/neuvia-link-index.json";
+  const BUILD_URL = adminScript ? new URL("neuvia-build.json", adminScript.src).toString() : "/static/neuvia-build.json";
+  const CONTROLLER_KEY = "__neuviaAdminEditor";
+  if (window[CONTROLLER_KEY]) {
+    window[CONTROLLER_KEY].ensureButton();
+    window[CONTROLLER_KEY].refreshSession();
+    return;
+  }
   const token = () => sessionStorage.getItem(KEY) || "";
   const request = async (path, options={}) => {
     const headers = {...(options.body ? {"Content-Type":"text/plain;charset=UTF-8"} : {}), ...(options.headers||{})};
@@ -33,7 +40,22 @@
     #neuvia-admin-error{color:#c33;min-height:20px;margin:8px 0}
   `;
   document.head.appendChild(style);
-  const button=document.createElement("button");button.id="neuvia-admin-button";button.type="button";button.textContent="Anmelden";document.body.appendChild(button);
+  const button=document.createElement("button");button.id="neuvia-admin-button";button.type="button";button.textContent="Anmelden";
+  function ensureButton(){
+    if(!button.isConnected && document.body) document.body.appendChild(button);
+  }
+  async function refreshSession(){
+    if(!token()){button.textContent="Anmelden";return;}
+    button.textContent="Prüfe Sitzung …";
+    try{
+      const data=await request("/api/session");
+      if(data.authenticated) button.textContent="Bearbeiten";
+      else {sessionStorage.removeItem(KEY);button.textContent="Anmelden";}
+    }catch{button.textContent="Bearbeiten";}
+  }
+  window[CONTROLLER_KEY]={ensureButton,refreshSession};
+  ensureButton();
+  document.addEventListener("nav",()=>{ensureButton();refreshSession();});
   function showMessage(message){const overlay=document.createElement("div");overlay.id="neuvia-admin-overlay";overlay.innerHTML='<div id="neuvia-admin-dialog"><h2>Neuvia-Editor</h2><p id="neuvia-admin-error"></p><button type="button" id="neuvia-admin-close">Schließen</button></div>';document.body.appendChild(overlay);overlay.querySelector("#neuvia-admin-error").textContent=message;overlay.querySelector("#neuvia-admin-close").onclick=()=>overlay.remove();}
   function loginDialog(){
     const overlay=document.createElement("div");overlay.id="neuvia-admin-overlay";
@@ -48,6 +70,26 @@
       catch(err){error.textContent=err.message;submit.disabled=false;}
     };
     overlay.querySelector("input").focus();
+  }
+  async function waitForPublication(commit,error,submit){
+    const deadline=Date.now()+8*60*1000;
+    while(Date.now()<deadline){
+      await new Promise(resolve=>setTimeout(resolve,5000));
+      try{
+        const response=await fetch(BUILD_URL+"?t="+Date.now(),{cache:"no-store"});
+        if(!response.ok)continue;
+        const build=await response.json();
+        if(build.commit===commit){
+          error.textContent="Veröffentlicht. Die Seite wird aktualisiert …";
+          submit.textContent="Veröffentlicht";
+          setTimeout(()=>window.location.reload(),700);
+          return;
+        }
+      }catch{}
+    }
+    error.textContent="Auf GitHub gespeichert, aber die Veröffentlichung dauert noch. Die Seite kann später neu geladen werden.";
+    submit.textContent="Gespeichert";
+    submit.disabled=true;
   }
   async function editCurrentPage(){
     let overlay;
@@ -78,8 +120,9 @@
         submit.disabled=true;error.textContent="Speichere auf GitHub …";
         try{
           const result=await request("/api/save",{method:"POST",body:JSON.stringify({path,content:overlay.querySelector("#neuvia-admin-content").value,message:overlay.querySelector("#neuvia-admin-message").value})});
-          error.textContent="Gespeichert. Commit: "+result.commit.slice(0,7)+". Die Vorschau wird nach dem Build aktualisiert.";
-          submit.textContent="Gespeichert";
+          error.textContent="Gespeichert. Die Website wird neu gebaut; sie aktualisiert sich nach der Veröffentlichung automatisch.";
+          submit.textContent="Wird veröffentlicht …";
+          await waitForPublication(result.commit,error,submit);
         }catch(err){error.textContent=err.message;submit.disabled=false;}
       };
       const textarea=overlay.querySelector("#neuvia-admin-content");
@@ -171,7 +214,7 @@
       textarea.addEventListener("input",renderSuggestions);
       textarea.addEventListener("click",renderSuggestions);
       textarea.addEventListener("keyup",event=>{
-        if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Home","End"].includes(event.key))renderSuggestions();
+        if(["ArrowLeft","ArrowRight","Home","End"].includes(event.key))renderSuggestions();
       });
       textarea.addEventListener("keydown",event=>{
         if(suggestionBox.hidden)return;
@@ -184,7 +227,10 @@
         if(event.key==="ArrowDown"||event.key==="ArrowUp"){
           event.preventDefault();
           selectedSuggestion=(selectedSuggestion+(event.key==="ArrowDown"?1:-1)+suggestions.length)%suggestions.length;
-          Array.from(suggestionBox.querySelectorAll('[role="option"]')).forEach((option,index)=>option.setAttribute("aria-selected",index===selectedSuggestion?"true":"false"));
+          Array.from(suggestionBox.querySelectorAll('[role="option"]')).forEach((option,index)=>{
+            option.setAttribute("aria-selected",index===selectedSuggestion?"true":"false");
+            if(index===selectedSuggestion)option.scrollIntoView({block:"nearest"});
+          });
           return;
         }
         if(event.key==="Enter"||event.key==="Tab"){
@@ -197,11 +243,9 @@
     }catch(err){if(overlay)overlay.remove();showMessage(err.message);}
   }
   button.onclick=()=>{if(!token()){loginDialog();return}editCurrentPage()};
-  // Quartz navigates between pages without a full reload. Reattach the controls
-  // if its navigation lifecycle replaces nodes inside the document body.
-  const observer = new MutationObserver(() => {
-    if (!button.isConnected) document.body.appendChild(button);
-  });
+  // Quartz swaps page bodies and re-executes head scripts during SPA navigation.
+  // Keep one persistent button and reattach it whenever the body is replaced.
+  const observer = new MutationObserver(ensureButton);
   observer.observe(document.documentElement, { childList: true, subtree: true });
-  if(token()){request("/api/session").then(d=>{if(d.authenticated){button.textContent="Bearbeiten"}else{sessionStorage.removeItem(KEY)}}).catch(()=>sessionStorage.removeItem(KEY));}
+  refreshSession();
 })();
