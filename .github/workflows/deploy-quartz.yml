@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - map-geo-structure
+      - neuvia-editor-test
   workflow_dispatch:
 
 permissions:
@@ -80,6 +81,18 @@ jobs:
       - name: Build website
         working-directory: .quartz-runtime
         run: npx quartz build
+
+      - name: Inject Neuvia admin interface into every page
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root = Path(".quartz-runtime/public")
+          tag = '<script defer src="/Neuvia/static/neuvia-admin.js"></script>'
+          for page in root.rglob("*.html"):
+              html = page.read_text(encoding="utf-8")
+              if tag not in html and "</head>" in html:
+                  page.write_text(html.replace("</head>", tag + "</head>", 1), encoding="utf-8")
+          PY
 
       - name: Publish interactive map HTML with its original extension
         run: cp .quartz-runtime/content/static/karte.html .quartz-runtime/public/static/karte.html
