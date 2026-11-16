@@ -241,7 +241,7 @@
       "parentId": "floptropica",
       "lorePath": "Lore/Die Freudendomäne Prismeer.md",
       "reviewStatus": "user_classified",
-      "loreLinkStatus": "linked"
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "badussyhof",
@@ -1553,7 +1553,9 @@
       "type": "district",
       "mapZoneIndex": 1,
       "mapType": "Distrikt",
-      "reviewStatus": "map_custom_zone"
+      "reviewStatus": "map_custom_zone",
+      "lorePath": "Lore/Der freie Norden.md",
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "norddistrikt",
@@ -1561,7 +1563,9 @@
       "type": "district",
       "mapZoneIndex": 2,
       "mapType": "Distrikt",
-      "reviewStatus": "map_custom_zone"
+      "reviewStatus": "map_custom_zone",
+      "lorePath": "Lore/Norddistrikt.md",
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "zentraldistrik",
@@ -1577,7 +1581,9 @@
       "type": "district",
       "mapZoneIndex": 4,
       "mapType": "Distrikt",
-      "reviewStatus": "map_custom_zone"
+      "reviewStatus": "map_custom_zone",
+      "lorePath": "Lore/Akademiedistrikt.md",
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "suddistrikt",
@@ -1619,7 +1625,8 @@
       "type": "small_city_district",
       "parentId": null,
       "lorePath": "Lore/purpur distrikt.md",
-      "reviewStatus": "parent_unknown"
+      "reviewStatus": "parent_unknown",
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "legweak-anwesen",
@@ -1627,7 +1634,8 @@
       "type": "estate",
       "parentId": null,
       "lorePath": "Lore/Legweak Anwesen.md",
-      "reviewStatus": "user_confirmed"
+      "reviewStatus": "user_confirmed",
+      "loreLinkStatus": "existing_page_even_if_empty"
     },
     {
       "id": "kampus-gorod",
@@ -1635,7 +1643,8 @@
       "type": "city",
       "parentId": null,
       "lorePath": "Lore/Kampus-Gorod.md",
-      "reviewStatus": "user_confirmed"
+      "reviewStatus": "user_confirmed",
+      "loreLinkStatus": "existing_page_even_if_empty"
     }
   ]
 }
