@@ -85,6 +85,50 @@ jobs:
         working-directory: .quartz-runtime
         run: npx quartz build
 
+      - name: Generate editor page map
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, unicodedata
+          content = Path(".quartz-runtime/content")
+          public = Path(".quartz-runtime/public/static")
+          public.mkdir(parents=True, exist_ok=True)
+          mapping = {}
+          collisions = set()
+
+          def slugify(value):
+              value = unicodedata.normalize("NFC", value)
+              parts = value.split("/")
+              parts = [p.replace("&", "-and-").replace("%", "-percent").replace("?", "").replace("#", "").translate(str.maketrans("", "", '<>:"|*')).lower() for p in parts]
+              return "/".join("-".join(p.split()) for p in parts).rstrip("/")
+
+          for file in content.rglob("*.md"):
+              rel = file.relative_to(content)
+              if any(part.startswith(".") or part in {"private", "templates"} for part in rel.parts):
+                  continue
+              stem = rel.as_posix()[:-3]
+              slug = slugify(stem)
+              parts = slug.split("/")
+              if len(parts) >= 2 and parts[-1] == parts[-2]:
+                  parts[-1] = "index"
+                  slug = "/".join(parts)
+              keys = {slug}
+              if slug == "index":
+                  keys.add("")
+              if slug.endswith("/index"):
+                  keys.add(slug[:-6])
+              for key in keys:
+                  if key in mapping and mapping[key] != rel.as_posix():
+                      collisions.add(key)
+                  else:
+                      mapping[key] = rel.as_posix()
+
+          for key in collisions:
+              mapping.pop(key, None)
+          (public / "neuvia-content-map.json").write_text(json.dumps(mapping, ensure_ascii=False), encoding="utf-8")
+          print(f"Mapped {len(mapping)} unique Markdown page routes; omitted {len(collisions)} collisions.")
+          PY
+
       - name: Inject Neuvia admin interface into every page
         run: |
           python3 - <<'PY'
@@ -123,7 +167,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download build artifact for Cloudflare
+      - name: Download Pages artifact for Cloudflare
         uses: actions/download-artifact@v4
         with:
           name: github-pages
