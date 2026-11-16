@@ -726,7 +726,7 @@
           currentSha = "";
           savedContent = "";
         }
-        activeFolder = destination.split("/").slice(0, isFolder ? 0 : -1).join("/");
+        activeFolder = isFolder ? destination : destination.split("/").slice(0, -1).join("/");
         await loadTree();
         if (currentMoves && newCurrentPath) {
           await openFile({ path: newCurrentPath, type: "file", name: basename(newCurrentPath) });
