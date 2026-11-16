@@ -799,6 +799,11 @@
       if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) renderSuggestions();
     });
     editor.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        overlay.querySelector(".nw-sync").click();
+        return;
+      }
       const box = overlay.querySelector(".nw-suggestions");
       if (!box.hidden) {
         if (event.key === "Escape") {
