@@ -54,7 +54,7 @@
       if(!mapResponse.ok)throw new Error("Seitenzuordnung fehlt. Bitte die Vorschau neu bauen lassen.");
       const map=await mapResponse.json();
       let route = decodeURIComponent(location.pathname).normalize("NFC");
-      const basePath = adminScript ? new URL(adminScript.src).pathname.replace(/\/static\/neuvia-admin\.js$/, "").replace(/\\/+$/, "") : "";
+      const basePath = adminScript ? new URL(adminScript.src).pathname.replace(/\/static\/neuvia-admin\.js$/, "").replace(/\/+$/, "") : "";
       if (basePath && (route === basePath || route.startsWith(basePath + "/"))) route = route.slice(basePath.length);
       const slug = route.replace(/^\/+|\/+$/g, "").replace(/\/index$/i, "").toLowerCase();
       const path=map[slug] || map[decodeURIComponent(slug)] || (slug===""?map[""]:null);
