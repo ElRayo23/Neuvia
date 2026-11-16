@@ -397,6 +397,9 @@ export default {
         if (body.sha && body.sha !== current.sha) {
           return send({ error: "Diese Notiz wurde zwischenzeitlich geändert. Lade sie neu, bevor du weiter synchronisierst." }, 409);
         }
+        if (current.content === content) {
+          return send({ ok: true, unchanged: true, commit: "", sha: current.sha });
+        }
         const result = await fetch(githubUrl(path), {
           method: "PUT",
           headers: {
@@ -502,6 +505,21 @@ export default {
       } catch (error) {
         const status = /zwischenzeitlich|Ziel|Quelle|nicht verschoben|in sich selbst|Dateiendung|ausgeblendete|Submodul/i.test(error.message) ? 409 : 502;
         return send({ error: error.message }, status);
+      }
+    }
+
+    if (url.pathname === "/api/publish-status" && request.method === "GET") {
+      if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
+      if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
+      const commit = String(url.searchParams.get("commit") || "");
+      if (!/^[a-f0-9]{40}$/i.test(commit)) return send({ error: "Ungültiger Veröffentlichungs-Commit." }, 400);
+      try {
+        const result = await githubJson("/repos/" + OWNER + "/" + REPO + "/actions/runs?branch=" + encodeURIComponent(BRANCH) + "&head_sha=" + encodeURIComponent(commit) + "&per_page=5", env.GITHUB_TOKEN);
+        const run = (result.workflow_runs || []).find((item) => item.head_sha === commit);
+        if (!run) return send({ found: false, status: "queued", conclusion: null, url: "" });
+        return send({ found: true, status: run.status || "unknown", conclusion: run.conclusion || null, url: run.html_url || "" });
+      } catch (error) {
+        return send({ error: error.message || "Veröffentlichungsstatus konnte nicht gelesen werden." }, 502);
       }
     }
 
