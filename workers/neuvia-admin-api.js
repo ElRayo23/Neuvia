@@ -171,6 +171,48 @@ async function githubJson(path, token, method = "GET", body) {
   }
   return data;
 }
+async function readMarkdownArchive(token, commitSha) {
+  const archive = await fetch(API + "/repos/" + OWNER + "/" + REPO + "/tarball/" + commitSha, {
+    headers: {
+      "Authorization": "Bearer " + token,
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "Neuvia-Admin-Editor",
+    },
+  });
+  if (!archive.ok || !archive.body) throw new Error("GitHub konnte die Notizen für die Link-Aktualisierung nicht laden (HTTP " + archive.status + ").");
+  let stream;
+  try {
+    stream = archive.body.pipeThrough(new DecompressionStream("gzip"));
+  } catch {
+    throw new Error("Die GitHub-Archivdatei konnte nicht für die Link-Aktualisierung geöffnet werden.");
+  }
+  const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+  const decoder = new TextDecoder();
+  const files = new Map();
+  let offset = 0;
+  while (offset + 512 <= bytes.length) {
+    const header = bytes.subarray(offset, offset + 512);
+    if (header.every((value) => value === 0)) break;
+    const readString = (from, length) => decoder.decode(header.subarray(from, from + length)).split("\0")[0];
+    const name = readString(0, 100);
+    const prefix = readString(345, 155);
+    const path = prefix ? prefix + "/" + name : name;
+    const sizeText = readString(124, 12).trim();
+    const size = sizeText ? parseInt(sizeText, 8) : 0;
+    if (!Number.isFinite(size) || size < 0) throw new Error("Ungültige Dateigröße im GitHub-Archiv.");
+    const dataStart = offset + 512;
+    const type = readString(156, 1);
+    const slash = path.indexOf("/");
+    const relativePath = slash >= 0 ? path.slice(slash + 1) : path;
+    if (relativePath.toLowerCase().endsWith(".md") && (!type || type === "0")) {
+      files.set(relativePath, decoder.decode(bytes.subarray(dataStart, dataStart + size)));
+    }
+    offset = dataStart + Math.ceil(size / 512) * 512;
+  }
+  return files;
+}
+
 async function moveVaultPath(source, destination, token) {
   const branch = await githubJson("/repos/" + OWNER + "/" + REPO + "/branches/" + encodeURIComponent(BRANCH), token);
   const parentSha = branch.commit?.sha;
@@ -232,11 +274,59 @@ async function moveVaultPath(source, destination, token) {
     }
   }
 
-  const changes = [];
-  for (const target of destinations) {
-    changes.push({ path: target.path, mode: target.mode, type: target.type, sha: target.sha });
-    changes.push({ path: target.source, mode: target.mode, type: target.type, sha: null });
+  const archiveFiles = await readMarkdownArchive(token, parentSha);
+  const movedPath = new Map(destinations.map((item) => [item.source, item.path]));
+  const basenameCounts = new Map();
+  for (const path of archiveFiles.keys()) {
+    const base = path.split("/").pop().replace(/\.md$/i, "").toLocaleLowerCase("de");
+    basenameCounts.set(base, (basenameCounts.get(base) || 0) + 1);
   }
+  const targetMap = new Map();
+  for (const item of destinations) {
+    if (!item.source.toLowerCase().endsWith(".md")) continue;
+    const oldTarget = item.source.replace(/\.md$/i, "");
+    const newTarget = item.path.replace(/\.md$/i, "");
+    targetMap.set(oldTarget.toLocaleLowerCase("de"), newTarget);
+    const oldBase = oldTarget.split("/").pop();
+    if (basenameCounts.get(oldBase.toLocaleLowerCase("de")) === 1) {
+      targetMap.set(oldBase.toLocaleLowerCase("de"), newTarget.split("/").pop());
+    }
+  }
+  if (isFolder) {
+    targetMap.set(source.toLocaleLowerCase("de"), destination);
+  }
+
+  const treeChanges = new Map();
+  for (const target of destinations) {
+    treeChanges.set(target.path, { path: target.path, mode: target.mode, type: target.type, sha: target.sha });
+    treeChanges.set(target.source, { path: target.source, mode: target.mode, type: target.type, sha: null });
+  }
+  let rewrittenNotes = 0;
+  const wikilink = /(!?\[\[)([^\]|#]+)(#[^\]|]*)?(\|[^\]]*)?(\]\])/g;
+  for (const [originalPath, originalContent] of archiveFiles) {
+    const nextPath = movedPath.get(originalPath) || originalPath;
+    let changed = false;
+    const content = originalContent.replace(wikilink, (match, open, rawTarget, anchor, alias, close) => {
+      const leading = rawTarget.match(/^\s*/)?.[0] || "";
+      const trailing = rawTarget.match(/\s*$/)?.[0] || "";
+      const target = rawTarget.trim().replace(/^\.\//, "").replace(/\.md$/i, "");
+      const normalized = target.toLocaleLowerCase("de");
+      let replacementTarget = targetMap.get(normalized) || "";
+      if (!replacementTarget && isFolder && normalized.startsWith(source.toLocaleLowerCase("de") + "/")) {
+        replacementTarget = destination + target.slice(source.length);
+      }
+      if (!replacementTarget || replacementTarget === target) return match;
+      changed = true;
+      return open + leading + replacementTarget + trailing + (anchor || "") + (alias || "") + close;
+    });
+    if (changed) {
+      treeChanges.set(nextPath, { path: nextPath, mode: "100644", type: "blob", content });
+      rewrittenNotes++;
+    }
+  }
+
+  const changes = Array.from(treeChanges.values());
+  if (changes.length > 1800) throw new Error("Zu viele Linkänderungen für einen einzelnen sicheren Verschiebevorgang. Bitte verschiebe kleinere Ordner.");
   const newTree = await githubJson(
     "/repos/" + OWNER + "/" + REPO + "/git/trees",
     token,
@@ -249,7 +339,7 @@ async function moveVaultPath(source, destination, token) {
     token,
     "POST",
     {
-      message: "Neuvia: " + (isFolder ? "Ordner" : "Datei") + " verschoben oder umbenannt",
+      message: "Neuvia: " + (isFolder ? "Ordner" : "Datei") + " verschoben; Wiki-Links aktualisiert",
       tree: newTree.sha,
       parents: [parentSha],
     }
@@ -261,9 +351,8 @@ async function moveVaultPath(source, destination, token) {
     "PATCH",
     { sha: commit.sha, force: false }
   );
-  return { commit: commit.sha, count: moving.length, isFolder };
+  return { commit: commit.sha, count: moving.length, isFolder, rewrittenNotes };
 }
-
 
 export default {
   async fetch(request, env) {
