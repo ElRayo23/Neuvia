@@ -25,12 +25,11 @@
     #neuvia-admin-error{color:#c33;min-height:20px;margin:8px 0}
     #neuvia-edit-banner{position:fixed;left:12px;bottom:12px;z-index:99998;background:#805b19;color:white;padding:8px 12px;border-radius:8px;font:13px sans-serif;display:flex;gap:8px;align-items:center}
     #neuvia-edit-banner button{border:0;border-radius:5px;padding:6px 9px;cursor:pointer}
-    body.neuvia-edit-mode #quartz-body article{outline:1px dashed #d99b35;outline-offset:5px}
   `;
   document.head.appendChild(style);
   const button=document.createElement("button");button.id="neuvia-admin-button";button.type="button";button.textContent="Anmelden";document.body.appendChild(button);
   let editMode=false;
-  const banner=document.createElement("div");banner.id="neuvia-edit-banner";banner.innerHTML='<span>Bearbeitungsmodus</span><button type="button" id="neuvia-edit-page">Seite bearbeiten</button>';banner.hidden=true;document.body.appendChild(banner);
+  const banner=document.createElement("div");banner.id="neuvia-edit-banner";banner.innerHTML='<span>Bearbeitungsmodus aktiv</span><button type="button" id="neuvia-edit-page">Markdown bearbeiten</button>';banner.hidden=true;document.body.appendChild(banner);
   function setMode(on){editMode=on;document.body.classList.toggle("neuvia-edit-mode",on);banner.hidden=!on;button.textContent=on?"Ansicht":"Bearbeiten";}
   function showMessage(message){const overlay=document.createElement("div");overlay.id="neuvia-admin-overlay";overlay.innerHTML='<div id="neuvia-admin-dialog"><h2>Neuvia-Editor</h2><p id="neuvia-admin-error"></p><button type="button" id="neuvia-admin-close">Schließen</button></div>';document.body.appendChild(overlay);overlay.querySelector("#neuvia-admin-error").textContent=message;overlay.querySelector("#neuvia-admin-close").onclick=()=>overlay.remove();}
   function loginDialog(){
@@ -57,7 +56,7 @@
       const basePath = adminScript ? new URL(adminScript.src).pathname.replace(/\/static\/neuvia-admin\.js$/, "").replace(/\/+$/, "") : "";
       if (basePath && (route === basePath || route.startsWith(basePath + "/"))) route = route.slice(basePath.length);
       const slug = route.replace(/^\/+|\/+$/g, "").replace(/\/index$/i, "").toLowerCase();
-      const path=map[slug] || map[decodeURIComponent(slug)] || (slug===""?map[""]:null);
+      const path=map[slug] || (slug===""?map[""]:null);
       if(!path)throw new Error("Für diese Seite wurde keine eindeutige Markdown-Datei gefunden.");
       const data=await request("/api/file?path="+encodeURIComponent(path));
       overlay=document.createElement("div");overlay.id="neuvia-admin-overlay";
