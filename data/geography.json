@@ -3,14 +3,14 @@
   "source": {
     "mapFile": "Lore/Chainland.map",
     "mapBlobSha": "b8be72aa2da237d3558f531d16b52c2244225803",
-    "note": "Only the user-authored state range (map state indices 52–75), active settlements within those states, and the seven custom zones are included. Auto-generated cultures, religions, provinces and routes are excluded."
+    "note": "Only user-authored map states (indices 52–75), active settlements within those states, and the seven custom zones are included. Auto-generated cultures, religions, provinces and routes are excluded. Removed settlements and generated nations are not shown."
   },
   "hierarchy": {
     "continent": "Floptropica",
     "politicalUnitsAtSameLevel": true,
     "notes": [
-      "States and regions are treated as equal-level political/geographic units.",
-      "Floptropica contains the nine user-confirmed Fae-world states.",
+      "States and regions are equal-level units; this schema does not imply a hierarchy between them.",
+      "The nine units listed in Floptropica.md are children of Floptropica.",
       "No parent is assigned where the lore does not establish one."
     ]
   },
@@ -31,7 +31,7 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "tandreol",
@@ -41,7 +41,7 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "ordensreich",
@@ -51,7 +51,7 @@
       "type": "state",
       "parentId": null,
       "lorePath": "Lore/Das Sumanische Ordensreich.md",
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "westsuman",
@@ -60,8 +60,8 @@
       "mapStateIndex": 55,
       "type": "state",
       "parentId": null,
-      "lorePath": "Musik/Westsuman.md",
-      "classification": "confirmed_or_inferred"
+      "lorePath": "Lore/Der vereinigte Westbund Suman.md",
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "ashtina",
@@ -70,8 +70,8 @@
       "mapStateIndex": 56,
       "type": "state",
       "parentId": null,
-      "lorePath": "Musik/Ashtina.md",
-      "classification": "confirmed_or_inferred"
+      "lorePath": "Lore/Herzogtum Ashtina.md",
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "leydan",
@@ -81,7 +81,7 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "miran",
@@ -90,8 +90,8 @@
       "mapStateIndex": 58,
       "type": "state",
       "parentId": null,
-      "lorePath": "Musik/Miran.md",
-      "classification": "confirmed_or_inferred"
+      "lorePath": "Lore/Sultanat Miran.md",
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "eisenherz",
@@ -101,7 +101,7 @@
       "type": "free_state",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "haven",
@@ -110,8 +110,8 @@
       "mapStateIndex": 60,
       "type": "state",
       "parentId": null,
-      "lorePath": "Musik/Haven.md",
-      "classification": "confirmed_or_inferred"
+      "lorePath": null,
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "neukilia",
@@ -121,7 +121,7 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "baskatal",
@@ -131,7 +131,7 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "zinesco",
@@ -141,7 +141,7 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_state_needs_review"
     },
     {
       "id": "tiamatatem",
@@ -151,7 +151,7 @@
       "type": "free_territory",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "tortuga",
@@ -161,7 +161,7 @@
       "type": "free_island",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "cvm",
@@ -171,7 +171,7 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "fruhlingshof",
@@ -181,7 +181,7 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "sommerhof",
@@ -191,7 +191,7 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "herbsthof",
@@ -201,7 +201,7 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "winterhof",
@@ -211,7 +211,7 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "prismeer",
@@ -221,7 +221,7 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": "Lore/Die Freudendomäne Prismeer.md",
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "badussyhof",
@@ -231,7 +231,7 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "islabonita",
@@ -241,7 +241,7 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "ryakmalek",
@@ -251,7 +251,7 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     },
     {
       "id": "atlantis",
@@ -261,7 +261,7 @@
       "type": "underwater_state",
       "parentId": null,
       "lorePath": null,
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "user_classified"
     }
   ],
   "settlements": [
@@ -1417,7 +1417,7 @@
       "type": "free_area",
       "mapZoneIndex": 0,
       "mapType": "Freigebiet",
-      "classification": "map_label_unconfirmed"
+      "reviewStatus": "needs_user_confirmation"
     },
     {
       "id": "derfreienorden",
@@ -1425,7 +1425,7 @@
       "type": "district",
       "mapZoneIndex": 1,
       "mapType": "Distrikt",
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_custom_zone"
     },
     {
       "id": "norddistrikt",
@@ -1433,15 +1433,15 @@
       "type": "district",
       "mapZoneIndex": 2,
       "mapType": "Distrikt",
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_custom_zone"
     },
     {
       "id": "zentraldistrik",
       "name": "Zentraldistrik",
-      "type": "district",
+      "type": "unclassified",
       "mapZoneIndex": 3,
       "mapType": "Distrikt",
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_custom_zone"
     },
     {
       "id": "akademiedistrikt",
@@ -1449,7 +1449,7 @@
       "type": "district",
       "mapZoneIndex": 4,
       "mapType": "Distrikt",
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_custom_zone"
     },
     {
       "id": "suddistrikt",
@@ -1457,7 +1457,7 @@
       "type": "district",
       "mapZoneIndex": 5,
       "mapType": "Distrikt",
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_custom_zone"
     },
     {
       "id": "ragnarok",
@@ -1465,7 +1465,7 @@
       "type": "danger_zone",
       "mapZoneIndex": 6,
       "mapType": "Gefahr",
-      "classification": "confirmed_or_inferred"
+      "reviewStatus": "map_custom_zone"
     }
   ],
   "additionalFeatures": [
@@ -1475,7 +1475,7 @@
       "type": "coast",
       "parentId": "westsuman",
       "lorePath": null,
-      "classification": "user_confirmed"
+      "reviewStatus": "user_confirmed"
     },
     {
       "id": "phandelver",
@@ -1483,7 +1483,7 @@
       "type": "small_region_or_mountain_range",
       "parentId": "westsuman",
       "lorePath": null,
-      "classification": "user_confirmed_ambiguous"
+      "reviewStatus": "type_ambiguous"
     },
     {
       "id": "purpur-distrikt",
@@ -1491,7 +1491,7 @@
       "type": "small_city_district",
       "parentId": null,
       "lorePath": "Lore/purpur distrikt.md",
-      "classification": "user_confirmed_parent_unknown"
+      "reviewStatus": "parent_unknown"
     },
     {
       "id": "legweak-anwesen",
@@ -1499,7 +1499,7 @@
       "type": "estate",
       "parentId": null,
       "lorePath": "Lore/Legweak Anwesen.md",
-      "classification": "user_confirmed"
+      "reviewStatus": "user_confirmed"
     },
     {
       "id": "kampus-gorod",
@@ -1507,7 +1507,7 @@
       "type": "city",
       "parentId": null,
       "lorePath": "Lore/Kampus-Gorod.md",
-      "classification": "user_confirmed"
+      "reviewStatus": "user_confirmed"
     }
   ]
 }
