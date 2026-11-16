@@ -192,13 +192,21 @@ export default {
       if (!safeFolderPath(path) || !visiblePath(path)) return send({ error: "Dieser Ordner darf nicht angezeigt werden." }, 400);
       try {
         if (url.searchParams.get("all") === "1") {
-          const treeResponse = await fetch(API + "/repos/" + OWNER + "/" + REPO + "/git/trees/" + encodeURIComponent(BRANCH) + "?recursive=1", {
-            headers: {
-              "Authorization": "Bearer " + env.GITHUB_TOKEN,
-              "Accept": "application/vnd.github+json",
-              "X-GitHub-Api-Version": "2022-11-28",
-              "User-Agent": "Neuvia-Admin-Editor",
-            },
+          const apiHeaders = {
+            "Authorization": "Bearer " + env.GITHUB_TOKEN,
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "Neuvia-Admin-Editor",
+          };
+          const branchResponse = await fetch(API + "/repos/" + OWNER + "/" + REPO + "/branches/" + encodeURIComponent(BRANCH), {
+            headers: apiHeaders,
+          });
+          const branchData = await branchResponse.json().catch(() => ({}));
+          if (!branchResponse.ok) throw new Error("GitHub-API Fehler " + branchResponse.status + ": " + (branchData.message || branchResponse.statusText));
+          const treeSha = branchData.commit?.commit?.tree?.sha;
+          if (!treeSha) throw new Error("GitHub hat keine Tree-SHA für den Test-Branch geliefert.");
+          const treeResponse = await fetch(API + "/repos/" + OWNER + "/" + REPO + "/git/trees/" + treeSha + "?recursive=1", {
+            headers: apiHeaders,
           });
           const treeData = await treeResponse.json().catch(() => ({}));
           if (!treeResponse.ok) throw new Error("GitHub-API Fehler " + treeResponse.status + ": " + (treeData.message || treeResponse.statusText));
