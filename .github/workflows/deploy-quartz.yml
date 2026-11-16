@@ -95,18 +95,66 @@ jobs:
           public.mkdir(parents=True, exist_ok=True)
           mapping = {}
           collisions = set()
-
+          link_entries = []
+          
           def slugify(value):
               value = unicodedata.normalize("NFC", value)
               parts = value.split("/")
               parts = [p.replace("&", "-and-").replace("%", "-percent").replace("?", "").replace("#", "").translate(str.maketrans("", "", '<>:"|*')).lower() for p in parts]
               return "/".join("-".join(p.split()) for p in parts).rstrip("/")
-
+          
+          def clean_yaml_scalar(value):
+              value = value.strip()
+              value = re.sub(r"\s+#.*$", "", value).strip()
+              if len(value) >= 2 and value[0] == value[-1] == '"':
+                  try:
+                      return json.loads(value)
+                  except Exception:
+                      return value[1:-1]
+              if len(value) >= 2 and value[0] == value[-1] == "'":
+                  return value[1:-1].replace("''", "'")
+              return value
+          
+          def frontmatter_data(file):
+              raw = file.read_text(encoding="utf-8", errors="replace")
+              title = None
+              aliases = []
+              lines = raw.splitlines()
+              if not lines or lines[0].strip() != "---":
+                  return title, aliases
+              end = next((i for i in range(1, len(lines)) if lines[i].strip() in {"---", "..."}), len(lines))
+              fm = lines[1:end]
+              for i, line in enumerate(fm):
+                  if line.startswith("title:"):
+                      title = clean_yaml_scalar(line.split(":", 1)[1])
+                  if line.startswith("aliases:"):
+                      value = line.split(":", 1)[1].strip()
+                      if value.startswith("[") and value.endswith("]"):
+                          for item in re.findall(r"""'(?:[^']|'')*'|"(?:\\.|[^"\\])*"|[^,]+""", value[1:-1]):
+                              item = clean_yaml_scalar(item)
+                              if item:
+                                  aliases.append(item)
+                      elif value:
+                          item = clean_yaml_scalar(value)
+                          if item:
+                              aliases.append(item)
+                      else:
+                          for child in fm[i + 1:]:
+                              if child.strip() and not child[:1].isspace():
+                                  break
+                              match = re.match(r"^\s+-\s+(.+?)\s*$", child)
+                              if match:
+                                  item = clean_yaml_scalar(match.group(1))
+                                  if item:
+                                      aliases.append(item)
+              return title, aliases
+          
           for file in content.rglob("*.md"):
               rel = file.relative_to(content)
               if any(part.startswith(".") or part in {"private", "templates"} for part in rel.parts):
                   continue
-              stem = rel.as_posix()[:-3]
+              rel_path = rel.as_posix()
+              stem = rel_path[:-3]
               slug = slugify(stem)
               parts = slug.split("/")
               if len(parts) >= 2 and parts[-1] == parts[-2]:
@@ -118,15 +166,46 @@ jobs:
               if slug.endswith("/index"):
                   keys.add(slug[:-6])
               for key in keys:
-                  if key in mapping and mapping[key] != rel.as_posix():
+                  if key in mapping and mapping[key] != rel_path:
                       collisions.add(key)
                   else:
-                      mapping[key] = rel.as_posix()
-
+                      mapping[key] = rel_path
+          
+              title, aliases = frontmatter_data(file)
+              if not title:
+                  for line in file.read_text(encoding="utf-8", errors="replace").splitlines():
+                      if line.startswith("# "):
+                          title = line[2:].strip()
+                          break
+              if not title:
+                  title = file.parent.name if file.stem.lower() == "index" and file.parent != content else (file.stem if file.stem.lower() != "index" else "Neuvia")
+              candidate = file.parent.name if file.stem.lower() == "index" and file.parent != content else (file.stem if file.stem.lower() != "index" else "index")
+              link_entries.append({
+                  "title": title,
+                  "candidate": candidate,
+                  "path": rel_path,
+                  "aliases": aliases
+              })
+          
           for key in collisions:
               mapping.pop(key, None)
+          
+          from collections import Counter
+          candidate_counts = Counter(item["candidate"].casefold() for item in link_entries)
+          for item in link_entries:
+              if candidate_counts[item["candidate"].casefold()] == 1:
+                  item["target"] = item["candidate"]
+              else:
+                  item["target"] = item["path"][:-3]
+                  if item["target"].lower().endswith("/index"):
+                      item["target"] = item["target"][:-6]
+              del item["candidate"]
+          
+          link_entries.sort(key=lambda item: (item["title"].casefold(), item["path"].casefold()))
           (public / "neuvia-content-map.json").write_text(json.dumps(mapping, ensure_ascii=False), encoding="utf-8")
+          (public / "neuvia-link-index.json").write_text(json.dumps(link_entries, ensure_ascii=False), encoding="utf-8")
           print(f"Mapped {len(mapping)} unique Markdown page routes; omitted {len(collisions)} collisions.")
+          print(f"Generated {len(link_entries)} Markdown link suggestions.")
           PY
 
       - name: Inject Neuvia admin interface into every page
