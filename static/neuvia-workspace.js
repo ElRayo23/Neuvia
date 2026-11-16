@@ -473,7 +473,10 @@
       const title = fallbackTitle(item.path);
       if (!q || normalize(title).includes(q) || normalize(item.path).includes(q)) {
         seen.add(item.path);
-        entries.push({ title, target: item.path.replace(/\.md$/i, ""), path: item.path, score: normalize(title).startsWith(q) ? 0 : 1 });
+        let linkTarget = item.path.replace(/\.md$/i, "");
+        if (/\/index$/i.test(linkTarget)) linkTarget = linkTarget.slice(0, -6);
+        else if (linkTarget.toLowerCase() === "index") linkTarget = "";
+        entries.push({ title, target: linkTarget, path: item.path, score: normalize(title).startsWith(q) ? 0 : 1 });
       }
     }
     return entries.sort((a,b)=>a.score-b.score||a.title.localeCompare(b.title,"de")).slice(0,8);
@@ -854,7 +857,7 @@
     });
 
     editorWrap.addEventListener("dragover", (event) => {
-      if (Array.from(event.dataTransfer?.items || []).some((item) => item.kind === "file")) {
+      if (Array.from(event.dataTransfer?.items || []).some((item) => item.kind === "file" && item.type.startsWith("image/"))) {
         event.preventDefault();
         editorWrap.classList.add("nw-drag");
       }
@@ -863,9 +866,11 @@
       if (!editorWrap.contains(event.relatedTarget)) editorWrap.classList.remove("nw-drag");
     });
     editorWrap.addEventListener("drop", (event) => {
-      event.preventDefault();
       editorWrap.classList.remove("nw-drag");
-      uploadImages(event.dataTransfer?.files || []);
+      const files = Array.from(event.dataTransfer?.files || []);
+      if (!files.some((file) => file.type.startsWith("image/"))) return;
+      event.preventDefault();
+      uploadImages(files);
     });
 
     window.addEventListener("beforeunload", beforeUnload);
