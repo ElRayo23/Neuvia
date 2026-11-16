@@ -628,7 +628,8 @@
       if (kind === "folder") {
         const folderName = name.replace(/^\/+|\/+$/g, "");
         path = [activeFolder, folderName, "index.md"].filter(Boolean).join("/");
-        content = "---\ntitle: " + folderName.split("/").pop().replace(/["\r\n]/g, "") + "\n---\n\n# " + folderName.split("/").pop().replace(/[\r\n]/g, "") + "\n";
+        const folderTitle = folderName.split("/").pop().replace(/[\r\n]/g, " ").trim();
+        content = "---\ntitle: " + JSON.stringify(folderTitle) + "\n---\n\n# " + folderTitle + "\n";
       } else {
         const filename = name.toLowerCase().endsWith(".md") ? name : name + ".md";
         path = [folder, filename].filter(Boolean).join("/");
