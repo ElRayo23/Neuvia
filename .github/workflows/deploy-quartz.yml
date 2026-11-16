@@ -129,6 +129,11 @@ jobs:
           name: github-pages
           path: .quartz-runtime/public
 
+      - name: Extract website from GitHub Pages artifact
+        run: |
+          tar -xf .quartz-runtime/public/artifact.tar -C .quartz-runtime/public
+          rm .quartz-runtime/public/artifact.tar
+
       - name: Deploy editor preview to Cloudflare Pages
         run: npx wrangler pages deploy .quartz-runtime/public --project-name=neuvia-editor-preview --branch=neuvia-editor-test
         env:
