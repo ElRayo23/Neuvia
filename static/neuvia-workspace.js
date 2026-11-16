@@ -685,7 +685,9 @@
       ? "Der gesamte Ordner einschließlich aller Unterordner und Dateien wird gemeinsam verschoben."
       : "Die Dateiendung bleibt erhalten. Das Verschieben wird als ein einzelner GitHub-Commit ausgeführt.");
     help.style.marginTop = "7px";
-    dialog.append(help);
+    const linkWarning = element("div", "nw-muted", "Hinweis: Wiki-Links wie [[Notiz]] werden beim Umbenennen/Verschieben derzeit noch nicht automatisch angepasst. Verwende vorerst Testnotizen oder prüfe die Verlinkungen anschließend.");
+    linkWarning.style.marginTop = "10px";
+    dialog.append(help, linkWarning);
     const error = element("div", "nw-error");
     const actions = element("div", "nw-dialog-actions");
     const cancel = element("button", "nw-button", "Abbrechen");
