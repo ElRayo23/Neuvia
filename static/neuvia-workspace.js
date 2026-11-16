@@ -187,9 +187,15 @@
     }
   }
 
+  function fallbackTitle(path) {
+    const fileTitle = basename(path).replace(/\.md$/i, "");
+    if (fileTitle.toLowerCase() === "index") return path.split("/").slice(-2, -1)[0] || "Neuvia";
+    return fileTitle;
+  }
+
   function getLinkIndexTitle(path) {
     const item = linkItems.find((entry) => entry.path === path);
-    return item && item.title ? item.title : basename(path).replace(/\.md$/i, "");
+    return item && item.title ? item.title : fallbackTitle(path);
   }
 
   function makeFolderTree() {
@@ -401,7 +407,7 @@
     const seen = new Set();
     for (const item of linkItems) {
       if (!item.path) continue;
-      const title = item.title || basename(item.path).replace(/\.md$/i, "");
+      const title = item.title || fallbackTitle(item.path);
       const target = item.target || item.path.replace(/\.md$/i, "");
       const aliases = item.aliases || [];
       const values = [title, target, item.path, ...aliases];
@@ -416,7 +422,7 @@
     }
     for (const item of treeItems) {
       if (item.type !== "file" || extension(item.path) !== "md" || seen.has(item.path)) continue;
-      const title = basename(item.path).replace(/\.md$/i, "");
+      const title = fallbackTitle(item.path);
       if (!q || normalize(title).includes(q) || normalize(item.path).includes(q)) {
         seen.add(item.path);
         entries.push({ title, target: item.path.replace(/\.md$/i, ""), path: item.path, score: normalize(title).startsWith(q) ? 0 : 1 });
