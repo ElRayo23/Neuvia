@@ -9,3 +9,4 @@ title: "Barthens Haus"
 [[Elmar Barthen]] 
 
 [[Elmar Jr]]
+ [[Elmar Barthen|El]]
