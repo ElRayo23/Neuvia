@@ -45,7 +45,7 @@ function bearer(request) {
   return header.startsWith("Bearer ") ? header.slice(7) : "";
 }
 function safePath(path) {
-  if (typeof path !== "string" || path.length > 500 || !path.endsWith(".md") || path.startsWith("/") || path.includes("\\")) return false;
+  if (typeof path !== "string" || path.length > 500 || !path.toLowerCase().endsWith(".md") || path.startsWith("/") || path.includes("\\")) return false;
   const parts = path.split("/");
   return parts.every((part) => part && part !== "." && part !== ".." && !part.startsWith("."))
     && !parts.some((part) => ["private", "templates"].includes(part.toLowerCase()));
@@ -257,7 +257,7 @@ export default {
       if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
       if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
       const path = url.searchParams.get("path") || "";
-      if (!safePath(path)) return send({ error: "Dieser Dateipfad darf nicht bearbeitet werden." }, 400);
+      if (!safePath(path) || !visiblePath(path)) return send({ error: "Dieser Dateipfad darf nicht bearbeitet werden." }, 400);
       try {
         const file = await readFile(path, env.GITHUB_TOKEN);
         return send({ path, content: file.content, sha: file.sha });
