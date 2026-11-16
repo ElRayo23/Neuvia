@@ -88,6 +88,9 @@
     "#neuvia-workspace .nw-muted{opacity:.58;font-size:11px;}",
     "#neuvia-workspace .nw-main{display:flex;flex-direction:column;min-width:0;min-height:0;}",
     "#neuvia-workspace .nw-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px;padding:9px 16px;border-bottom:1px solid var(--lightgray,#ddd);}",
+    "#neuvia-workspace .nw-current-group{display:flex;align-items:center;gap:9px;min-width:0;overflow:hidden;}",
+    "#neuvia-workspace .nw-back{flex-shrink:0;border:1px solid var(--lightgray,#ddd);border-radius:7px;padding:6px 9px;background:var(--light,#fff);color:inherit;}",
+    "#neuvia-workspace .nw-back:disabled{opacity:.35;cursor:default;}",
     "#neuvia-workspace .nw-current{min-width:0;overflow:hidden;}",
     "#neuvia-workspace .nw-current-title{font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}",
     "#neuvia-workspace .nw-current-path{font-size:11px;opacity:.58;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}",
@@ -122,6 +125,7 @@
   let linkItems = [];
   let currentPath = "";
   let currentSha = "";
+  const navigationHistory = [];
   let savedContent = "";
   let saveTimer = null;
   let savingPromise = null;
@@ -348,7 +352,9 @@
     const title = overlay.querySelector(".nw-current-title");
     const path = overlay.querySelector(".nw-current-path");
     const moveButton = overlay.querySelector(".nw-move-current");
+    const backButton = overlay.querySelector(".nw-back");
     if (moveButton) moveButton.disabled = !currentPath;
+    if (backButton) backButton.disabled = navigationHistory.length === 0;
     if (!currentPath) {
       title.textContent = "Keine Notiz geöffnet";
       path.textContent = "Wähle links eine Markdown-Datei aus";
@@ -358,7 +364,7 @@
     path.textContent = currentPath;
   }
 
-  async function openFile(item) {
+  async function openFile(item, options = {}) {
     if (item.type !== "file") return;
     const ext = extension(item.path);
     if (ext !== "md") {
@@ -371,6 +377,8 @@
       await saveCurrent();
       status("Öffne " + item.name + " …");
       const data = await request("/api/file?path=" + encodeURIComponent(item.path));
+      const previousPath = currentPath;
+      if (!options.fromHistory && previousPath) navigationHistory.push(previousPath);
       currentPath = item.path;
       activeFolder = item.path.split("/").slice(0, -1).join("/");
       currentSha = data.sha || "";
@@ -403,6 +411,18 @@
     } catch (error) {
       status(error.message, "error");
     }
+  }
+
+  async function goBack() {
+    if (!navigationHistory.length) return;
+    const previousPath = navigationHistory.pop();
+    const item = treeItems.find((entry) => entry.type === "file" && entry.path === previousPath);
+    if (!item) {
+      updateCurrentHeader();
+      status("Die vorherige Notiz existiert nicht mehr: " + previousPath, "error");
+      return;
+    }
+    await openFile(item, { fromHistory: true });
   }
 
   function resolveWikiTarget(rawTarget) {
@@ -859,10 +879,17 @@
 
     const main = element("main", "nw-main");
     const topbar = element("div", "nw-topbar");
+    const currentGroup = element("div", "nw-current-group");
+    const backButton = element("button", "nw-back", "← Zurück");
+    backButton.type = "button";
+    backButton.disabled = true;
+    backButton.title = "Zur vorherigen Notiz (Alt + ←)";
+    backButton.addEventListener("click", goBack);
     const current = element("div", "nw-current");
     const currentTitle = element("div", "nw-current-title", "Keine Notiz geöffnet");
     const currentPathLabel = element("div", "nw-current-path", "Wähle links eine Markdown-Datei aus");
     current.append(currentTitle, currentPathLabel);
+    currentGroup.append(backButton, current);
     const topActions = element("div", "nw-top-actions");
     const imagePicker = element("input");
     imagePicker.type = "file";
@@ -897,7 +924,7 @@
     website.type = "button";
     website.addEventListener("click", () => { location.href = SITE_BASE; });
     topActions.append(imageButton, moveButton, sync, publishButton, website);
-    topbar.append(current, topActions);
+    topbar.append(currentGroup, topActions);
 
     const editorWrap = element("div", "nw-editor-wrap");
     const dropHint = element("div", "nw-drop-hint", "Bild hier ablegen – Einfügen an der Cursorposition");
@@ -933,6 +960,11 @@
       if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) renderSuggestions();
     });
     editor.addEventListener("keydown", (event) => {
+      if (event.altKey && event.key === "ArrowLeft") {
+        event.preventDefault();
+        goBack();
+        return;
+      }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
         overlay.querySelector(".nw-sync").click();
