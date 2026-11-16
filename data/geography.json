@@ -31,7 +31,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "tandreol",
@@ -41,7 +42,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "ordensreich",
@@ -51,7 +53,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": "Lore/Das Sumanische Ordensreich.md",
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "linked"
     },
     {
       "id": "westsuman",
@@ -61,7 +64,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": "Lore/Der vereinigte Westbund Suman.md",
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "linked"
     },
     {
       "id": "ashtina",
@@ -71,7 +75,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": "Lore/Herzogtum Ashtina.md",
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "linked"
     },
     {
       "id": "leydan",
@@ -81,7 +86,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "miran",
@@ -91,7 +97,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": "Lore/Sultanat Miran.md",
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "linked"
     },
     {
       "id": "eisenherz",
@@ -101,7 +108,8 @@
       "type": "free_state",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "haven",
@@ -110,8 +118,9 @@
       "mapStateIndex": 60,
       "type": "state",
       "parentId": null,
-      "lorePath": null,
-      "reviewStatus": "map_state_needs_review"
+      "lorePath": "Musik/Haven.md",
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "linked"
     },
     {
       "id": "neukilia",
@@ -121,7 +130,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "baskatal",
@@ -131,7 +141,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "zinesco",
@@ -141,7 +152,8 @@
       "type": "state",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "map_state_needs_review"
+      "reviewStatus": "map_state_needs_review",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "tiamatatem",
@@ -151,7 +163,8 @@
       "type": "free_territory",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "tortuga",
@@ -161,7 +174,8 @@
       "type": "free_island",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "cvm",
@@ -171,7 +185,8 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "fruhlingshof",
@@ -181,7 +196,8 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "sommerhof",
@@ -191,7 +207,8 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "herbsthof",
@@ -201,7 +218,8 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "winterhof",
@@ -211,7 +229,8 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "prismeer",
@@ -221,7 +240,8 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": "Lore/Die Freudendomäne Prismeer.md",
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "linked"
     },
     {
       "id": "badussyhof",
@@ -231,7 +251,8 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "islabonita",
@@ -241,7 +262,8 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "ryakmalek",
@@ -251,7 +273,8 @@
       "type": "state",
       "parentId": "floptropica",
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "atlantis",
@@ -261,7 +284,8 @@
       "type": "underwater_state",
       "parentId": null,
       "lorePath": null,
-      "reviewStatus": "user_classified"
+      "reviewStatus": "user_classified",
+      "loreLinkStatus": "no_existing_lore_page"
     }
   ],
   "settlements": [
@@ -274,7 +298,8 @@
       "mapGroup": "capital",
       "x": 890.86,
       "y": 448.09,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-394",
@@ -285,7 +310,8 @@
       "mapGroup": "town",
       "x": 965.51171875,
       "y": 263.56341552734375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-395",
@@ -296,7 +322,8 @@
       "mapGroup": "capital",
       "x": 967.26171875,
       "y": 335.06341552734375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-396",
@@ -307,7 +334,8 @@
       "mapGroup": "village",
       "x": 1082.76171875,
       "y": 274.31341552734375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-397",
@@ -318,7 +346,8 @@
       "mapGroup": "capital",
       "x": 1165.2,
       "y": 413.55,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-398",
@@ -329,7 +358,8 @@
       "mapGroup": "capital",
       "x": 1199.8253173828125,
       "y": 544.0167846679688,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-399",
@@ -340,7 +370,8 @@
       "mapGroup": "capital",
       "x": 1250.9423828125,
       "y": 587.0929565429688,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-400",
@@ -351,7 +382,8 @@
       "mapGroup": "capital",
       "x": 1147.13,
       "y": 672.97,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-401",
@@ -362,7 +394,8 @@
       "mapGroup": "town",
       "x": 951.132080078125,
       "y": 669.7992553710938,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-402",
@@ -373,7 +406,8 @@
       "mapGroup": "capital",
       "x": 993.88,
       "y": 561.61,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-403",
@@ -384,7 +418,8 @@
       "mapGroup": "capital",
       "x": 866.95,
       "y": 573.29,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-404",
@@ -395,7 +430,8 @@
       "mapGroup": "capital",
       "x": 842.76,
       "y": 646.4,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-405",
@@ -406,7 +442,8 @@
       "mapGroup": "capital",
       "x": 852.08,
       "y": 516.35,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-406",
@@ -417,7 +454,8 @@
       "mapGroup": "village",
       "x": 1126.48974609375,
       "y": 510.39501953125,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-407",
@@ -428,7 +466,8 @@
       "mapGroup": "capital",
       "x": 1057.78,
       "y": 530.98,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-408",
@@ -439,7 +478,8 @@
       "mapGroup": "capital",
       "x": 954.2571411132812,
       "y": 446.6792907714844,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-409",
@@ -450,7 +490,8 @@
       "mapGroup": "capital",
       "x": 886.66,
       "y": 475.73,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-410",
@@ -461,7 +502,8 @@
       "mapGroup": "capital",
       "x": 915.94,
       "y": 489.57,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-411",
@@ -472,7 +514,8 @@
       "mapGroup": "capital",
       "x": 923.6,
       "y": 447.26,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-412",
@@ -483,7 +526,8 @@
       "mapGroup": "capital",
       "x": 902.99,
       "y": 463.13,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-413",
@@ -494,7 +538,8 @@
       "mapGroup": "capital",
       "x": 949.63,
       "y": 399.69,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-414",
@@ -505,7 +550,8 @@
       "mapGroup": "capital",
       "x": 1027.92,
       "y": 437.67,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-415",
@@ -516,7 +562,8 @@
       "mapGroup": "capital",
       "x": 991.91,
       "y": 479.44,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-416",
@@ -527,7 +574,8 @@
       "mapGroup": "capital",
       "x": 1031.335205078125,
       "y": 373.6075744628906,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-466",
@@ -538,7 +586,8 @@
       "mapGroup": "town",
       "x": 869.8372802734375,
       "y": 440.89459228515625,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-467",
@@ -549,7 +598,8 @@
       "mapGroup": "village",
       "x": 894.8375244140625,
       "y": 463.184814453125,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-468",
@@ -560,7 +610,8 @@
       "mapGroup": "village",
       "x": 912.1875,
       "y": 463.2848205566406,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-469",
@@ -571,7 +622,8 @@
       "mapGroup": "village",
       "x": 904.0374755859375,
       "y": 456.5848083496094,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-472",
@@ -582,7 +634,8 @@
       "mapGroup": "capital",
       "x": 1149.8179931640625,
       "y": 242.2701416015625,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-473",
@@ -593,7 +646,8 @@
       "mapGroup": "village",
       "x": 1139.951171875,
       "y": 182.9513397216797,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-474",
@@ -604,7 +658,8 @@
       "mapGroup": "village",
       "x": 1087.94384765625,
       "y": 193.1826171875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-475",
@@ -615,7 +670,8 @@
       "mapGroup": "town",
       "x": 1070.1146240234375,
       "y": 241.85768127441406,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-476",
@@ -626,7 +682,8 @@
       "mapGroup": "city",
       "x": 1035.634521484375,
       "y": 316.84979248046875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-477",
@@ -637,7 +694,8 @@
       "mapGroup": "village",
       "x": 1061.907470703125,
       "y": 340.7142333984375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-478",
@@ -648,7 +706,8 @@
       "mapGroup": "city",
       "x": 1102.39306640625,
       "y": 389.836181640625,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-479",
@@ -659,7 +718,8 @@
       "mapGroup": "town",
       "x": 1122.8848876953125,
       "y": 315.34521484375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-480",
@@ -670,7 +730,8 @@
       "mapGroup": "city",
       "x": 1167.71044921875,
       "y": 337.7217712402344,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-482",
@@ -681,7 +742,8 @@
       "mapGroup": "village",
       "x": 1201.04,
       "y": 338.57,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-483",
@@ -692,7 +754,8 @@
       "mapGroup": "city",
       "x": 1212.8743896484375,
       "y": 364.1296081542969,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-484",
@@ -703,7 +766,8 @@
       "mapGroup": "town",
       "x": 1221.416748046875,
       "y": 392.52960205078125,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-485",
@@ -714,7 +778,8 @@
       "mapGroup": "city",
       "x": 1125.97265625,
       "y": 397.1198425292969,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-486",
@@ -725,7 +790,8 @@
       "mapGroup": "village",
       "x": 1134.524169921875,
       "y": 363.8920593261719,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-487",
@@ -736,7 +802,8 @@
       "mapGroup": "town",
       "x": 1294.63232421875,
       "y": 417.8431396484375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-488",
@@ -747,7 +814,8 @@
       "mapGroup": "town",
       "x": 1260.8402099609375,
       "y": 436.7612609863281,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-489",
@@ -758,7 +826,8 @@
       "mapGroup": "city",
       "x": 1228.0858154296875,
       "y": 458.5298767089844,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-490",
@@ -769,7 +838,8 @@
       "mapGroup": "city",
       "x": 1207.671142578125,
       "y": 474.272705078125,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-491",
@@ -780,7 +850,8 @@
       "mapGroup": "village",
       "x": 1197.233154296875,
       "y": 424.6434631347656,
-      "lorePath": "Kampagnen/Phandelver/Phandalin.md"
+      "lorePath": "Kampagnen/Phandelver/Phandalin.md",
+      "loreLinkStatus": "linked"
     },
     {
       "id": "burg-492",
@@ -791,7 +862,8 @@
       "mapGroup": "town",
       "x": 1174.117919921875,
       "y": 471.68218994140625,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-493",
@@ -802,7 +874,8 @@
       "mapGroup": "town",
       "x": 1148.32,
       "y": 457.43,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-494",
@@ -813,7 +886,8 @@
       "mapGroup": "city",
       "x": 1176.0048828125,
       "y": 437.8630065917969,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-495",
@@ -824,7 +898,8 @@
       "mapGroup": "town",
       "x": 1134.302490234375,
       "y": 411.2964172363281,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-496",
@@ -835,7 +910,8 @@
       "mapGroup": "city",
       "x": 1107.0546875,
       "y": 444.9438781738281,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-497",
@@ -846,7 +922,8 @@
       "mapGroup": "city",
       "x": 1108.0443115234375,
       "y": 458.0729675292969,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-498",
@@ -857,7 +934,8 @@
       "mapGroup": "city",
       "x": 1124.47216796875,
       "y": 455.63189697265625,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-499",
@@ -868,7 +946,8 @@
       "mapGroup": "city",
       "x": 1138.2611083984375,
       "y": 449.2982482910156,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-500",
@@ -879,7 +958,8 @@
       "mapGroup": "village",
       "x": 1113.5029296875,
       "y": 432.3940124511719,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-501",
@@ -890,7 +970,8 @@
       "mapGroup": "city",
       "x": 1192.8748779296875,
       "y": 518.7099609375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-502",
@@ -901,7 +982,8 @@
       "mapGroup": "city",
       "x": 1155.7398681640625,
       "y": 519.8467407226562,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-503",
@@ -912,7 +994,8 @@
       "mapGroup": "city",
       "x": 1141.138427734375,
       "y": 536.7514038085938,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-504",
@@ -923,7 +1006,8 @@
       "mapGroup": "city",
       "x": 1170.461669921875,
       "y": 549.7282104492188,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-505",
@@ -934,7 +1018,8 @@
       "mapGroup": "city",
       "x": 1176.3768310546875,
       "y": 534.6923217773438,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-506",
@@ -945,7 +1030,8 @@
       "mapGroup": "city",
       "x": 1230.2,
       "y": 551.95,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-507",
@@ -956,7 +1042,8 @@
       "mapGroup": "city",
       "x": 1219.8369140625,
       "y": 544.1559448242188,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-508",
@@ -967,7 +1054,8 @@
       "mapGroup": "city",
       "x": 1218.819091796875,
       "y": 512.8309936523438,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-509",
@@ -978,7 +1066,8 @@
       "mapGroup": "village",
       "x": 1197.0675048828125,
       "y": 620.3829345703125,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-510",
@@ -989,7 +1078,8 @@
       "mapGroup": "village",
       "x": 1202.180419921875,
       "y": 586.8363037109375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-511",
@@ -1000,7 +1090,8 @@
       "mapGroup": "town",
       "x": 1209.3035888671875,
       "y": 627.4143676757812,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-512",
@@ -1011,7 +1102,8 @@
       "mapGroup": "town",
       "x": 1208.1798095703125,
       "y": 640.3137817382812,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-513",
@@ -1022,7 +1114,8 @@
       "mapGroup": "village",
       "x": 1203.33740234375,
       "y": 654.569091796875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-514",
@@ -1033,7 +1126,8 @@
       "mapGroup": "capital",
       "x": 1131.3402099609375,
       "y": 674.0303955078125,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-515",
@@ -1044,7 +1138,8 @@
       "mapGroup": "town",
       "x": 1156.9239501953125,
       "y": 651.5658569335938,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-516",
@@ -1055,7 +1150,8 @@
       "mapGroup": "village",
       "x": 1137.0849609375,
       "y": 634.2928466796875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-518",
@@ -1066,7 +1162,8 @@
       "mapGroup": "city",
       "x": 972.59619140625,
       "y": 610.0908813476562,
-      "lorePath": "Lore/Vas Legas.md"
+      "lorePath": "Lore/Vas Legas.md",
+      "loreLinkStatus": "linked"
     },
     {
       "id": "burg-519",
@@ -1077,7 +1174,8 @@
       "mapGroup": "town",
       "x": 973.1130981445312,
       "y": 614.9728393554688,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-520",
@@ -1088,7 +1186,8 @@
       "mapGroup": "town",
       "x": 965.0122680664062,
       "y": 601.9613037109375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-521",
@@ -1099,7 +1198,8 @@
       "mapGroup": "village",
       "x": 971.8026123046875,
       "y": 592.0370483398438,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-522",
@@ -1110,7 +1210,8 @@
       "mapGroup": "city",
       "x": 961.181884765625,
       "y": 589.512451171875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-524",
@@ -1121,7 +1222,8 @@
       "mapGroup": "village",
       "x": 953.7821655273438,
       "y": 587.684326171875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-525",
@@ -1132,7 +1234,8 @@
       "mapGroup": "town",
       "x": 955.8715209960938,
       "y": 580.0234375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-526",
@@ -1143,7 +1246,8 @@
       "mapGroup": "town",
       "x": 965.5346069335938,
       "y": 581.3292846679688,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-527",
@@ -1154,7 +1258,8 @@
       "mapGroup": "capital",
       "x": 915.523681640625,
       "y": 631.7847290039062,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-528",
@@ -1165,7 +1270,8 @@
       "mapGroup": "town",
       "x": 884.28076171875,
       "y": 622.7710571289062,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-529",
@@ -1176,7 +1282,8 @@
       "mapGroup": "town",
       "x": 910.8796997070312,
       "y": 441.2131042480469,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-530",
@@ -1187,7 +1294,8 @@
       "mapGroup": "town",
       "x": 917.532470703125,
       "y": 516.0950927734375,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-531",
@@ -1198,7 +1306,8 @@
       "mapGroup": "town",
       "x": 936.8262939453125,
       "y": 517.6424560546875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-532",
@@ -1209,7 +1318,8 @@
       "mapGroup": "village",
       "x": 947.3098754882812,
       "y": 476.237548828125,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-533",
@@ -1220,7 +1330,8 @@
       "mapGroup": "town",
       "x": 965.79,
       "y": 455.34,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-534",
@@ -1231,7 +1342,8 @@
       "mapGroup": "town",
       "x": 944.3386840820312,
       "y": 435.0670471191406,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-535",
@@ -1242,7 +1354,8 @@
       "mapGroup": "city",
       "x": 970.3865356445312,
       "y": 427.1853942871094,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-536",
@@ -1253,7 +1366,8 @@
       "mapGroup": "city",
       "x": 943.7423706054688,
       "y": 418.27996826171875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-537",
@@ -1264,7 +1378,8 @@
       "mapGroup": "city",
       "x": 1038.27734375,
       "y": 459.8022155761719,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-538",
@@ -1275,7 +1390,8 @@
       "mapGroup": "village",
       "x": 1036.260009765625,
       "y": 438.02752685546875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-539",
@@ -1286,7 +1402,8 @@
       "mapGroup": "city",
       "x": 1015.500732421875,
       "y": 473.3356628417969,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-540",
@@ -1297,7 +1414,8 @@
       "mapGroup": "city",
       "x": 999.5733032226562,
       "y": 449.8791809082031,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-541",
@@ -1308,7 +1426,8 @@
       "mapGroup": "town",
       "x": 982.6874389648438,
       "y": 438.5070495605469,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-542",
@@ -1319,7 +1438,8 @@
       "mapGroup": "town",
       "x": 1004.1680908203125,
       "y": 439.426025390625,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-543",
@@ -1330,7 +1450,8 @@
       "mapGroup": "town",
       "x": 1008.1885375976562,
       "y": 421.8509216308594,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-544",
@@ -1341,7 +1462,8 @@
       "mapGroup": "town",
       "x": 992.9108276367188,
       "y": 418.40484619140625,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-545",
@@ -1352,7 +1474,8 @@
       "mapGroup": "village",
       "x": 1011.0914306640625,
       "y": 377.69891357421875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-546",
@@ -1363,7 +1486,8 @@
       "mapGroup": "town",
       "x": 1039.491455078125,
       "y": 360.9989013671875,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-547",
@@ -1374,7 +1498,8 @@
       "mapGroup": "city",
       "x": 936.5123901367188,
       "y": 332.7793273925781,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-549",
@@ -1385,7 +1510,8 @@
       "mapGroup": "city",
       "x": 897.5869140625,
       "y": 330.1402893066406,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-550",
@@ -1396,7 +1522,8 @@
       "mapGroup": "city",
       "x": 923.005859375,
       "y": 295.37066650390625,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     },
     {
       "id": "burg-551",
@@ -1407,7 +1534,8 @@
       "mapGroup": "capital",
       "x": 972.5588989257812,
       "y": 248.9596710205078,
-      "lorePath": null
+      "lorePath": null,
+      "loreLinkStatus": "no_existing_lore_page"
     }
   ],
   "customZones": [
