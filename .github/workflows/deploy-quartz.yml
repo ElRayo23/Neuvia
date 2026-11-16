@@ -81,6 +81,9 @@ jobs:
         working-directory: .quartz-runtime
         run: npx quartz build
 
+      - name: Publish interactive map HTML with its original extension
+        run: cp .quartz-runtime/content/static/karte.html .quartz-runtime/public/static/karte.html
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
