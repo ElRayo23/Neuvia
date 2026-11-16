@@ -51,6 +51,7 @@ jobs:
   build:
     needs: check-preview-content
     if: always() && (github.event_name != 'push' || github.ref != 'refs/heads/neuvia-editor-test' || needs.check-preview-content.outputs.should_build == 'true')
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - name: Check out Neuvia
@@ -291,6 +292,7 @@ jobs:
   deploy-preview:
     if: github.ref == 'refs/heads/neuvia-editor-test'
     needs: build
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - name: Check out Neuvia for Worker deployment
