@@ -362,9 +362,10 @@
     for (const item of mdFiles) {
       const noExt = item.path.replace(/\.md$/i, "");
       const base = basename(noExt);
+      const folderIndexName = base.toLowerCase() === "index" ? noExt.split("/").slice(-2, -1)[0] : "";
       let score = 99;
       if (normalize(noExt) === q) score = 1;
-      else if (normalize(base) === q) score = 4;
+      else if (normalize(base) === q || (folderIndexName && normalize(folderIndexName) === q)) score = 4;
       if (score < 99) candidates.push({ path: item.path, score });
     }
     candidates.sort((a,b)=>a.score-b.score);
