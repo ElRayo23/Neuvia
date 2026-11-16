@@ -87,6 +87,70 @@ function encodeBase64(value) {
   return btoa(binary);
 }
 
+
+function safeFolderPath(path) {
+  if (typeof path !== "string" || path.length > 500 || path.startsWith("/") || path.includes("\\")) return false;
+  if (!path) return true;
+  return path.split("/").every((part) => part && part !== "." && part !== ".." && !part.startsWith(".")
+    && !["private", "templates"].includes(part.toLowerCase()));
+}
+function visiblePath(path) {
+  const parts = path ? path.split("/") : [];
+  const hiddenRoots = new Set([".github", ".obsidian", ".noteser", ".git", "static", "workers", ".quartz-runtime"]);
+  if (parts.some((part) => part.startsWith(".") || ["private", "templates"].includes(part.toLowerCase()))) return false;
+  return !hiddenRoots.has(parts[0]);
+}
+const IMAGE_EXTENSIONS = new Set(["png", "jpg", "jpeg", "webp", "gif", "avif"]);
+const MIME_BY_EXTENSION = {
+  png: ["image/png"], jpg: ["image/jpeg"], jpeg: ["image/jpeg"],
+  webp: ["image/webp"], gif: ["image/gif"], avif: ["image/avif"],
+};
+function visibleFile(path) {
+  const ext = path.split(".").pop().toLowerCase();
+  return ext === "md" || ext === "pdf" || IMAGE_EXTENSIONS.has(ext);
+}
+function encodeBase64Bytes(bytes) {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(binary);
+}
+async function githubContentsWrite(path, body, token) {
+  const result = await fetch(githubUrl(path), {
+    method: "PUT",
+    headers: {
+      "Authorization": "Bearer " + token,
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "Neuvia-Admin-Editor",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...body, branch: BRANCH }),
+  });
+  const data = await result.json().catch(() => ({}));
+  if (!result.ok) {
+    const detail = data.message || result.statusText || "Unbekannte GitHub-Antwort";
+    throw new Error((result.status === 409 || result.status === 422)
+      ? "Die Datei konnte nicht gespeichert werden, weil sie bereits existiert oder zwischenzeitlich geändert wurde."
+      : "GitHub-API Fehler " + result.status + ": " + detail);
+  }
+  return data;
+}
+function safeUploadFilename(filename) {
+  const original = String(filename || "bild").normalize("NFC").split(/[\\\\/]/).pop();
+  const dot = original.lastIndexOf(".");
+  if (dot <= 0) throw new Error("Die Bilddatei braucht eine gültige Dateiendung.");
+  const extension = original.slice(dot + 1).toLowerCase();
+  if (!IMAGE_EXTENSIONS.has(extension)) throw new Error("Erlaubt sind PNG, JPG, WebP, GIF und AVIF.");
+  const stem = original.slice(0, dot)
+    .replace(/[^\\p{L}\\p{N}._-]+/gu, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/^\\.+/, "")
+    .slice(0, 100);
+  if (!stem) throw new Error("Der Bildname ist ungültig.");
+  return stem + "." + extension;
+}
+
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -119,6 +183,44 @@ export default {
       return send({ authenticated: await valid(bearer(request), env.SESSION_SECRET) });
     }
     if (url.pathname === "/api/logout" && request.method === "POST") return send({ ok: true });
+
+
+    if (url.pathname === "/api/tree" && request.method === "GET") {
+      if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
+      if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
+      const path = url.searchParams.get("path") || "";
+      if (!safeFolderPath(path) || !visiblePath(path)) return send({ error: "Dieser Ordner darf nicht angezeigt werden." }, 400);
+      try {
+        const result = await fetch(githubUrl(path) + "?ref=" + encodeURIComponent(BRANCH), {
+          headers: {
+            "Authorization": "Bearer " + env.GITHUB_TOKEN,
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "Neuvia-Admin-Editor",
+          },
+        });
+        const raw = await result.text();
+        let entries;
+        try { entries = JSON.parse(raw); } catch { entries = null; }
+        if (!result.ok) throw new Error("GitHub-API Fehler " + result.status + ": " + (entries?.message || result.statusText));
+        if (!Array.isArray(entries)) throw new Error("GitHub hat für diesen Pfad keinen Ordner geliefert.");
+        const items = entries
+          .filter((entry) => visiblePath(entry.path) && (entry.type === "dir" || (entry.type === "file" && visibleFile(entry.path))))
+          .map((entry) => ({
+            name: entry.name,
+            path: entry.path,
+            type: entry.type === "dir" ? "folder" : "file",
+            extension: entry.type === "file" ? entry.name.split(".").pop().toLowerCase() : "",
+            size: entry.type === "file" ? entry.size : null,
+          }))
+          .sort((a, b) => a.type === b.type
+            ? a.name.localeCompare(b.name, "de", { sensitivity: "base", numeric: true })
+            : (a.type === "folder" ? -1 : 1));
+        return send({ path, items });
+      } catch (error) {
+        return send({ error: error.message }, 502);
+      }
+    }
 
     if (url.pathname === "/api/file" && request.method === "GET") {
       if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
@@ -176,6 +278,63 @@ export default {
         return send({ error: error.message }, 502);
       }
     }
+
+    if (url.pathname === "/api/create" && request.method === "POST") {
+      if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
+      if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
+      let body = {};
+      try { body = JSON.parse(await request.text()); } catch { return send({ error: "Ungültige Anfrage." }, 400); }
+      const path = body.path;
+      const content = typeof body.content === "string" ? body.content : "";
+      if (!safePath(path) || !visiblePath(path)) return send({ error: "Dieser Dateipfad darf nicht verwendet werden." }, 400);
+      if (enc.encode(content).length > 900000) return send({ error: "Der Inhalt ist zu groß." }, 400);
+      try {
+        const data = await githubContentsWrite(path, {
+          message: "Neuvia-Notiz erstellt",
+          content: encodeBase64(content),
+        }, env.GITHUB_TOKEN);
+        return send({ ok: true, path, commit: data.commit?.sha || "" });
+      } catch (error) {
+        return send({ error: error.message }, 502);
+      }
+    }
+
+    if (url.pathname === "/api/upload" && request.method === "POST") {
+      if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
+      if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
+      try {
+        const form = await request.formData();
+        const file = form.get("file");
+        if (!file || typeof file.arrayBuffer !== "function") return send({ error: "Keine Bilddatei empfangen." }, 400);
+        if (!file.size || file.size > 10 * 1024 * 1024) return send({ error: "Bilder dürfen höchstens 10 MB groß sein." }, 400);
+        const filename = safeUploadFilename(file.name);
+        const extension = filename.split(".").pop().toLowerCase();
+        if (!MIME_BY_EXTENSION[extension].includes(file.type)) return send({ error: "Dateiendung und Bildformat passen nicht zusammen." }, 400);
+        const now = new Date();
+        const stamp = now.getUTCFullYear().toString()
+          + String(now.getUTCMonth() + 1).padStart(2, "0")
+          + String(now.getUTCDate()).padStart(2, "0")
+          + String(now.getUTCHours()).padStart(2, "0")
+          + String(now.getUTCMinutes()).padStart(2, "0")
+          + String(now.getUTCSeconds()).padStart(2, "0");
+        const path = "Files/" + stamp + "-" + crypto.randomUUID().slice(0, 8) + "-" + filename;
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        const data = await githubContentsWrite(path, {
+          message: "Bild hochgeladen: " + filename.slice(0, 70),
+          content: encodeBase64Bytes(bytes),
+        }, env.GITHUB_TOKEN);
+        return send({
+          ok: true,
+          path,
+          embed: "![[" + path + "]]",
+          commit: data.commit?.sha || "",
+          size: file.size,
+        });
+      } catch (error) {
+        return send({ error: error.message || "Bild konnte nicht hochgeladen werden." }, 502);
+      }
+    }
+
     return send({ error: "Not found" }, 404);
   },
 };
