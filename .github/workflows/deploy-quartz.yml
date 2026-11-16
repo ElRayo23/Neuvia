@@ -6,6 +6,15 @@ on:
       - main
       - map-geo-structure
       - neuvia-editor-test
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.pdf'
+      - '**/*.png'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.webp'
+      - '**/*.gif'
+      - '**/*.avif'
   workflow_dispatch:
 
 permissions:
@@ -40,6 +49,9 @@ jobs:
 
       - name: Validate Neuvia admin script
         run: node --check static/neuvia-admin.js
+
+      - name: Validate Neuvia admin API Worker
+        run: node --input-type=module --check < workers/neuvia-admin-api.js
 
       - name: Prepare Quartz site
         run: |
