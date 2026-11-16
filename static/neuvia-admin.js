@@ -3,7 +3,7 @@
   const KEY = "neuviaAdminSession";
   const token = () => sessionStorage.getItem(KEY) || "";
   const request = async (path, options={}) => {
-    const headers = {"Content-Type":"application/json", ...(options.headers||{})};
+    const headers = {...(options.body ? {"Content-Type":"text/plain;charset=UTF-8"} : {}), ...(options.headers||{})};
     if (token()) headers.Authorization = "Bearer " + token();
     const res = await fetch(API + path, {...options, headers});
     const data = await res.json().catch(() => ({}));
