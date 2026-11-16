@@ -913,7 +913,7 @@
 
     const footer = element("div", "nw-footer");
     const statusText = element("span", "nw-status", "Lade Workspace …");
-    const footerHint = element("span", "", "Markdown · [[Wiki-Links]] · Bilder per Drag & Drop");
+    const footerHint = element("span", "", "Markdown · [[Notiz|Anzeigetext]] · Bilder per Drag & Drop");
     footer.append(statusText, footerHint);
     main.append(topbar, editorWrap, footer);
     shell.append(sidebar, main);
