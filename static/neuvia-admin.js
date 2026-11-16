@@ -1,7 +1,8 @@
 (() => {
   const API = "https://neuvia-admin-api.forkleafcustom.workers.dev";
   const KEY = "neuviaAdminSession";
-  const MAP_URL = "/static/neuvia-content-map.json";
+  const adminScript = document.querySelector('script[src*="neuvia-admin.js"]');
+  const MAP_URL = adminScript ? new URL("neuvia-content-map.json", adminScript.src).toString() : "/static/neuvia-content-map.json";
   const token = () => sessionStorage.getItem(KEY) || "";
   const request = async (path, options={}) => {
     const headers = {...(options.body ? {"Content-Type":"text/plain;charset=UTF-8"} : {}), ...(options.headers||{})};
