@@ -185,7 +185,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
 
       - name: Deploy Neuvia admin API Worker
-        run: npx wrangler deploy workers/neuvia-admin-api.js --name=neuvia-admin-api --compatibility-date=2026-11-15 --account-id=d6e55c097c01617680ef4e9c13f70af7
+        run: npx wrangler deploy workers/neuvia-admin-api.js --name=neuvia-admin-api --compatibility-date=2026-11-15
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
