@@ -1438,7 +1438,7 @@
     {
       "id": "zentraldistrik",
       "name": "Zentraldistrik",
-      "type": "unclassified",
+      "type": "district",
       "mapZoneIndex": 3,
       "mapType": "Distrikt",
       "reviewStatus": "map_custom_zone"
