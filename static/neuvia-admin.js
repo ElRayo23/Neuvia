@@ -23,14 +23,9 @@
     #neuvia-admin-dialog button{padding:9px 13px;border:0;border-radius:7px;cursor:pointer;margin:10px 6px 0 0}
     #neuvia-admin-submit{background:var(--secondary,#284b63);color:white}
     #neuvia-admin-error{color:#c33;min-height:20px;margin:8px 0}
-    #neuvia-edit-banner{position:fixed;left:12px;bottom:12px;z-index:99998;background:#805b19;color:white;padding:8px 12px;border-radius:8px;font:13px sans-serif;display:flex;gap:8px;align-items:center}
-    #neuvia-edit-banner button{border:0;border-radius:5px;padding:6px 9px;cursor:pointer}
   `;
   document.head.appendChild(style);
   const button=document.createElement("button");button.id="neuvia-admin-button";button.type="button";button.textContent="Anmelden";document.body.appendChild(button);
-  let editMode=false;
-  const banner=document.createElement("div");banner.id="neuvia-edit-banner";banner.innerHTML='<span>Bearbeitungsmodus aktiv</span><button type="button" id="neuvia-edit-page">Markdown bearbeiten</button>';banner.hidden=true;document.body.appendChild(banner);
-  function setMode(on){editMode=on;document.body.classList.toggle("neuvia-edit-mode",on);banner.hidden=!on;button.textContent=on?"Ansicht":"Bearbeiten";}
   function showMessage(message){const overlay=document.createElement("div");overlay.id="neuvia-admin-overlay";overlay.innerHTML='<div id="neuvia-admin-dialog"><h2>Neuvia-Editor</h2><p id="neuvia-admin-error"></p><button type="button" id="neuvia-admin-close">Schließen</button></div>';document.body.appendChild(overlay);overlay.querySelector("#neuvia-admin-error").textContent=message;overlay.querySelector("#neuvia-admin-close").onclick=()=>overlay.remove();}
   function loginDialog(){
     const overlay=document.createElement("div");overlay.id="neuvia-admin-overlay";
@@ -41,7 +36,7 @@
     overlay.querySelector("form").onsubmit=async e=>{
       e.preventDefault();const submit=overlay.querySelector("#neuvia-admin-submit"),error=overlay.querySelector("#neuvia-admin-error");
       submit.disabled=true;error.textContent="Prüfe Anmeldung …";
-      try{const data=await request("/api/login",{method:"POST",body:JSON.stringify({password:overlay.querySelector("input").value})});sessionStorage.setItem(KEY,data.token);overlay.remove();setMode(true);}
+      try{const data=await request("/api/login",{method:"POST",body:JSON.stringify({password:overlay.querySelector("input").value})});sessionStorage.setItem(KEY,data.token);button.textContent="Bearbeiten";overlay.remove();editCurrentPage();}
       catch(err){error.textContent=err.message;submit.disabled=false;}
     };
     overlay.querySelector("input").focus();
@@ -78,13 +73,11 @@
       overlay.querySelector("textarea").focus();
     }catch(err){if(overlay)overlay.remove();showMessage(err.message);}
   }
-  banner.querySelector("#neuvia-edit-page").onclick=editCurrentPage;
-  button.onclick=()=>{if(!token()){loginDialog();return}if(editMode){setMode(false);return}setMode(true)};
+  button.onclick=()=>{if(!token()){loginDialog();return}editCurrentPage()};
   // Quartz navigates between pages without a full reload. Reattach the controls
   // if its navigation lifecycle replaces nodes inside the document body.
   const observer = new MutationObserver(() => {
     if (!button.isConnected) document.body.appendChild(button);
-    if (!banner.isConnected) document.body.appendChild(banner);
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
   if(token()){request("/api/session").then(d=>{if(d.authenticated){button.textContent="Bearbeiten"}else{sessionStorage.removeItem(KEY)}}).catch(()=>sessionStorage.removeItem(KEY));}
