@@ -345,6 +345,8 @@
   function updateCurrentHeader() {
     const title = overlay.querySelector(".nw-current-title");
     const path = overlay.querySelector(".nw-current-path");
+    const moveButton = overlay.querySelector(".nw-move-current");
+    if (moveButton) moveButton.disabled = !currentPath;
     if (!currentPath) {
       title.textContent = "Keine Notiz geöffnet";
       path.textContent = "Wähle links eine Markdown-Datei aus";
@@ -352,8 +354,6 @@
     }
     title.textContent = getLinkIndexTitle(currentPath);
     path.textContent = currentPath;
-    const moveButton = overlay.querySelector(".nw-move-current");
-    if (moveButton) moveButton.disabled = !currentPath;
   }
 
   async function openFile(item) {
@@ -725,6 +725,7 @@
           currentPath = "";
           currentSha = "";
           savedContent = "";
+          updateCurrentHeader();
         }
         activeFolder = isFolder ? destination : destination.split("/").slice(0, -1).join("/");
         await loadTree();
