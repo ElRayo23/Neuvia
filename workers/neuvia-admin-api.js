@@ -187,8 +187,17 @@ async function moveVaultPath(source, destination, token) {
   const sourceEntry = entries.find((entry) => entry.path === source);
   if (!sourceEntry) throw new Error("Die Quelldatei oder der Quellordner existiert nicht mehr.");
   const isFolder = sourceEntry.type === "tree";
+  if (!isFolder && (sourceEntry.type !== "blob" || !visibleFile(source))) {
+    throw new Error("Dieser Dateityp darf nicht verschoben werden.");
+  }
+  if (!isFolder && source.split(".").pop().toLowerCase() !== destination.split(".").pop().toLowerCase()) {
+    throw new Error("Die Dateiendung darf beim Verschieben nicht geändert werden.");
+  }
   if (isFolder && destination.startsWith(source + "/")) {
     throw new Error("Ein Ordner kann nicht in sich selbst verschoben werden.");
+  }
+  if (isFolder && entries.some((entry) => entry.path === destination || entry.path.startsWith(destination + "/"))) {
+    throw new Error("Am Ziel existiert bereits ein Ordner oder eine Datei: " + destination);
   }
   const moving = isFolder
     ? entries.filter((entry) => entry.type === "blob" && entry.path.startsWith(source + "/"))
@@ -480,11 +489,6 @@ export default {
       if (!source || !destination || source === destination) return send({ error: "Bitte unterschiedliche Quell- und Zielpfade angeben." }, 400);
       if (!safeFolderPath(source) || !safeFolderPath(destination) || !visiblePath(source) || !visiblePath(destination)) {
         return send({ error: "Dieser Datei- oder Ordnerpfad darf nicht verschoben werden." }, 400);
-      }
-      if (!visibleFile(source) && !source.split("/").pop().includes(".")) {
-        // Directory paths are allowed; file paths must use a supported visible extension.
-      } else if (!visibleFile(source)) {
-        return send({ error: "Dieser Dateityp darf nicht verschoben werden." }, 400);
       }
       try {
         const result = await moveVaultPath(source, destination, env.GITHUB_TOKEN);
