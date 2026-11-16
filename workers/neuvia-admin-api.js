@@ -191,6 +191,29 @@ export default {
       const path = url.searchParams.get("path") || "";
       if (!safeFolderPath(path) || !visiblePath(path)) return send({ error: "Dieser Ordner darf nicht angezeigt werden." }, 400);
       try {
+        if (url.searchParams.get("all") === "1") {
+          const treeResponse = await fetch(API + "/repos/" + OWNER + "/" + REPO + "/git/trees/" + encodeURIComponent(BRANCH) + "?recursive=1", {
+            headers: {
+              "Authorization": "Bearer " + env.GITHUB_TOKEN,
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+              "User-Agent": "Neuvia-Admin-Editor",
+            },
+          });
+          const treeData = await treeResponse.json().catch(() => ({}));
+          if (!treeResponse.ok) throw new Error("GitHub-API Fehler " + treeResponse.status + ": " + (treeData.message || treeResponse.statusText));
+          if (treeData.truncated) throw new Error("GitHub hat die Dateiliste gekürzt. Bitte Ordner einzeln laden.");
+          const items = (treeData.tree || [])
+            .filter((entry) => visiblePath(entry.path) && (entry.type === "tree" || (entry.type === "blob" && visibleFile(entry.path))))
+            .map((entry) => ({
+              name: entry.path.split("/").pop(),
+              path: entry.path,
+              type: entry.type === "tree" ? "folder" : "file",
+              extension: entry.type === "blob" ? entry.path.split(".").pop().toLowerCase() : "",
+              size: entry.size || null,
+            }));
+          return send({ path: "", items });
+        }
         const result = await fetch(githubUrl(path) + "?ref=" + encodeURIComponent(BRANCH), {
           headers: {
             "Authorization": "Bearer " + env.GITHUB_TOKEN,
