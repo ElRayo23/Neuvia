@@ -590,7 +590,7 @@ export default {
       }
       try {
         const result = await moveVaultPath(source, destination, env.GITHUB_TOKEN);
-        return send({ ok: true, source, destination, commit: result.commit, movedFiles: result.count, folder: result.isFolder });
+        return send({ ok: true, source, destination, commit: result.commit, movedFiles: result.count, folder: result.isFolder, rewrittenNotes: result.rewrittenNotes || 0 });
       } catch (error) {
         const status = /zwischenzeitlich|Ziel|Quelle|nicht verschoben|in sich selbst|Dateiendung|ausgeblendete|Submodul/i.test(error.message) ? 409 : 502;
         return send({ error: error.message }, status);
