@@ -290,8 +290,12 @@
       const ext = extension(item.path);
       row.append(element("span", "", ext === "md" ? "▤" : (IMAGE_TYPES.has(ext) ? "▧" : "▣")));
       row.append(element("span", "nw-name", ext === "md" ? getLinkIndexTitle(item.path) : item.name));
-      row.title = item.path;
+      row.title = item.path + " · Rechtsklick zum Verschieben/Umbenennen";
       row.addEventListener("click", () => openFile(item));
+      row.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        showMoveDialog(item.path, false);
+      });
       parent.append(row);
     }
     function addFolder(folder, parent) {
@@ -304,10 +308,15 @@
       row.title = folder.path;
       const children = element("div", "nw-tree-children");
       children.hidden = true;
+      row.title = folder.path + " · Rechtsklick zum Verschieben/Umbenennen";
       row.addEventListener("click", () => {
         children.hidden = !children.hidden;
         arrow.textContent = children.hidden ? "▸" : "▾";
         activeFolder = folder.path;
+      });
+      row.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+        showMoveDialog(folder.path, true);
       });
       wrapper.append(row, children);
       parent.append(wrapper);
@@ -343,6 +352,8 @@
     }
     title.textContent = getLinkIndexTitle(currentPath);
     path.textContent = currentPath;
+    const moveButton = overlay.querySelector(".nw-move-current");
+    if (moveButton) moveButton.disabled = !currentPath;
   }
 
   async function openFile(item) {
@@ -398,7 +409,9 @@
     const q = normalize(target.replace(/\.md$/i, "").replace(/\/+$/, ""));
     const mdFiles = treeItems.filter((item) => item.type === "file" && extension(item.path) === "md");
     const candidates = [];
+    const existingMarkdownPaths = new Set(mdFiles.map((item) => item.path));
     for (const item of linkItems) {
+      if (!existingMarkdownPaths.has(item.path)) continue;
       let score = 99;
       if (normalize(item.target) === q) score = 0;
       else if (normalize(String(item.path || "").replace(/\.md$/i, "")) === q) score = 1;
@@ -453,8 +466,9 @@
     const q = normalize(query);
     const entries = [];
     const seen = new Set();
+    const currentMarkdownPaths = new Set(treeItems.filter((entry) => entry.type === "file" && extension(entry.path) === "md").map((entry) => entry.path));
     for (const item of linkItems) {
-      if (!item.path) continue;
+      if (!item.path || !currentMarkdownPaths.has(item.path)) continue;
       const title = item.title || fallbackTitle(item.path);
       const target = item.target || item.path.replace(/\.md$/i, "");
       const aliases = item.aliases || [];
@@ -656,6 +670,79 @@
     nameInput.focus();
   }
 
+  function showMoveDialog(source, isFolder) {
+    const backdrop = element("div", "nw-dialog-backdrop");
+    const dialog = element("form", "nw-dialog");
+    dialog.append(element("h2", "", isFolder ? "Ordner verschieben oder umbenennen" : "Datei verschieben oder umbenennen"));
+    dialog.append(element("div", "nw-muted", "Quellpfad: " + source));
+    dialog.append(element("label", "", "Neuer Pfad (relativ zum Vault)"));
+    const destinationInput = element("input");
+    destinationInput.required = true;
+    destinationInput.value = source;
+    destinationInput.placeholder = isFolder ? "z. B. Kampagnen/Neue Gruppe" : "z. B. Lore/Neuer Name.md";
+    dialog.append(destinationInput);
+    const help = element("div", "nw-muted", isFolder
+      ? "Der gesamte Ordner einschließlich aller Unterordner und Dateien wird gemeinsam verschoben."
+      : "Die Dateiendung bleibt erhalten. Das Verschieben wird als ein einzelner GitHub-Commit ausgeführt.");
+    help.style.marginTop = "7px";
+    dialog.append(help);
+    const error = element("div", "nw-error");
+    const actions = element("div", "nw-dialog-actions");
+    const cancel = element("button", "nw-button", "Abbrechen");
+    cancel.type = "button";
+    const submit = element("button", "nw-button nw-primary", "Verschieben");
+    submit.type = "submit";
+    actions.append(cancel, submit);
+    dialog.append(error, actions);
+    backdrop.append(dialog);
+    overlay.append(backdrop);
+    cancel.addEventListener("click", () => backdrop.remove());
+    backdrop.addEventListener("click", (event) => { if (event.target === backdrop) backdrop.remove(); });
+
+    dialog.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const destination = destinationInput.value.trim().replace(/^\/+|\/+$/g, "");
+      if (!destination || destination === source) {
+        error.textContent = "Bitte einen neuen, vom Quellpfad abweichenden Zielpfad angeben.";
+        return;
+      }
+      submit.disabled = true;
+      cancel.disabled = true;
+      error.textContent = "";
+      const oldCurrentPath = currentPath;
+      const currentMoves = !!oldCurrentPath && (oldCurrentPath === source || (isFolder && oldCurrentPath.startsWith(source + "/")));
+      const newCurrentPath = currentMoves ? destination + oldCurrentPath.slice(source.length) : "";
+      try {
+        await saveCurrent();
+        status(isFolder ? "Verschiebe Ordner …" : "Verschiebe Datei …");
+        await request("/api/move", {
+          method: "POST",
+          body: JSON.stringify({ source, destination })
+        });
+        backdrop.remove();
+        if (currentMoves) {
+          clearDraft(oldCurrentPath);
+          currentPath = "";
+          currentSha = "";
+          savedContent = "";
+        }
+        activeFolder = destination.split("/").slice(0, isFolder ? 0 : -1).join("/");
+        await loadTree();
+        if (currentMoves && newCurrentPath) {
+          await openFile({ path: newCurrentPath, type: "file", name: basename(newCurrentPath) });
+        }
+        status((isFolder ? "Ordner" : "Datei") + " verschoben und in GitHub gesichert", "success");
+      } catch (err) {
+        error.textContent = err.message;
+        submit.disabled = false;
+        cancel.disabled = false;
+        status(err.message, "error");
+      }
+    });
+    destinationInput.focus();
+    destinationInput.select();
+  }
+
   async function publish() {
     const button = overlay.querySelector(".nw-publish");
     button.disabled = true;
@@ -766,6 +853,12 @@
     const imageButton = element("button", "nw-button", "Bild hinzufügen");
     imageButton.type = "button";
     imageButton.addEventListener("click", () => imagePicker.click());
+    const moveButton = element("button", "nw-button nw-move-current", "Verschieben");
+    moveButton.type = "button";
+    moveButton.disabled = true;
+    moveButton.addEventListener("click", () => {
+      if (currentPath) showMoveDialog(currentPath, false);
+    });
     const sync = element("button", "nw-button nw-sync", "Sync");
     sync.type = "button";
     sync.addEventListener("click", async () => {
@@ -780,7 +873,7 @@
     const website = element("button", "nw-button", "Website");
     website.type = "button";
     website.addEventListener("click", () => { location.href = SITE_BASE; });
-    topActions.append(imageButton, sync, publishButton, website);
+    topActions.append(imageButton, moveButton, sync, publishButton, website);
     topbar.append(current, topActions);
 
     const editorWrap = element("div", "nw-editor-wrap");
