@@ -38,10 +38,11 @@ import createDOMPurify from "dompurify";
     if (!indexesPromise) {
       indexesPromise = Promise.all([
         fetch(staticBase + "neuvia-content-map.json", { cache: "no-store" }),
-        fetch(staticBase + "neuvia-link-index.json", { cache: "no-store" })
-      ]).then(async ([mapResponse, linkResponse]) => {
-        if (!mapResponse.ok || !linkResponse.ok) throw new Error("Linkindex nicht verfügbar");
-        return { map: await mapResponse.json(), links: await linkResponse.json() };
+        fetch(staticBase + "neuvia-link-index.json", { cache: "no-store" }),
+        fetch(staticBase + "neuvia-asset-index.json", { cache: "no-store" })
+      ]).then(async ([mapResponse, linkResponse, assetResponse]) => {
+        if (!mapResponse.ok || !linkResponse.ok || !assetResponse.ok) throw new Error("Linkindex nicht verfügbar");
+        return { map: await mapResponse.json(), links: await linkResponse.json(), assets: await assetResponse.json() };
       }).catch((error) => { indexesPromise = null; throw error; });
     }
     return indexesPromise;
@@ -93,12 +94,23 @@ import createDOMPurify from "dompurify";
     return parts.join("/");
   }
 
+  function resolveAssetPath(value) {
+    const candidate = assetPath(value);
+    const assets = window.__neuviaIndexes?.assets;
+    if (!assets) return candidate;
+    const known = new Set(assets.files || []);
+    if (known.has(candidate)) return candidate;
+    const filename = candidate.split("/").pop().toLocaleLowerCase("de");
+    const matches = assets.byName?.[filename] || [];
+    return matches.length === 1 ? matches[0] : candidate;
+  }
+
   const markdownRenderer = new marked.Renderer();
   const defaultImageRenderer = markdownRenderer.image.bind(markdownRenderer);
   markdownRenderer.image = (token) => {
     const href = String(token.href || "");
     if (!href || /^(https?:|data:|blob:|\/|#)/i.test(href)) return defaultImageRenderer(token);
-    const src = apiUrl("/api/public-asset", assetPath(href));
+    const src = apiUrl("/api/public-asset", resolveAssetPath(href));
     const title = token.title ? ' title="' + esc(token.title) + '"' : "";
     return '<img loading="lazy" class="neuvia-live-image" src="' + esc(src) + '" alt="' + esc(token.text || "") + '"' + title + '>';
   };
@@ -119,7 +131,7 @@ import createDOMPurify from "dompurify";
       const [target, ...anchorParts] = token.target.split("#");
       const anchor = anchorParts.join("#");
       if (token.embed && /\.(png|jpe?g|webp|gif|avif|pdf)$/i.test(target)) {
-        const resolvedAsset = assetPath(target);
+        const resolvedAsset = resolveAssetPath(target);
         const url = /^(https?:|data:|blob:)/i.test(resolvedAsset)
           ? resolvedAsset
           : apiUrl("/api/public-asset", resolvedAsset);
