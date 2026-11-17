@@ -116,7 +116,7 @@ jobs:
       - name: Prepare Quartz site
         run: |
           cp .github/quartz/quartz.config.yaml .quartz-runtime/quartz.config.yaml
-          if [ "$GITHUB_REF_NAME" = "neuvia-editor-test" ]; then
+          if [ "$GITHUB_REF_NAME" = "main" ] || [ "$GITHUB_REF_NAME" = "neuvia-editor-test" ]; then
             sed -i 's#baseUrl: elrayo23.github.io/Neuvia#baseUrl: neuvia-editor-preview.pages.dev#' .quartz-runtime/quartz.config.yaml
           fi
           mkdir -p .quartz-runtime/content
@@ -322,10 +322,10 @@ jobs:
           import os
           root = Path(".quartz-runtime/public")
           version = os.environ.get("GITHUB_SHA", "")
-          is_preview = os.environ.get("GITHUB_REF_NAME") == "neuvia-editor-test"
-          admin_path = "/Neuvia/static/neuvia-admin.js" if not is_preview else "/static/neuvia-admin.js"
+          is_cloudflare = os.environ.get("GITHUB_REF_NAME") in {"main", "neuvia-editor-test"}
+          admin_path = "/static/neuvia-admin.js" if is_cloudflare else "/Neuvia/static/neuvia-admin.js"
           tags = [f'<script defer src="{admin_path}?v={version}"></script>']
-          if is_preview:
+          if is_cloudflare:
               tags.append(f'<script defer src="/static/neuvia-live-reader.bundle.js?v={version}"></script>')
               tags.append(f'<script defer src="/static/neuvia-search-boot.js?v={version}"></script>')
           for page in root.rglob("*.html"):
