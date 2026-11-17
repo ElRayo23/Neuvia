@@ -192,6 +192,16 @@
     return cursor;
   }
 
+  function refreshInlineImages(editor, selection) {
+    const source = getEditorContent(editor);
+    const pattern = /!\[\[[^\]|]+(?:\|[^\]]+)?\]\]|!\[[^\]]*\]\([^)]+\)/g;
+    const embedCount = Array.from(source.matchAll(pattern)).length;
+    const renderedCount = editor.querySelectorAll(".nw-inline-image").length;
+    if (embedCount === renderedCount || selection.start !== selection.end) return;
+    renderEditorContent(editor, source);
+    setEditorCaret(editor, selection.start);
+  }
+
   const normalize = (value) => String(value || "").normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("de").trim();
   const encodePath = (path) => path.split("/").map(encodeURIComponent).join("/");
@@ -1332,7 +1342,6 @@
     editor.setAttribute("aria-label", "Markdown-Notiz");
     editor.setAttribute("aria-disabled", "true");
     editor.dataset.placeholder = "Wähle links eine Notiz aus oder erstelle eine neue …";
-    editor.dataset.placeholder = "Wähle links eine Notiz aus oder erstelle eine neue …";
     const suggestions = element("div", "nw-suggestions");
     suggestions.hidden = true;
     editorWrap.append(editor, dropHint, suggestions);
@@ -1348,7 +1357,8 @@
     document.body.append(overlay);
 
     editor.addEventListener("input", () => {
-      editorSelection(editor);
+      const selection = editorSelection(editor);
+      refreshInlineImages(editor, selection);
       storeDraft();
       scheduleSave();
       renderSuggestions();
