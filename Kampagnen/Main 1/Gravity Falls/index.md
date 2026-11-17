@@ -9,4 +9,4 @@ title: Der Krieg um Prismeer
 - [Endgame](Endgame%2025bcb8222608801fafdeef8f8ad8ee27)
 - [Session Endelyn](Session%20Endelyn%20243cb8222608809ab64fdd1e0e83d150)
 
-Die zugehörigen Charakter-, Orts- und Sitzungsseiten sowie Medien liegen in den jeweiligen Unterordnern.
+Ein bitterer Krieg bahnte sich an, nachdem [[Violenti Victores]] [[Bavlorna Blätterstroh]] besiegten. 
