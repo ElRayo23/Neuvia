@@ -31,7 +31,6 @@ Hallo
 
 ## Neue interaktive Landkarte
 
-Die neue Karte mit anklickbaren Ländern und Siedlungen.
 
 <iframe
   src="https://elrayo23.github.io/Neuvia/static/karte.html"
