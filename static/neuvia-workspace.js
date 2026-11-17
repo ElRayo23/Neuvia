@@ -29,7 +29,7 @@
     if (!currentPath || !overlay) return;
     try {
       localStorage.setItem(DRAFT_PREFIX + currentPath, JSON.stringify({
-        content: overlay.querySelector(".nw-editor").value,
+        content: getEditorContent(overlay.querySelector(".nw-editor")),
         sha: currentSha,
         savedAt: Date.now()
       }));
@@ -39,6 +39,153 @@
   function clearDraft(path) {
     try { localStorage.removeItem(DRAFT_PREFIX + path); } catch {}
   }
+
+  function markdownForEditorNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) return node.nodeValue || "";
+    if (node.nodeType !== Node.ELEMENT_NODE) return "";
+    if (node.classList.contains("nw-inline-image")) return node.dataset.markdown || "";
+    if (node.tagName === "BR") return "\n";
+    const content = Array.from(node.childNodes).map(markdownForEditorNode).join("");
+    if (node.tagName === "DIV" || node.tagName === "P") {
+      return content === "\n" ? "\n" : content + (content.endsWith("\n") ? "" : "\n");
+    }
+    return content;
+  }
+
+  function getEditorContent(editor) {
+    return Array.from(editor.childNodes).map(markdownForEditorNode).join("");
+  }
+
+  function renderEditorContent(editor, markdown) {
+    const source = String(markdown || "");
+    const pattern = /!\[\[([^\]|]+)(?:\|([^\]]+))?\]\]|!\[([^\]]*)\]\(([^)]+)\)/g;
+    const fragment = document.createDocumentFragment();
+    let lastIndex = 0;
+    let match;
+    while ((match = pattern.exec(source))) {
+      if (match.index > lastIndex) fragment.append(document.createTextNode(source.slice(lastIndex, match.index)));
+      const path = (match[1] || match[4] || "").trim().replace(/^<|>$/g, "");
+      const alt = match[2] || match[3] || "";
+      const wrapper = element("span", "nw-inline-image");
+      wrapper.contentEditable = "false";
+      wrapper.dataset.markdown = match[0];
+      wrapper.title = path;
+      const image = document.createElement("img");
+      image.src = imageUrl(path);
+      image.alt = alt || basename(path);
+      image.loading = "lazy";
+      image.addEventListener("error", () => {
+        const error = element("span", "nw-inline-image-error", "Bild konnte nicht geladen werden: " + basename(path));
+        wrapper.replaceChildren(error);
+      }, { once: true });
+      wrapper.append(image);
+      fragment.append(wrapper);
+      lastIndex = pattern.lastIndex;
+    }
+    if (lastIndex < source.length) fragment.append(document.createTextNode(source.slice(lastIndex)));
+    editor.replaceChildren(fragment);
+  }
+
+  function editorSelection(editor) {
+    const selection = window.getSelection();
+    const inside = (node) => node === editor || (node && editor.contains(node));
+    if (!selection || !inside(selection.anchorNode) || !inside(selection.focusNode)) {
+      const end = getEditorContent(editor).length;
+      return { start: end, end };
+    }
+    const offsetOf = (target, offset) => {
+      let total = 0;
+      let found = false;
+      const visit = (node) => {
+        if (found) return;
+        if (node === target) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            total += Math.min(offset, node.nodeValue.length);
+          } else {
+            for (let i = 0; i < Math.min(offset, node.childNodes.length); i++) {
+              total += markdownForEditorNode(node.childNodes[i]).length;
+            }
+          }
+          found = true;
+          return;
+        }
+        if (node.nodeType === Node.TEXT_NODE || (node.nodeType === Node.ELEMENT_NODE &&
+            (node.classList.contains("nw-inline-image") || node.tagName === "BR"))) {
+          total += markdownForEditorNode(node).length;
+          return;
+        }
+        for (const child of node.childNodes || []) visit(child);
+      };
+      visit(editor);
+      return found ? total : getEditorContent(editor).length;
+    };
+    const anchor = offsetOf(selection.anchorNode, selection.anchorOffset);
+    const focus = offsetOf(selection.focusNode, selection.focusOffset);
+    return { start: Math.min(anchor, focus), end: Math.max(anchor, focus) };
+  }
+
+  function setEditorCaret(editor, markdownOffset) {
+    const target = Math.max(0, markdownOffset);
+    let total = 0;
+    let point = null;
+    const find = (parent) => {
+      const children = Array.from(parent.childNodes);
+      for (let i = 0; i < children.length && !point; i++) {
+        const child = children[i];
+        if (child.nodeType === Node.TEXT_NODE) {
+          const length = child.nodeValue.length;
+          if (target <= total + length) {
+            point = { node: child, offset: Math.max(0, Math.min(length, target - total)) };
+            return;
+          }
+          total += length;
+          continue;
+        }
+        if (child.nodeType === Node.ELEMENT_NODE && child.classList.contains("nw-inline-image")) {
+          const length = (child.dataset.markdown || "").length;
+          if (target <= total) { point = { node: parent, offset: i }; return; }
+          if (target < total + length) {
+            point = { node: parent, offset: i + (target - total >= length / 2 ? 1 : 0) };
+            return;
+          }
+          total += length;
+          continue;
+        }
+        if (child.nodeType === Node.ELEMENT_NODE && child.tagName === "BR") {
+          if (target <= total + 1) { point = { node: parent, offset: i + (target > total ? 1 : 0) }; return; }
+          total += 1;
+          continue;
+        }
+        if (child.nodeType === Node.ELEMENT_NODE) {
+          find(child);
+          if (!point) {
+            const length = markdownForEditorNode(child).length;
+            if (target <= total + length) { point = { node: parent, offset: i + 1 }; return; }
+            total += length;
+          }
+        }
+      }
+    };
+    find(editor);
+    if (!point) point = { node: editor, offset: editor.childNodes.length };
+    const range = document.createRange();
+    range.setStart(point.node, point.offset);
+    range.collapse(true);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  function replaceEditorRange(editor, start, end, replacement) {
+    const value = getEditorContent(editor);
+    const next = value.slice(0, start) + replacement + value.slice(end);
+    const cursor = start + replacement.length;
+    renderEditorContent(editor, next);
+    setEditorCaret(editor, cursor);
+    editor.dispatchEvent(new Event("input", { bubbles: true }));
+    return cursor;
+  }
+
   const normalize = (value) => String(value || "").normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("de").trim();
   const encodePath = (path) => path.split("/").map(encodeURIComponent).join("/");
@@ -97,7 +244,10 @@
     "#neuvia-workspace .nw-top-actions{display:flex;align-items:center;gap:7px;flex-shrink:0;}",
     "#neuvia-workspace .nw-editor-wrap{position:relative;display:flex;flex:1;min-height:0;}",
     "#neuvia-workspace .nw-editor{display:block;width:100%;height:100%;min-height:0;resize:none;border:0;outline:0;padding:30px clamp(18px,5vw,64px) 48px;background:var(--light,#faf8f8);color:var(--dark,#2b2b2b);font:14px/1.72 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2;white-space:pre-wrap;overflow-wrap:anywhere;overflow:auto;}",
-    "#neuvia-workspace .nw-editor::placeholder{color:var(--gray,#999);}",
+    "#neuvia-workspace .nw-editor:empty::before{content:attr(data-placeholder);color:var(--gray,#999);pointer-events:none;}",
+    "#neuvia-workspace .nw-editor .nw-inline-image{display:inline-block;max-width:100%;margin:8px 0;vertical-align:top;}",
+    "#neuvia-workspace .nw-editor .nw-inline-image img{display:block;max-width:min(100%,720px);max-height:360px;width:auto;height:auto;object-fit:contain;border-radius:6px;}",
+    "#neuvia-workspace .nw-editor .nw-inline-image-error{display:inline-block;padding:6px 9px;border:1px solid #c66;border-radius:5px;color:#c33;font:12px system-ui,sans-serif;}",
     "#neuvia-workspace .nw-drop-hint{display:none;position:absolute;inset:12px;z-index:3;align-items:center;justify-content:center;border:2px dashed var(--secondary,#284b63);border-radius:12px;background:var(--light,#faf8f8);opacity:.94;font-size:17px;font-weight:650;pointer-events:none;}",
     "#neuvia-workspace .nw-editor-wrap.nw-drag .nw-drop-hint{display:flex;}",
     "#neuvia-workspace .nw-suggestions{position:absolute;left:clamp(18px,5vw,64px);bottom:15px;z-index:5;width:min(520px,calc(100% - 36px));max-height:260px;overflow:auto;padding:5px;border:1px solid var(--lightgray,#bbb);border-radius:8px;background:var(--light,#fff);box-shadow:0 7px 24px #0003;}",
@@ -163,7 +313,7 @@
 
   function currentIsDirty() {
     const editor = overlay && overlay.querySelector(".nw-editor");
-    return !!(editor && currentPath && editor.value !== savedContent);
+    return !!(editor && currentPath && getEditorContent(editor) !== savedContent);
   }
 
   function scheduleSave() {
@@ -183,10 +333,10 @@
     if (!editor) return true;
     if (savingPromise) {
       await savingPromise;
-      if (editor.value !== savedContent) return saveCurrent();
+      if (getEditorContent(editor) !== savedContent) return saveCurrent();
       return true;
     }
-    const snapshot = editor.value;
+    const snapshot = getEditorContent(editor);
     if (snapshot === savedContent) {
       status("Synchronisiert", "success");
       return true;
@@ -207,7 +357,7 @@
       if (currentPath === path) {
         savedContent = snapshot;
         currentSha = data.sha || currentSha;
-        if (editor.value === snapshot) {
+        if (getEditorContent(editor) === snapshot) {
           clearDraft(path);
           status(data.unchanged
             ? "Bereits synchronisiert – keine Änderungen."
@@ -549,8 +699,8 @@
   function imageReferenceAtCursor() {
     const editor = overlay && overlay.querySelector(".nw-editor");
     if (!editor) return null;
-    const cursor = editor.selectionStart;
-    const value = editor.value;
+    const cursor = editorSelection(editor).start;
+    const value = getEditorContent(editor);
     const lineStart = value.lastIndexOf("\n", cursor - 1) + 1;
     const lineEndRaw = value.indexOf("\n", cursor);
     const line = value.slice(lineStart, lineEndRaw < 0 ? value.length : lineEndRaw);
@@ -620,8 +770,9 @@
       currentSha = data.sha || "";
       savedContent = data.content || "";
       const editor = overlay.querySelector(".nw-editor");
-      editor.value = savedContent;
-      editor.disabled = false;
+      renderEditorContent(editor, savedContent);
+      editor.contentEditable = "true";
+      editor.setAttribute("aria-disabled", "false");
       hideSuggestions();
       const draft = readDraft(item.path);
       if (draft && typeof draft.content === "string" && draft.content !== savedContent) {
@@ -630,7 +781,7 @@
           ? "Für diese Notiz gibt es einen lokalen, noch nicht synchronisierten Entwurf. Möchtest du ihn wiederherstellen?"
           : "Es gibt einen lokalen Entwurf, aber die GitHub-Datei wurde seitdem verändert. Entwurf trotzdem wiederherstellen? Der Sync wird dann zunächst wegen eines Versionskonflikts blockiert.";
         if (window.confirm(question)) {
-          editor.value = draft.content;
+          renderEditorContent(editor, draft.content);
           if (!sameVersion) currentSha = draft.sha || "__local_draft_without_base_sha__";
           status(sameVersion ? "Lokaler Entwurf wiederhergestellt" : "Älterer lokaler Entwurf wiederhergestellt – Versionskonflikt beachten", sameVersion ? "success" : "error");
           scheduleSave();
@@ -712,9 +863,10 @@
 
   function getActiveLink() {
     const editor = overlay.querySelector(".nw-editor");
-    const cursor = editor.selectionStart;
-    if (editor.selectionEnd !== cursor) return null;
-    const before = editor.value.slice(0, cursor);
+    const selection = editorSelection(editor);
+    const cursor = selection.start;
+    if (selection.end !== cursor) return null;
+    const before = getEditorContent(editor).slice(0, cursor);
     const start = before.lastIndexOf("[[");
     if (start < 0 || before.slice(start + 2).includes("]]") || before.slice(start + 2).includes("\n")) return null;
     const rawQuery = before.slice(start + 2);
@@ -771,13 +923,8 @@
     const editor = overlay.querySelector(".nw-editor");
     const active = getActiveLink();
     if (!active || !item) return;
-    const before = editor.value.slice(0, active.start);
-    const after = editor.value.slice(active.end);
     const insertion = "[[" + item.target + (active.alias || "") + "]]";
-    editor.value = before + insertion + after;
-    const cursor = before.length + insertion.length;
-    editor.setSelectionRange(cursor, cursor);
-    editor.dispatchEvent(new Event("input", { bubbles: true }));
+    replaceEditorRange(editor, active.start, active.end, insertion);
     hideSuggestions();
     editor.focus();
   }
@@ -813,10 +960,8 @@
 
   function insertAtCursor(text) {
     const editor = overlay.querySelector(".nw-editor");
-    const start = editor.selectionStart;
-    const end = editor.selectionEnd;
-    editor.setRangeText(text, start, end, "end");
-    editor.dispatchEvent(new Event("input", { bubbles: true }));
+    const selection = editorSelection(editor);
+    replaceEditorRange(editor, selection.start, selection.end, text);
     editor.focus();
   }
 
@@ -1171,11 +1316,15 @@
 
     const editorWrap = element("div", "nw-editor-wrap");
     const dropHint = element("div", "nw-drop-hint", "Bild hier ablegen – Einfügen an der Cursorposition");
-    const editor = element("textarea", "nw-editor");
+    const editor = element("div", "nw-editor");
+    editor.contentEditable = "false";
     editor.spellcheck = false;
-    editor.disabled = true;
-    editor.placeholder = "Wähle links eine Notiz aus oder erstelle eine neue …";
+    editor.setAttribute("role", "textbox");
+    editor.setAttribute("aria-multiline", "true");
     editor.setAttribute("aria-label", "Markdown-Notiz");
+    editor.setAttribute("aria-disabled", "true");
+    editor.dataset.placeholder = "Wähle links eine Notiz aus oder erstelle eine neue …";
+    editor.placeholder = "Wähle links eine Notiz aus oder erstelle eine neue …";
     const suggestions = element("div", "nw-suggestions");
     suggestions.hidden = true;
     editorWrap.append(editor, dropHint, suggestions);
@@ -1238,6 +1387,11 @@
           chooseSuggestion(suggestionItems[selectedSuggestion]);
           return;
         }
+      }
+      if (event.key === "Enter" && !event.isComposing) {
+        event.preventDefault();
+        insertAtCursor("\n");
+        return;
       }
       if (event.key === "Tab") {
         event.preventDefault();
