@@ -389,15 +389,45 @@ async function deleteVaultPath(path, mode, token) {
       const parent = path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "";
       const moved = inside.map((entry) => ({ entry, target: [parent, entry.path.slice(path.length + 1)].filter(Boolean).join("/") }));
       const occupied = new Set(entries.filter((entry) => !entry.path.startsWith(path + "/")).map((entry) => entry.path));
+      const mergeTargets = new Set();
       for (const item of moved) {
+        const indexCollision = item.target.endsWith("/index.md") && occupied.has(item.target);
+        if (indexCollision) {
+          mergeTargets.add(item.target);
+          continue;
+        }
         if (occupied.has(item.target) || moved.some((other) => other !== item && (other.target === item.target || other.target.startsWith(item.target + "/") || item.target.startsWith(other.target + "/")))) {
           throw new Error("Zielkonflikt beim Eine-Ebene-hoch-Verschieben: " + item.target + ". Es wurde nichts geändert.");
         }
       }
-      changes = moved.flatMap(({entry,target}) => [
-        { path: target, mode: entry.mode, type: "blob", sha: entry.sha },
-        deletionEntry(entry)
-      ]);
+      for (const target of mergeTargets) {
+        const targetEntry = entries.find((entry) => entry.path === target);
+        const sourceItem = moved.find((item) => item.target === target);
+        if (!targetEntry || !sourceItem || !target.endsWith("/index.md")) {
+          throw new Error("Die Index-Dateien konnten nicht eindeutig zusammengeführt werden. Es wurde nichts geändert.");
+        }
+      }
+      changes = [];
+      for (const { entry, target } of moved) {
+        if (mergeTargets.has(target)) {
+          const [targetFile, sourceFile] = await Promise.all([
+            readFile(target, token),
+            readFile(entry.path, token),
+          ]);
+          const sourceBody = sourceFile.content.replace(/^---\\r?\\n[\\s\\S]*?\\r?\\n---\\s*(?:\\r?\\n|$)/, "").trim();
+          const mergedContent = targetFile.content.trimEnd() + (sourceBody ? "\\n\\n---\\n\\n" + sourceBody : "") + "\\n";
+          const blob = await githubJson("/repos/" + OWNER + "/" + REPO + "/git/blobs", token, "POST", {
+            content: mergedContent,
+            encoding: "utf-8",
+          });
+          if (!blob.sha) throw new Error("GitHub hat die zusammengeführte Index-Datei nicht erstellt.");
+          changes.push({ path: target, mode: entry.mode, type: "blob", sha: blob.sha });
+          changes.push(deletionEntry(entry));
+        } else {
+          changes.push({ path: target, mode: entry.mode, type: "blob", sha: entry.sha });
+          changes.push(deletionEntry(entry));
+        }
+      }
     } else throw new Error("Ungültiger Löschmodus.");
   }
   if (!changes.length) throw new Error("Der Ordner enthält keine Dateien.");
