@@ -363,6 +363,53 @@ async function moveVaultPath(source, destination, token) {
   return { commit: commit.sha, count: moving.length, isFolder, rewrittenNotes };
 }
 
+
+async function deleteVaultPath(path, mode, token) {
+  const branch = await githubJson("/repos/" + OWNER + "/" + REPO + "/branches/" + encodeURIComponent(BRANCH), token);
+  const parentSha = branch.commit?.sha;
+  const baseTreeSha = branch.commit?.commit?.tree?.sha;
+  if (!parentSha || !baseTreeSha) throw new Error("GitHub hat den aktuellen Branch-Stand nicht vollständig geliefert.");
+  const treeData = await githubJson("/repos/" + OWNER + "/" + REPO + "/git/trees/" + baseTreeSha + "?recursive=1", token);
+  if (treeData.truncated) throw new Error("Die Dateiliste wurde gekürzt; Aktion aus Sicherheitsgründen abgebrochen.");
+  const entries = (treeData.tree || []).filter((entry) => entry.type === "blob");
+  const folder = entries.some((entry) => entry.path.startsWith(path + "/"));
+  const source = entries.find((entry) => entry.path === path);
+  if (mode === "file" && (!source || !visibleFile(path) || !visiblePath(path))) throw new Error("Die Datei existiert nicht oder darf nicht gelöscht werden.");
+  if (mode !== "file" && (!folder || !safeFolderPath(path) || !visiblePath(path))) throw new Error("Der Ordner existiert nicht oder darf nicht gelöscht werden.");
+  let changes = [];
+  if (mode === "file") {
+    changes = [{ path, sha: null }];
+  } else {
+    const inside = entries.filter((entry) => entry.path.startsWith(path + "/"));
+    if (inside.some((entry) => !visiblePath(entry.path))) throw new Error("Der Ordner enthält ausgeblendete Dateien. Löschung abgebrochen.");
+    if (mode === "recursive") {
+      changes = inside.map((entry) => ({ path: entry.path, sha: null }));
+    } else if (mode === "contents") {
+      const parent = path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "";
+      const moved = inside.map((entry) => ({ entry, target: [parent, entry.path.slice(path.length + 1)].filter(Boolean).join("/") }));
+      const occupied = new Set(entries.filter((entry) => !entry.path.startsWith(path + "/")).map((entry) => entry.path));
+      for (const item of moved) {
+        if (occupied.has(item.target) || moved.some((other) => other !== item && (other.target === item.target || other.target.startsWith(item.target + "/")))) {
+          throw new Error("Zielkonflikt beim Eine-Ebene-hoch-Verschieben: " + item.target + ". Es wurde nichts geändert.");
+        }
+      }
+      changes = moved.flatMap(({entry,target}) => [
+        { path: target, mode: entry.mode, type: "blob", sha: entry.sha },
+        { path: entry.path, sha: null }
+      ]);
+    } else throw new Error("Ungültiger Löschmodus.");
+  }
+  if (!changes.length) throw new Error("Der Ordner enthält keine Dateien.");
+  const newTree = await githubJson("/repos/" + OWNER + "/" + REPO + "/git/trees", token, "POST", { base_tree: baseTreeSha, tree: changes });
+  if (!newTree.sha) throw new Error("GitHub hat keinen neuen Dateibaum erstellt.");
+  const commit = await githubJson("/repos/" + OWNER + "/" + REPO + "/git/commits", token, "POST", {
+    message: "Neuvia: " + (mode === "contents" ? "Ordnerinhalt eine Ebene hoch verschoben" : "Inhalt gelöscht"),
+    tree: newTree.sha, parents: [parentSha]
+  });
+  await githubJson("/repos/" + OWNER + "/" + REPO + "/git/refs/heads/" + BRANCH, token, "PATCH", { sha: commit.sha, force: false });
+  return { commit: commit.sha, count: mode === "file" ? 1 : changes.filter((item) => item.sha === null).length };
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -661,6 +708,24 @@ export default {
         return send({ ok: true, source, destination, commit: result.commit, movedFiles: result.count, folder: result.isFolder, rewrittenNotes: result.rewrittenNotes || 0 });
       } catch (error) {
         const status = /zwischenzeitlich|Ziel|Quelle|nicht verschoben|in sich selbst|Dateiendung|ausgeblendete|Submodul/i.test(error.message) ? 409 : 502;
+        return send({ error: error.message }, status);
+      }
+    }
+
+
+    if (url.pathname === "/api/delete" && request.method === "POST") {
+      if (!await valid(bearer(request), env.SESSION_SECRET)) return send({ error: "Sitzung abgelaufen. Bitte erneut anmelden." }, 401);
+      if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
+      let body = {};
+      try { body = JSON.parse(await request.text()); } catch { return send({ error: "Ungültige Anfrage." }, 400); }
+      const path = String(body.path || "").replace(/\/+$/, "");
+      const mode = String(body.mode || "");
+      if (!path || !["file", "recursive", "contents"].includes(mode)) return send({ error: "Ungültiger Löschauftrag." }, 400);
+      try {
+        const result = await deleteVaultPath(path, mode, env.GITHUB_TOKEN);
+        return send({ ok: true, path, mode, commit: result.commit, changedFiles: result.count });
+      } catch (error) {
+        const status = /existiert nicht|Zielkonflikt|ausgeblendete|Ungültiger|keine Dateien/i.test(error.message) ? 409 : 502;
         return send({ error: error.message }, status);
       }
     }
