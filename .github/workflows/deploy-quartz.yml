@@ -287,6 +287,22 @@ jobs:
           link_entries.sort(key=lambda item: (item["title"].casefold(), item["path"].casefold()))
           (public / "neuvia-content-map.json").write_text(json.dumps(mapping, ensure_ascii=False), encoding="utf-8")
           (public / "neuvia-link-index.json").write_text(json.dumps(link_entries, ensure_ascii=False), encoding="utf-8")
+          asset_extensions = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif", ".svg", ".pdf"}
+          asset_files = []
+          asset_names = {}
+          for asset in content.rglob("*"):
+              if not asset.is_file() or asset.suffix.lower() not in asset_extensions:
+                  continue
+              rel_asset = asset.relative_to(content).as_posix()
+              if any(part.startswith(".") or part in {"private", "templates"} for part in asset.relative_to(content).parts):
+                  continue
+              asset_files.append(rel_asset)
+              asset_names.setdefault(asset.name.casefold(), []).append(rel_asset)
+          (public / "neuvia-asset-index.json").write_text(
+              json.dumps({"files": asset_files, "byName": asset_names}, ensure_ascii=False),
+              encoding="utf-8"
+          )
+          print(f"Indexed {len(asset_files)} visible image and document assets.")
           build_info = {
               "commit": os.environ.get("GITHUB_SHA", ""),
               "branch": os.environ.get("GITHUB_REF_NAME", "")
@@ -321,8 +337,10 @@ jobs:
                   page.write_text(html, encoding="utf-8")
           PY
 
-      - name: Publish interactive map HTML with its original extension
-        run: cp .quartz-runtime/content/static/geography-index.html .quartz-runtime/public/static/geography-index.html
+      - name: Publish interactive map HTML and data with their original extensions
+        run: |
+          cp .quartz-runtime/content/static/geography-index.html .quartz-runtime/public/static/geography-index.html
+          cp .quartz-runtime/content/static/geography.json .quartz-runtime/public/static/geography.json
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
