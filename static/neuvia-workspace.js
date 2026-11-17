@@ -388,13 +388,13 @@
     if (!editor) return null;
     const cursor = editor.selectionStart;
     const value = editor.value;
-    const lineStart = value.lastIndexOf("\\n", cursor - 1) + 1;
-    const lineEndRaw = value.indexOf("\\n", cursor);
+    const lineStart = value.lastIndexOf("\n", cursor - 1) + 1;
+    const lineEndRaw = value.indexOf("\n", cursor);
     const line = value.slice(lineStart, lineEndRaw < 0 ? value.length : lineEndRaw);
     const local = cursor - lineStart;
     const patterns = [
-      /!\\[\\[([^\\]|]+)(?:\\|([^\\]]+))?\\]\\]/g,
-      /!\\[[^\\]]*\\]\\(([^)]+)\\)/g
+      /!\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,
+      /!\[[^\]]*\]\(([^)]+)\)/g
     ];
     for (const pattern of patterns) {
       let match;
