@@ -377,13 +377,14 @@ async function deleteVaultPath(path, mode, token) {
   if (mode === "file" && (!source || !visibleFile(path) || !visiblePath(path))) throw new Error("Die Datei existiert nicht oder darf nicht gelöscht werden.");
   if (mode !== "file" && (!folder || !safeFolderPath(path) || !visiblePath(path))) throw new Error("Der Ordner existiert nicht oder darf nicht gelöscht werden.");
   let changes = [];
+  const deletionEntry = (entry) => ({ path: entry.path, mode: entry.mode, type: "blob", sha: null });
   if (mode === "file") {
-    changes = [{ path, sha: null }];
+    changes = [deletionEntry(source)];
   } else {
     const inside = entries.filter((entry) => entry.path.startsWith(path + "/"));
     if (inside.some((entry) => !visiblePath(entry.path))) throw new Error("Der Ordner enthält ausgeblendete Dateien. Löschung abgebrochen.");
     if (mode === "recursive") {
-      changes = inside.map((entry) => ({ path: entry.path, sha: null }));
+      changes = inside.map(deletionEntry);
     } else if (mode === "contents") {
       const parent = path.includes("/") ? path.slice(0, path.lastIndexOf("/")) : "";
       const moved = inside.map((entry) => ({ entry, target: [parent, entry.path.slice(path.length + 1)].filter(Boolean).join("/") }));
@@ -395,7 +396,7 @@ async function deleteVaultPath(path, mode, token) {
       }
       changes = moved.flatMap(({entry,target}) => [
         { path: target, mode: entry.mode, type: "blob", sha: entry.sha },
-        { path: entry.path, sha: null }
+        deletionEntry(entry)
       ]);
     } else throw new Error("Ungültiger Löschmodus.");
   }
