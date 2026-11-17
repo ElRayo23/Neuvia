@@ -69,7 +69,15 @@ jobs:
           PY
   build:
     needs: check-preview-content
-    if: always() && (github.event_name != 'push' || github.ref != 'refs/heads/neuvia-editor-test' || needs.check-preview-content.outputs.should_build == 'true')
+    if: >-
+      always() &&
+      (
+        needs.check-preview-content.result == 'skipped' ||
+        (
+          needs.check-preview-content.result == 'success' &&
+          (github.event_name != 'push' || github.ref != 'refs/heads/neuvia-editor-test' || needs.check-preview-content.outputs.should_build == 'true')
+        )
+      )
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
