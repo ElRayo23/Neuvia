@@ -16,7 +16,7 @@ input{min-width:190px}button{cursor:pointer}button:hover{border-color:var(--acce
 .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-items:start}
 .map-shell{position:relative;aspect-ratio:1920/911;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:#466eab;touch-action:none;cursor:grab}
 .map-shell.dragging{cursor:grabbing}
-.map-world{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
+.map-world{position:absolute;inset:0;transform-origin:50% 50%}
 .map-world img,.map-world svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .map-world img{object-fit:fill;user-select:none;pointer-events:none}
 .pin{cursor:pointer;stroke:#fff;stroke-width:1.8;vector-effect:non-scaling-stroke;filter:drop-shadow(0 1px 2px #000b)}
@@ -93,11 +93,11 @@ footer{color:var(--muted);font-size:.78rem;margin-top:9px}
    const unit=data.politicalUnits.find(x=>x.id===item.politicalUnitId);
    detail.innerHTML='<div class="detail-name">'+esc(item.name)+'</div><div class="muted">Siedlung · '+esc(item.mapGroup||"Ort")+'</div>'+
     '<div class="stat"><span>Land</span><span>'+esc(unit?.name||"—")+'</span></div>'+
-    (unit?.lorePath?'<a id="unitLink" href="'+esc(slugPath(unit.lorePath))+'">Lore-Eintrag öffnen ↗</a>':"");
+    (unit?.lorePath?'<a id="unitLink" target="_top" rel="noopener" href="'+esc(slugPath(unit.lorePath))+'">Lore-Eintrag öffnen ↗</a>':"");
   }else{
    detail.innerHTML='<div class="detail-name">'+esc(item.name)+'</div><div class="muted">'+esc(item.type||"Politische Einheit")+'</div>'+
     '<div class="stat"><span>Siedlungen</span><span>'+data.settlements.filter(x=>x.politicalUnitId===item.id).length+'</span></div>'+
-    (item.lorePath?'<a id="unitLink" href="'+esc(slugPath(item.lorePath))+'">Lore-Eintrag öffnen ↗</a>':'<div class="muted">Noch kein Lore-Eintrag verknüpft.</div>');
+    (item.lorePath?'<a id="unitLink" target="_top" rel="noopener" href="'+esc(slugPath(item.lorePath))+'">Lore-Eintrag öffnen ↗</a>':'<div class="muted">Noch kein Lore-Eintrag verknüpft.</div>');
   }
  }
  function renderPins(){
