@@ -40,6 +40,8 @@
     try { localStorage.removeItem(DRAFT_PREFIX + path); } catch {}
   }
 
+  let lastKnownEditorSelection = { start: 0, end: 0 };
+
   function markdownForEditorNode(node) {
     if (node.nodeType === Node.TEXT_NODE) return node.nodeValue || "";
     if (node.nodeType !== Node.ELEMENT_NODE) return "";
@@ -90,8 +92,10 @@
     const selection = window.getSelection();
     const inside = (node) => node === editor || (node && editor.contains(node));
     if (!selection || !inside(selection.anchorNode) || !inside(selection.focusNode)) {
-      const end = getEditorContent(editor).length;
-      return { start: end, end };
+      const length = getEditorContent(editor).length;
+      const start = Math.min(length, Math.max(0, lastKnownEditorSelection.start));
+      const end = Math.min(length, Math.max(start, lastKnownEditorSelection.end));
+      return { start, end };
     }
     const offsetOf = (target, offset) => {
       let total = 0;
@@ -121,7 +125,8 @@
     };
     const anchor = offsetOf(selection.anchorNode, selection.anchorOffset);
     const focus = offsetOf(selection.focusNode, selection.focusOffset);
-    return { start: Math.min(anchor, focus), end: Math.max(anchor, focus) };
+    lastKnownEditorSelection = { start: Math.min(anchor, focus), end: Math.max(anchor, focus) };
+    return lastKnownEditorSelection;
   }
 
   function setEditorCaret(editor, markdownOffset) {
@@ -174,6 +179,7 @@
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
+    lastKnownEditorSelection = { start: target, end: target };
   }
 
   function replaceEditorRange(editor, start, end, replacement) {
@@ -773,6 +779,8 @@
       renderEditorContent(editor, savedContent);
       editor.contentEditable = "true";
       editor.setAttribute("aria-disabled", "false");
+      lastKnownEditorSelection = { start: 0, end: 0 };
+      setEditorCaret(editor, 0);
       hideSuggestions();
       const draft = readDraft(item.path);
       if (draft && typeof draft.content === "string" && draft.content !== savedContent) {
@@ -1340,11 +1348,13 @@
     document.body.append(overlay);
 
     editor.addEventListener("input", () => {
+      editorSelection(editor);
       storeDraft();
       scheduleSave();
       renderSuggestions();
     });
     editor.addEventListener("click", () => {
+      editorSelection(editor);
       renderSuggestions();
       setTimeout(() => {
         const reference = imageReferenceAtCursor();
@@ -1353,6 +1363,7 @@
       }, 0);
     });
     editor.addEventListener("keyup", (event) => {
+      editorSelection(editor);
       if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) renderSuggestions();
     });
     editor.addEventListener("keydown", (event) => {
