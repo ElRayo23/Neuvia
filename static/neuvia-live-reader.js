@@ -1,6 +1,7 @@
 // Neuvia live reader: load the current Markdown source while keeping the Quartz layout.
 // Phase 1 release sync: deploy this bundle with the matching Worker routes.
 // Bundle source is copied into the Quartz workspace before esbuild resolves npm packages.
+// Preview release uses the v3 workflow concurrency lane.
 import { marked } from "marked";
 import createDOMPurify from "dompurify";
 
