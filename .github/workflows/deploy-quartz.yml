@@ -337,11 +337,6 @@ jobs:
                   page.write_text(html, encoding="utf-8")
           PY
 
-      - name: Publish interactive map HTML and data with their original extensions
-        run: |
-          cp .quartz-runtime/content/static/geography-index.html .quartz-runtime/public/static/geography-index.html
-          cp .quartz-runtime/content/static/geography.json .quartz-runtime/public/static/geography.json
-
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
