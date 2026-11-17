@@ -1,4 +1,5 @@
 // Neuvia live reader: load the current Markdown source while keeping the Quartz layout.
+// Phase 1 release sync: deploy this bundle with the matching Worker routes.
 import { marked } from "marked";
 import createDOMPurify from "dompurify";
 
