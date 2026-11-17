@@ -180,7 +180,7 @@ async function githubJson(path, token, method = "GET", body) {
   }
   return data;
 }
-async function readMarkdownArchive(token, commitSha) {
+async function scanMarkdownArchive(token, commitSha, visit) {
   const archive = await fetch(API + "/repos/" + OWNER + "/" + REPO + "/tarball/" + commitSha, {
     headers: {
       "Authorization": "Bearer " + token,
@@ -191,35 +191,81 @@ async function readMarkdownArchive(token, commitSha) {
   });
   if (!archive.ok || !archive.body) throw new Error("GitHub konnte die Notizen für die Link-Aktualisierung nicht laden (HTTP " + archive.status + ").");
   let stream;
-  try {
-    stream = archive.body.pipeThrough(new DecompressionStream("gzip"));
-  } catch {
-    throw new Error("Die GitHub-Archivdatei konnte nicht für die Link-Aktualisierung geöffnet werden.");
-  }
-  const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+  try { stream = archive.body.pipeThrough(new DecompressionStream("gzip")); }
+  catch { throw new Error("Die GitHub-Archivdatei konnte nicht für die Link-Aktualisierung geöffnet werden."); }
+
+  // TAR-Dateien blockweise lesen, statt das gesamte entpackte Repository im Speicher zu halten.
+  const reader = stream.getReader();
+  let chunk = new Uint8Array(0);
+  let chunkOffset = 0;
   const decoder = new TextDecoder();
-  const files = new Map();
-  let offset = 0;
-  while (offset + 512 <= bytes.length) {
-    const header = bytes.subarray(offset, offset + 512);
-    if (header.every((value) => value === 0)) break;
-    const readString = (from, length) => decoder.decode(header.subarray(from, from + length)).split("\0")[0];
-    const name = readString(0, 100);
-    const prefix = readString(345, 155);
-    const path = prefix ? prefix + "/" + name : name;
-    const sizeText = readString(124, 12).trim();
-    const size = sizeText ? parseInt(sizeText, 8) : 0;
-    if (!Number.isFinite(size) || size < 0) throw new Error("Ungültige Dateigröße im GitHub-Archiv.");
-    const dataStart = offset + 512;
-    const type = readString(156, 1);
-    const slash = path.indexOf("/");
-    const relativePath = slash >= 0 ? path.slice(slash + 1) : path;
-    if (relativePath.toLowerCase().endsWith(".md") && (!type || type === "0")) {
-      files.set(relativePath, decoder.decode(bytes.subarray(dataStart, dataStart + size)));
+
+  async function readExact(length) {
+    const output = new Uint8Array(length);
+    let written = 0;
+    while (written < length) {
+      if (chunkOffset >= chunk.length) {
+        const next = await reader.read();
+        if (next.done) break;
+        chunk = next.value;
+        chunkOffset = 0;
+        continue;
+      }
+      const take = Math.min(length - written, chunk.length - chunkOffset);
+      output.set(chunk.subarray(chunkOffset, chunkOffset + take), written);
+      chunkOffset += take;
+      written += take;
     }
-    offset = dataStart + Math.ceil(size / 512) * 512;
+    return written === length ? output : output.subarray(0, written);
   }
-  return files;
+
+  async function skipExact(length) {
+    let remaining = length;
+    while (remaining > 0) {
+      if (chunkOffset >= chunk.length) {
+        const next = await reader.read();
+        if (next.done) return false;
+        chunk = next.value;
+        chunkOffset = 0;
+        continue;
+      }
+      const take = Math.min(remaining, chunk.length - chunkOffset);
+      chunkOffset += take;
+      remaining -= take;
+    }
+    return true;
+  }
+
+  try {
+    while (true) {
+      const header = await readExact(512);
+      if (header.length < 512 || header.every((value) => value === 0)) break;
+      const readString = (from, length) => decoder.decode(header.subarray(from, from + length)).split("\0")[0];
+      const name = readString(0, 100);
+      const prefix = readString(345, 155);
+      const archivePath = prefix ? prefix + "/" + name : name;
+      const sizeText = readString(124, 12).trim();
+      const size = sizeText ? parseInt(sizeText, 8) : 0;
+      if (!Number.isFinite(size) || size < 0) throw new Error("Ungültige Dateigröße im GitHub-Archiv.");
+      const type = readString(156, 1);
+      const slash = archivePath.indexOf("/");
+      const relativePath = slash >= 0 ? archivePath.slice(slash + 1) : archivePath;
+      const isMarkdown = relativePath.toLowerCase().endsWith(".md") && (!type || type === "0");
+
+      if (isMarkdown) {
+        if (size > 8 * 1024 * 1024) throw new Error("Eine Markdown-Datei ist größer als 8 MB. Umbenennen wurde sicherheitshalber abgebrochen.");
+        const contents = await readExact(size);
+        if (contents.length !== size) throw new Error("Die GitHub-Archivdatei wurde unvollständig übertragen.");
+        visit(relativePath, decoder.decode(contents));
+      } else if (!(await skipExact(size))) {
+        throw new Error("Die GitHub-Archivdatei wurde unvollständig übertragen.");
+      }
+      const padding = (512 - (size % 512)) % 512;
+      if (padding && !(await skipExact(padding))) break;
+    }
+  } finally {
+    reader.releaseLock();
+  }
 }
 
 async function moveVaultPath(source, destination, token) {
@@ -283,10 +329,12 @@ async function moveVaultPath(source, destination, token) {
     }
   }
 
-  const archiveFiles = await readMarkdownArchive(token, parentSha);
+  const markdownPaths = entries
+    .filter((entry) => entry.type === "blob" && entry.path.toLowerCase().endsWith(".md"))
+    .map((entry) => entry.path);
   const movedPath = new Map(destinations.map((item) => [item.source, item.path]));
   const basenameCounts = new Map();
-  for (const path of archiveFiles.keys()) {
+  for (const path of markdownPaths) {
     const base = path.split("/").pop().replace(/\.md$/i, "").toLocaleLowerCase("de");
     basenameCounts.set(base, (basenameCounts.get(base) || 0) + 1);
   }
@@ -312,7 +360,7 @@ async function moveVaultPath(source, destination, token) {
   }
   let rewrittenNotes = 0;
   const wikilink = /(!?\[\[)([^\]|#]+)(#[^\]|]*)?(\|[^\]]*)?(\]\])/g;
-  for (const [originalPath, originalContent] of archiveFiles) {
+  await scanMarkdownArchive(token, parentSha, (originalPath, originalContent) => {
     const nextPath = movedPath.get(originalPath) || originalPath;
     let changed = false;
     const content = originalContent.replace(wikilink, (match, open, rawTarget, anchor, alias, close) => {
@@ -332,7 +380,7 @@ async function moveVaultPath(source, destination, token) {
       treeChanges.set(nextPath, { path: nextPath, mode: "100644", type: "blob", content });
       rewrittenNotes++;
     }
-  }
+  });
 
   const changes = Array.from(treeChanges.values());
   if (changes.length > 1800) throw new Error("Zu viele Linkänderungen für einen einzelnen sicheren Verschiebevorgang. Bitte verschiebe kleinere Ordner.");
