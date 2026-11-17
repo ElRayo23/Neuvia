@@ -412,3 +412,21 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
+
+  deploy-retired-preview-redirect:
+    if: github.ref == 'refs/heads/main'
+    needs: deploy-cloudflare-production
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare redirect for the retired Cloudflare preview address
+        run: |
+          mkdir -p retired-preview
+          cat > retired-preview/_redirects <<'EOF'
+          /* https://neuvia-editor-preview.pages.dev/:splat 301
+          EOF
+      - name: Redirect the old preview branch alias
+        run: npx wrangler pages deploy retired-preview --project-name=neuvia-editor-preview --branch=neuvia-editor-test
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
