@@ -33,8 +33,7 @@ Schau im Explorer oben links nach mehr Infos nach.
   title="Music"
   width="100%"
   height="750"
-  style="border: none; border-radius: 8px;"
-  loading="lazy">
+  style="border: none; border-radius: 8px;">
 </iframe>
 
 
