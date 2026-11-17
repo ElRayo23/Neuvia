@@ -30,7 +30,7 @@ Schau im Explorer oben links nach mehr Infos nach.
 
 
 <iframe
-  src="https://elrayo23.github.io/Neuvia/static/karte.html"
+  src="static/karte.html"
   title="Neuvia Struktur"
   width="100%"
   height="900"
