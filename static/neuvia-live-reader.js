@@ -74,12 +74,23 @@ import createDOMPurify from "dompurify";
   }
 
   function assetPath(value) {
-    const path = String(value || "").trim().replace(/^\.\//, "");
+    let path = String(value || "").trim().replace(/^\.\//, "");
+    try { path = decodeURIComponent(path); } catch {}
     if (/^(https?:|data:|blob:|\/)/i.test(path)) return path;
     if (/^(files|assets)\//i.test(path)) return path;
     const folder = currentPath.includes("/") ? currentPath.slice(0, currentPath.lastIndexOf("/") + 1) : "";
     return folder + path;
   }
+
+  const markdownRenderer = new marked.Renderer();
+  const defaultImageRenderer = markdownRenderer.image.bind(markdownRenderer);
+  markdownRenderer.image = (token) => {
+    const href = String(token.href || "");
+    if (!href || /^(https?:|data:|blob:|\/|#)/i.test(href)) return defaultImageRenderer(token);
+    const src = apiUrl("/api/public-asset", assetPath(href));
+    const title = token.title ? ' title="' + esc(token.title) + '"' : "";
+    return '<img loading="lazy" class="neuvia-live-image" src="' + esc(src) + '" alt="' + esc(token.text || "") + '"' + title + '>';
+  };
 
   const wikiExtension = {
     name: "neuviaWikiLink",
@@ -119,7 +130,7 @@ import createDOMPurify from "dompurify";
     renderer(token) { return "<mark>" + esc(token.text) + "</mark>"; }
   };
 
-  marked.use({ gfm: true, extensions: [wikiExtension, highlightExtension] });
+  marked.use({ gfm: true, renderer: markdownRenderer, extensions: [wikiExtension, highlightExtension] });
 
   function stripFrontmatter(source) {
     const text = String(source || "").replace(/^\uFEFF/, "");
