@@ -29,9 +29,6 @@ Hallo
 </iframe>
 
 
-## Neue interaktive Landkarte
-
-
 <iframe
   src="https://elrayo23.github.io/Neuvia/static/karte.html"
   title="Neue interaktive Karte von Chainland"
