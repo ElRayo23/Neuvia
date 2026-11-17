@@ -370,7 +370,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
 
   deploy-cloudflare-production:
-    if: github.ref == 'refs/heads/main'
+    if: ${{ always() && github.ref == 'refs/heads/main' && needs.build.result == 'success' }}
     needs: build
     timeout-minutes: 10
     runs-on: ubuntu-latest
@@ -414,7 +414,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
 
   deploy-retired-preview-redirect:
-    if: github.ref == 'refs/heads/main'
+    if: ${{ always() && github.ref == 'refs/heads/main' && needs.deploy-cloudflare-production.result == 'success' }}
     needs: deploy-cloudflare-production
     timeout-minutes: 5
     runs-on: ubuntu-latest
