@@ -162,11 +162,12 @@
           continue;
         }
         if (child.nodeType === Node.ELEMENT_NODE) {
+          const isBlock = child.tagName === "DIV" || child.tagName === "P";
+          const innerMarkdown = Array.from(child.childNodes).map(markdownForEditorNode).join("");
           find(child);
-          if (!point) {
-            const length = markdownForEditorNode(child).length;
-            if (target <= total + length) { point = { node: parent, offset: i + 1 }; return; }
-            total += length;
+          if (!point && isBlock && innerMarkdown !== "\n" && !innerMarkdown.endsWith("\n")) {
+            if (target <= total + 1) { point = { node: parent, offset: i + 1 }; return; }
+            total += 1;
           }
         }
       }
@@ -1424,6 +1425,12 @@
       if (files.some((file) => file.type.startsWith("image/"))) {
         event.preventDefault();
         uploadImages(files);
+        return;
+      }
+      const text = event.clipboardData?.getData("text/plain");
+      if (text !== undefined && text !== null) {
+        event.preventDefault();
+        insertAtCursor(text);
       }
     });
 
