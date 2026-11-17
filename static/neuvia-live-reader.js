@@ -184,7 +184,10 @@ import createDOMPurify from "dompurify";
     let markdown = stripFrontmatter(source);
     markdown = markdown.replace(/^(\s*>\s*)\[!(\w+)\]([^\r\n]*)/gm, (all, prefix, type, rest) => prefix + "[" + type.toUpperCase() + "]" + rest);
     const html = marked.parse(markdown, { gfm: true, breaks: true });
-    container.innerHTML = purifier.sanitize(String(html), { ADD_ATTR: ["loading", "target", "rel"] });
+    container.innerHTML = purifier.sanitize(String(html), {
+      ADD_TAGS: ["iframe"],
+      ADD_ATTR: ["loading", "target", "rel", "width", "height", "style", "allow", "allowfullscreen", "referrerpolicy"]
+    });
     decorate(container);
     for (const placeholder of Array.from(container.querySelectorAll(".neuvia-live-transclude"))) {
       const nestedPath = placeholder.dataset.path || "";
