@@ -114,6 +114,12 @@
     "#neuvia-workspace .nw-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}",
     "#neuvia-workspace .nw-error{min-height:18px;margin-top:9px;color:#c33;font-size:12px;}",
     "#neuvia-workspace .nw-empty{padding:13px 9px;color:var(--darkgray,#666);font-size:12px;}",
+    "#neuvia-workspace .nw-image-backdrop{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:18px;background:#000b;}",
+    "#neuvia-workspace .nw-image-preview{display:flex;flex-direction:column;gap:10px;max-width:min(1100px,96vw);max-height:94vh;padding:12px;border:1px solid var(--lightgray,#bbb);border-radius:10px;background:var(--light,#faf8f8);box-shadow:0 12px 40px #0008;}",
+    "#neuvia-workspace .nw-image-preview-header{display:flex;align-items:center;justify-content:space-between;gap:14px;}",
+    "#neuvia-workspace .nw-image-preview-path{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;opacity:.7;}",
+    "#neuvia-workspace .nw-image-preview img{display:block;max-width:calc(96vw - 48px);max-height:calc(94vh - 75px);width:auto;height:auto;object-fit:contain;}",
+    "#neuvia-workspace .nw-image-preview-error{margin:8px;color:#c33;font-size:13px;}",
     "#neuvia-workspace button:disabled{opacity:.5;cursor:wait;}",
     "@media(max-width:700px){#neuvia-workspace .nw-shell{grid-template-columns:190px minmax(0,1fr);}#neuvia-workspace .nw-topbar{align-items:flex-start;flex-direction:column;padding:8px 10px;}#neuvia-workspace .nw-top-actions{width:100%;}#neuvia-workspace .nw-top-actions button{flex:1;padding:7px 5px;font-size:12px;}#neuvia-workspace .nw-editor{padding:20px 14px 36px;font-size:13px;}#neuvia-workspace .nw-actions{flex-wrap:wrap;}#neuvia-workspace .nw-actions button{flex:1;font-size:12px;padding:7px 5px;}}",
     "@media(max-width:480px){#neuvia-workspace .nw-shell{grid-template-columns:145px minmax(0,1fr);}#neuvia-workspace .nw-brand{padding:11px 8px;font-size:14px;}#neuvia-workspace .nw-current-path{display:none;}#neuvia-workspace .nw-actions{padding:8px 5px;}#neuvia-workspace .nw-search{margin:4px 5px 7px;width:calc(100% - 10px);}}"
@@ -336,7 +342,70 @@
     if (!container.childElementCount) container.appendChild(element("div", "nw-empty", "Keine Notizen gefunden."));
   }
 
-  const IMAGE_TYPES = new Set(["png", "jpg", "jpeg", "webp", "gif", "avif"]);
+  const IMAGE_TYPES = new Set(["png", "jpg", "jpeg", "webp", "gif", "avif", "svg"]);
+
+  function imageUrl(path) {
+    const value = String(path || "").trim();
+    if (/^(https?:|data:|blob:)/i.test(value)) return value;
+    return API + "/api/public-asset?path=" + encodeURIComponent(value.replace(/^\\/+/, ""));
+  }
+
+  function showImagePreview(path, alt = "") {
+    const backdrop = element("div", "nw-image-backdrop");
+    backdrop.setAttribute("role", "dialog");
+    backdrop.setAttribute("aria-modal", "true");
+    backdrop.setAttribute("aria-label", "Bildvorschau");
+    const panel = element("div", "nw-image-preview");
+    const header = element("div", "nw-image-preview-header");
+    const label = element("div", "nw-image-preview-path", path);
+    const close = element("button", "nw-button", "Schließen");
+    close.type = "button";
+    close.addEventListener("click", () => backdrop.remove());
+    header.append(label, close);
+    const image = document.createElement("img");
+    image.src = imageUrl(path);
+    image.alt = alt || basename(path);
+    image.addEventListener("error", () => {
+      const error = element("p", "nw-image-preview-error", "Bild konnte nicht geladen werden. Prüfe den Pfad und ob die Datei veröffentlicht bzw. hochgeladen wurde.");
+      panel.append(error);
+    }, { once: true });
+    panel.append(header, image);
+    backdrop.append(panel);
+    backdrop.addEventListener("click", (event) => { if (event.target === backdrop) backdrop.remove(); });
+    const onKey = (event) => {
+      if (event.key === "Escape" && backdrop.isConnected) {
+        backdrop.remove();
+        document.removeEventListener("keydown", onKey);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    backdrop.addEventListener("DOMNodeRemoved", () => document.removeEventListener("keydown", onKey), { once: true });
+    overlay.append(backdrop);
+  }
+
+  function imageReferenceAtCursor() {
+    const editor = overlay && overlay.querySelector(".nw-editor");
+    if (!editor) return null;
+    const cursor = editor.selectionStart;
+    const value = editor.value;
+    const lineStart = value.lastIndexOf("\\n", cursor - 1) + 1;
+    const lineEndRaw = value.indexOf("\\n", cursor);
+    const line = value.slice(lineStart, lineEndRaw < 0 ? value.length : lineEndRaw);
+    const local = cursor - lineStart;
+    const patterns = [
+      /!\\[\\[([^\\]|]+)(?:\\|([^\\]]+))?\\]\\]/g,
+      /!\\[[^\\]]*\\]\\(([^)]+)\\)/g
+    ];
+    for (const pattern of patterns) {
+      let match;
+      while ((match = pattern.exec(line))) {
+        if (local >= match.index && local <= match.index + match[0].length) {
+          return { path: match[1].trim().replace(/^<|>$/g, ""), alt: match[2] || "" };
+        }
+      }
+    }
+    return null;
+  }
 
   async function loadTree() {
     status("Lade Ordner und Notizen …");
@@ -367,6 +436,10 @@
   async function openFile(item, options = {}) {
     if (item.type !== "file") return;
     const ext = extension(item.path);
+    if (IMAGE_TYPES.has(ext)) {
+      showImagePreview(item.path);
+      return;
+    }
     if (ext !== "md") {
       const url = new URL(encodePath(item.path), SITE_BASE).href;
       window.open(url, "_blank", "noopener");
@@ -903,6 +976,13 @@
     const imageButton = element("button", "nw-button", "Bild hinzufügen");
     imageButton.type = "button";
     imageButton.addEventListener("click", () => imagePicker.click());
+    const imagePreviewButton = element("button", "nw-button nw-image-preview-current", "Bildvorschau");
+    imagePreviewButton.type = "button";
+    imagePreviewButton.addEventListener("click", () => {
+      const reference = imageReferenceAtCursor();
+      if (reference) showImagePreview(reference.path, reference.alt);
+      else status("Setze den Cursor in einen Bildverweis wie ![[Files/Bild.png]] oder ![Alt](Files/Bild.png).", "normal");
+    });
     const moveButton = element("button", "nw-button nw-move-current", "Verschieben");
     moveButton.type = "button";
     moveButton.disabled = true;
@@ -923,7 +1003,7 @@
     const website = element("button", "nw-button", "Website");
     website.type = "button";
     website.addEventListener("click", () => { location.href = SITE_BASE; });
-    topActions.append(imageButton, moveButton, sync, publishButton, website);
+    topActions.append(imageButton, imagePreviewButton, moveButton, sync, publishButton, website);
     topbar.append(currentGroup, topActions);
 
     const editorWrap = element("div", "nw-editor-wrap");
@@ -954,7 +1034,11 @@
     });
     editor.addEventListener("click", () => {
       renderSuggestions();
-      setTimeout(openWikiLinkAtCursor, 0);
+      setTimeout(() => {
+        const reference = imageReferenceAtCursor();
+        if (reference) showImagePreview(reference.path, reference.alt);
+        else openWikiLinkAtCursor();
+      }, 0);
     });
     editor.addEventListener("keyup", (event) => {
       if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) renderSuggestions();
