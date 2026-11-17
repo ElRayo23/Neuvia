@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Länder und Orte – Neuvia</title>
+<style>
+:root{color-scheme:dark;--bg:#17191d;--panel:#22262d;--line:#3b414b;--text:#edf0f4;--muted:#aab2bd;--accent:#b8d8ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:1500px;margin:auto;padding:16px}header{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:1.2rem;margin:0}p{margin:3px 0;color:var(--muted);font-size:.88rem}
+input{width:min(100%,420px);padding:10px 12px;background:#2b3038;color:var(--text);border:1px solid var(--line);border-radius:8px;font:inherit}
+.layout{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.4fr);gap:14px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+h2{font-size:1rem;margin:0 0 10px}.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.unit,.hit{display:flex;justify-content:space-between;gap:12px;padding:6px 7px;border-radius:6px}
+.unit:hover,.hit:hover{background:#ffffff0d}.count,.meta{color:var(--muted);font-size:.82rem;white-space:nowrap}
+#results{display:grid;gap:3px;max-height:560px;overflow:auto}.empty{color:var(--muted);padding:8px}
+@media(max-width:760px){main{padding:10px}.layout{grid-template-columns:1fr}.list{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.list{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main>
+<header><div><h1>Länder und Ortschaften</h1><p>Alphabetische Übersicht und Suche in allen erfassten Siedlungen</p></div><input id="search" type="search" placeholder="Stadt, Ortschaft oder Land suchen …" aria-label="Stadt, Ortschaft oder Land suchen"></header>
+<div class="layout">
+<section><h2>Länder und Regionen</h2><div id="units" class="list"><div class="empty">Einträge werden geladen …</div></div></section>
+<section><h2>Suchergebnisse</h2><div id="results" class="empty">Suchbegriff eingeben, um Länder und Ortschaften zu finden.</div></section>
+</div></main>
+<script>
+(()=>{const base=location.pathname.includes("/Neuvia/")?"/Neuvia":"";const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));const path=p=>base+"/"+p.replace(/\.md$/i,"").split("/").map(s=>encodeURIComponent(s.replace(/ /g,"-"))).join("/")+"/";const units=document.getElementById("units"),results=document.getElementById("results"),search=document.getElementById("search");let data;
+function link(item,label,meta){if(item.lorePath)return '<a href="'+esc(path(item.lorePath))+'">'+esc(label)+'</a>';return '<span>'+esc(label)+'</span>'}
+function render(){const sorted=[...data.politicalUnits].sort((a,b)=>a.name.localeCompare(b.name,"de"));units.innerHTML=sorted.map(u=>'<div class="unit"><span>'+link(u,u.name)+'</span><span class="count">'+data.settlements.filter(s=>s.politicalUnitId===u.id).length+' Orte</span></div>').join("");}
+function find(){const q=search.value.trim().toLocaleLowerCase("de");if(!q){results.className="empty";results.textContent="Suchbegriff eingeben, um Länder und Ortschaften zu finden.";return}const hits=[];data.politicalUnits.forEach(u=>{if((u.name+" "+u.officialName).toLocaleLowerCase("de").includes(q))hits.push({name:u.name,meta:"Land / Region",item:u})});data.settlements.forEach(s=>{const u=data.politicalUnits.find(x=>x.id===s.politicalUnitId);if((s.name+" "+(u?.name||"")).toLocaleLowerCase("de").includes(q))hits.push({name:s.name,meta:u?.name||"Ortschaft",item:s,unit:u})});results.className="";if(!hits.length){results.className="empty";results.textContent="Keine Treffer.";return}results.innerHTML=hits.slice(0,100).map(h=>'<div class="hit"><span>'+link(h.item,h.name)+' '+(h.item.lorePath?'':'<span class="meta">')+'</span><span class="meta">'+esc(h.meta)+(h.item.lorePath?'':' · kein eigener Lore-Eintrag')+'</span></div>').join("");}
+search.addEventListener("input",find);fetch("geography.json").then(r=>{if(!r.ok)throw Error("Daten konnten nicht geladen werden.");return r.json()}).then(d=>{data=d;render()}).catch(e=>{units.textContent=e.message;results.textContent=e.message});})();
+</script></body></html>
