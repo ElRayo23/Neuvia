@@ -1,10 +1,9 @@
-// Neuvia live-reader API: Markdown and visible assets are served directly from the test branch.
-// Phase 1 release sync: deploy this Worker with the matching reader bundle.
-const ORIGIN = "https://elrayo23.github.io";
-const ORIGINS = [ORIGIN, "https://neuvia-editor-preview.pages.dev"];
+// Neuvia API: the single production editor and live reader use the main branch.
+const ORIGIN = "https://neuvia-editor-preview.pages.dev";
+const ORIGINS = [ORIGIN];
 const OWNER = "ElRayo23";
 const REPO = "Neuvia";
-const BRANCH = "neuvia-editor-test";
+const BRANCH = "main";
 const API = "https://api.github.com";
 const enc = new TextEncoder();
 
