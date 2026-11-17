@@ -1,3 +1,4 @@
+// Neuvia live-reader API: Markdown and visible assets are served directly from the test branch.
 const ORIGIN = "https://elrayo23.github.io";
 const ORIGINS = [ORIGIN, "https://neuvia-editor-preview.pages.dev"];
 const OWNER = "ElRayo23";
