@@ -1,3 +1,4 @@
+// Neuvia live reader: load the current Markdown source while keeping the Quartz layout.
 import { marked } from "marked";
 import createDOMPurify from "dompurify";
 
