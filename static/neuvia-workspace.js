@@ -120,6 +120,10 @@
     "#neuvia-workspace .nw-image-preview-path{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;opacity:.7;}",
     "#neuvia-workspace .nw-image-preview img{display:block;max-width:calc(96vw - 48px);max-height:calc(94vh - 75px);width:auto;height:auto;object-fit:contain;}",
     "#neuvia-workspace .nw-image-preview-error{margin:8px;color:#c33;font-size:13px;}",
+    "#neuvia-workspace .nw-context-menu{position:fixed;z-index:50;min-width:210px;padding:5px;border:1px solid var(--lightgray,#bbb);border-radius:9px;background:var(--light,#fff);box-shadow:0 8px 28px #0004;}",
+    "#neuvia-workspace .nw-context-menu button{display:block;width:100%;padding:8px 10px;border:0;border-radius:5px;background:transparent;color:inherit;text-align:left;}",
+    "#neuvia-workspace .nw-context-menu button:hover{background:var(--highlight,rgba(120,130,140,.18));}",
+    "#neuvia-workspace .nw-context-menu .nw-danger{color:#c33;}",
     "#neuvia-workspace button:disabled{opacity:.5;cursor:wait;}",
     "@media(max-width:700px){#neuvia-workspace .nw-shell{grid-template-columns:190px minmax(0,1fr);}#neuvia-workspace .nw-topbar{align-items:flex-start;flex-direction:column;padding:8px 10px;}#neuvia-workspace .nw-top-actions{width:100%;}#neuvia-workspace .nw-top-actions button{flex:1;padding:7px 5px;font-size:12px;}#neuvia-workspace .nw-editor{padding:20px 14px 36px;font-size:13px;}#neuvia-workspace .nw-actions{flex-wrap:wrap;}#neuvia-workspace .nw-actions button{flex:1;font-size:12px;padding:7px 5px;}}",
     "@media(max-width:480px){#neuvia-workspace .nw-shell{grid-template-columns:145px minmax(0,1fr);}#neuvia-workspace .nw-brand{padding:11px 8px;font-size:14px;}#neuvia-workspace .nw-current-path{display:none;}#neuvia-workspace .nw-actions{padding:8px 5px;}#neuvia-workspace .nw-search{margin:4px 5px 7px;width:calc(100% - 10px);}}"
@@ -304,10 +308,7 @@
       row.append(element("span", "nw-name", ext === "md" ? getLinkIndexTitle(item.path) : item.name));
       row.title = item.path + " · Rechtsklick zum Verschieben/Umbenennen";
       row.addEventListener("click", () => openFile(item));
-      row.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
-        showMoveDialog(item.path, false);
-      });
+      bindContextActions(row, item.path, false);
       parent.append(row);
     }
     function addFolder(folder, parent) {
@@ -326,10 +327,7 @@
         arrow.textContent = children.hidden ? "▸" : "▾";
         activeFolder = folder.path;
       });
-      row.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
-        showMoveDialog(folder.path, true);
-      });
+      bindContextActions(row, folder.path, true);
       wrapper.append(row, children);
       parent.append(wrapper);
       for (const child of Array.from(folder.folders.values()).sort((a,b)=>a.name.localeCompare(b.name,"de",{sensitivity:"base"}))) addFolder(child, children);
@@ -340,6 +338,170 @@
     root.files.sort((a,b)=>a.name.localeCompare(b.name,"de",{sensitivity:"base",numeric:true}));
     for (const file of root.files) addFile(file, container);
     if (!container.childElementCount) container.appendChild(element("div", "nw-empty", "Keine Notizen gefunden."));
+  }
+
+
+  function closeContextMenu() {
+    overlay?.querySelector(".nw-context-menu")?.remove();
+  }
+
+  function showContextMenu(path, isFolder, x, y) {
+    closeContextMenu();
+    activeFolder = isFolder ? path : path.split("/").slice(0, -1).join("/");
+    const menu = element("div", "nw-context-menu");
+    menu.style.left = Math.max(8, Math.min(x, window.innerWidth - 225)) + "px";
+    menu.style.top = Math.max(8, Math.min(y, window.innerHeight - 230)) + "px";
+    menu.setAttribute("role", "menu");
+    const action = (label, callback, danger = false) => {
+      const button = element("button", danger ? "nw-danger" : "", label);
+      button.type = "button";
+      button.addEventListener("click", async () => { closeContextMenu(); await callback(); });
+      menu.append(button);
+    };
+    action("Umbenennen", () => showRenameDialog(path, isFolder));
+    action("Verschieben", () => showFolderPicker(path, isFolder));
+    if (isFolder) action("Ordner löschen (Inhalt behalten)", () => deletePath(path, "contents"));
+    action("Löschen", () => deletePath(path, isFolder ? "recursive" : "file"), true);
+    action("Neuen Beitrag erstellen", () => showDialog("note"));
+    overlay.append(menu);
+    const dismiss = (event) => {
+      if (!menu.contains(event.target)) { closeContextMenu(); document.removeEventListener("pointerdown", dismiss, true); }
+    };
+    setTimeout(() => document.addEventListener("pointerdown", dismiss, true), 0);
+  }
+
+  function bindContextActions(row, path, isFolder) {
+    row.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+      showContextMenu(path, isFolder, event.clientX, event.clientY);
+    });
+    let pressTimer = null;
+    let longPressed = false;
+    row.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "touch") return;
+      longPressed = false;
+      pressTimer = setTimeout(() => {
+        longPressed = true;
+        showContextMenu(path, isFolder, event.clientX || 20, event.clientY || 80);
+      }, 550);
+    });
+    const cancelPress = () => { if (pressTimer) clearTimeout(pressTimer); pressTimer = null; };
+    row.addEventListener("pointerup", cancelPress);
+    row.addEventListener("pointerleave", cancelPress);
+    row.addEventListener("pointercancel", cancelPress);
+    row.addEventListener("click", (event) => {
+      if (longPressed) { event.preventDefault(); event.stopImmediatePropagation(); longPressed = false; }
+    }, true);
+  }
+
+  function showRenameDialog(source, isFolder) {
+    const backdrop = element("div", "nw-dialog-backdrop");
+    const dialog = element("form", "nw-dialog");
+    dialog.append(element("h2", "", "Umbenennen"));
+    dialog.append(element("div", "nw-muted", source));
+    dialog.append(element("label", "", "Neuer Name"));
+    const input = element("input");
+    const oldName = basename(source);
+    input.value = isFolder ? oldName : oldName.replace(/\.[^.]+$/, "");
+    input.required = true;
+    dialog.append(input);
+    const error = element("div", "nw-error");
+    const actions = element("div", "nw-dialog-actions");
+    const cancel = element("button", "nw-button", "Abbrechen");
+    cancel.type = "button";
+    const submit = element("button", "nw-button nw-primary", "Umbenennen");
+    submit.type = "submit";
+    actions.append(cancel, submit);
+    dialog.append(error, actions);
+    backdrop.append(dialog); overlay.append(backdrop);
+    cancel.addEventListener("click", () => backdrop.remove());
+    backdrop.addEventListener("click", (event) => { if (event.target === backdrop) backdrop.remove(); });
+    dialog.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const name = input.value.trim();
+      if (!name || /[\\/]/.test(name) || name === "." || name === "..") { error.textContent = "Bitte einen gültigen Namen ohne Pfadtrenner eingeben."; return; }
+      const nextName = isFolder || /\.[^.]+$/.test(name) ? name : name + (oldName.match(/\.[^.]+$/)?.[0] || "");
+      const destination = [source.split("/").slice(0,-1).join("/"), nextName].filter(Boolean).join("/");
+      if (destination === source) { backdrop.remove(); return; }
+      submit.disabled = true;
+      try {
+        await saveCurrent();
+        const result = await request("/api/move", { method:"POST", body:JSON.stringify({source,destination}) });
+        const currentMoves = currentPath === source || (isFolder && currentPath.startsWith(source + "/"));
+        const nextCurrent = currentMoves ? destination + currentPath.slice(source.length) : "";
+        backdrop.remove();
+        if (currentMoves) { clearDraft(currentPath); currentPath = ""; currentSha = ""; savedContent = ""; updateCurrentHeader(); }
+        await loadTree();
+        if (nextCurrent) await openFile({path:nextCurrent,type:"file",name:basename(nextCurrent)});
+        status("Umbenannt · " + (result.rewrittenNotes || 0) + " Wiki-Link(s) aktualisiert", "success");
+      } catch (err) { error.textContent = err.message; submit.disabled = false; }
+    });
+    input.focus(); input.select();
+  }
+
+  function showFolderPicker(source, isFolder) {
+    const backdrop = element("div", "nw-dialog-backdrop");
+    const dialog = element("form", "nw-dialog");
+    dialog.append(element("h2", "", "Zielordner auswählen"));
+    dialog.append(element("div", "nw-muted", "Quelle: " + source));
+    dialog.append(element("label", "", "Zielordner"));
+    const select = element("select");
+    select.style.cssText = "width:100%;padding:9px;border:1px solid var(--lightgray,#aaa);border-radius:7px;background:var(--light,#fff);color:inherit;";
+    const addOption = (value,label) => { const option=element("option","",label); option.value=value; select.append(option); };
+    addOption("", "Vault-Hauptordner");
+    for (const item of treeItems.filter((entry) => entry.type === "folder").sort((a,b)=>a.path.localeCompare(b.path,"de"))) {
+      if (item.path === source || (isFolder && item.path.startsWith(source + "/"))) continue;
+      addOption(item.path, item.path);
+    }
+    const error = element("div", "nw-error");
+    const actions = element("div", "nw-dialog-actions");
+    const cancel = element("button", "nw-button", "Abbrechen"); cancel.type="button";
+    const submit = element("button", "nw-button nw-primary", "Verschieben"); submit.type="submit";
+    actions.append(cancel,submit); dialog.append(select,error,actions); backdrop.append(dialog); overlay.append(backdrop);
+    cancel.addEventListener("click",()=>backdrop.remove());
+    backdrop.addEventListener("click",(event)=>{if(event.target===backdrop)backdrop.remove();});
+    dialog.addEventListener("submit",async(event)=>{
+      event.preventDefault();
+      const destination=[select.value,basename(source)].filter(Boolean).join("/");
+      if(destination===source){error.textContent="Bitte einen anderen Zielordner wählen.";return;}
+      submit.disabled=true; cancel.disabled=true;
+      const oldPath=currentPath;
+      const moves=oldPath===source || (isFolder && oldPath.startsWith(source+"/"));
+      const nextPath=moves?destination+oldPath.slice(source.length):"";
+      try{
+        await saveCurrent();
+        const result=await request("/api/move",{method:"POST",body:JSON.stringify({source,destination})});
+        backdrop.remove();
+        if(moves){clearDraft(oldPath);currentPath="";currentSha="";savedContent="";updateCurrentHeader();}
+        activeFolder=select.value;
+        await loadTree();
+        if(nextPath)await openFile({path:nextPath,type:"file",name:basename(nextPath)});
+        status("Verschoben · "+(result.rewrittenNotes||0)+" Wiki-Link(s) aktualisiert","success");
+      }catch(err){error.textContent=err.message;submit.disabled=false;cancel.disabled=false;}
+    });
+  }
+
+  async function deletePath(path, mode) {
+    const description = mode === "recursive" ? "Der Ordner und ALLE enthaltenen Dateien und Unterordner werden endgültig gelöscht." :
+      mode === "contents" ? "Alle Inhalte werden eine Ebene nach oben verschoben. Der Ordner wird entfernt." :
+      "Der Beitrag wird endgültig gelöscht.";
+    if (!window.confirm(description + "\n\n" + path + "\n\nFortfahren?")) return;
+    try {
+      await saveCurrent();
+      const result = await request("/api/delete", {method:"POST",body:JSON.stringify({path,mode})});
+      let nextPath = "";
+      if (mode === "contents" && currentPath.startsWith(path + "/")) {
+        const parent = path.includes("/") ? path.slice(0,path.lastIndexOf("/")) : "";
+        nextPath = [parent,currentPath.slice(path.length+1)].filter(Boolean).join("/");
+      }
+      const currentRemoved = mode === "file" ? currentPath === path : mode === "recursive" ? currentPath === path || currentPath.startsWith(path+"/") : false;
+      if (currentRemoved || nextPath) {
+        clearDraft(currentPath); currentPath=""; currentSha=""; savedContent=""; updateCurrentHeader();
+      }
+      await loadTree();
+      if (nextPath) await openFile({path:nextPath,type:"file",name:basename(nextPath)});
+      status(mode === "contents" ? "Ordner entfernt; Inhalte eine Ebene nach oben verschoben." : "Gelöscht · "+result.changedFiles+" Datei(en).","success");
+    } catch(error) { status(error.message,"error"); alert(error.message); }
   }
 
   const IMAGE_TYPES = new Set(["png", "jpg", "jpeg", "webp", "gif", "avif", "svg"]);
