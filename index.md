@@ -31,7 +31,7 @@ Hallo
 
 <iframe
   src="https://elrayo23.github.io/Neuvia/static/karte.html"
-  title="Neue interaktive Karte von Chainland"
+  title="Neuvia Struktur"
   width="100%"
   height="900"
   style="border: 0; border-radius: 10px; background: #17191d;"
