@@ -322,7 +322,7 @@ jobs:
           PY
 
       - name: Publish interactive map HTML with its original extension
-        run: cp .quartz-runtime/content/static/karte.html .quartz-runtime/public/static/karte.html
+        run: cp .quartz-runtime/content/static/geography-index.html .quartz-runtime/public/static/geography-index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
