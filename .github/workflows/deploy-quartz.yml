@@ -58,7 +58,7 @@ jobs:
                   changed.update(commit.get("modified") or [])
                   changed.update(commit.get("removed") or [])
           content_extensions = {".md", ".pdf", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"}
-          content_only = bool(changed) and all(PurePosixPath(path).suffix.lower() in content_extensions and path != "Lore/Karte.md" for path in changed)
+          content_only = bool(changed) and all(PurePosixPath(path).suffix.lower() in content_extensions and path not in {"Lore/Karte.md", "index.md"} for path in changed)
           worker_only = bool(changed) and all(path == "workers/neuvia-admin-api.js" for path in changed)
           should_build = not content_only and not worker_only
           deploy_worker = "workers/neuvia-admin-api.js" in changed or ".github/workflows/deploy-quartz.yml" in changed
