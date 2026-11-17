@@ -289,6 +289,7 @@
         row.append(name);
         row.title = item.path;
         row.addEventListener("click", () => openFile(item));
+        bindContextActions(row, item.path, false);
         container.append(row);
         const pathLine = element("div", "nw-muted", item.path);
         pathLine.style.padding = "0 8px 5px 27px";
