@@ -389,7 +389,7 @@ async function deleteVaultPath(path, mode, token) {
       const moved = inside.map((entry) => ({ entry, target: [parent, entry.path.slice(path.length + 1)].filter(Boolean).join("/") }));
       const occupied = new Set(entries.filter((entry) => !entry.path.startsWith(path + "/")).map((entry) => entry.path));
       for (const item of moved) {
-        if (occupied.has(item.target) || moved.some((other) => other !== item && (other.target === item.target || other.target.startsWith(item.target + "/")))) {
+        if (occupied.has(item.target) || moved.some((other) => other !== item && (other.target === item.target || other.target.startsWith(item.target + "/") || item.target.startsWith(other.target + "/")))) {
           throw new Error("Zielkonflikt beim Eine-Ebene-hoch-Verschieben: " + item.target + ". Es wurde nichts geändert.");
         }
       }
