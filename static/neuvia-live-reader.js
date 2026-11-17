@@ -8,7 +8,7 @@ import createDOMPurify from "dompurify";
   const API = "https://neuvia-admin-api.forkleafcustom.workers.dev";
   const basePath = (document.body?.dataset?.basepath || "").replace(/\/$/, "");
   const staticBase = basePath + "/static/";
-  const purifier = createDOMPurify(window);
+  const purifier = createDOMPurify;
   let indexesPromise;
   let currentPath = "";
   let runId = 0;
