@@ -76,7 +76,7 @@ footer{color:var(--muted);font-size:.78rem;margin-top:9px}
 </main>
 <script>
 (()=> {
- const base="/Neuvia";
+ const base=location.pathname.includes("/Neuvia/")?"/Neuvia":"";
  const ns="http://www.w3.org/2000/svg";
  const overlay=document.getElementById("overlay"), shell=document.getElementById("mapShell"), world=document.getElementById("mapWorld");
  const search=document.getElementById("search"), filter=document.getElementById("unitFilter"), detail=document.getElementById("detail"), unitList=document.getElementById("unitList"), results=document.getElementById("searchResults");
