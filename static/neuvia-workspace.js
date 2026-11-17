@@ -347,7 +347,7 @@
   function imageUrl(path) {
     const value = String(path || "").trim();
     if (/^(https?:|data:|blob:)/i.test(value)) return value;
-    return API + "/api/public-asset?path=" + encodeURIComponent(value.replace(/^\\/+/, ""));
+    return API + "/api/public-asset?path=" + encodeURIComponent(value.replace(/^\/+/, ""));
   }
 
   function showImagePreview(path, alt = "") {
