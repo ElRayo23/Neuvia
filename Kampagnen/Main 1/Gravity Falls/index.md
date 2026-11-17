@@ -1,5 +1,5 @@
 ---
-title: Gravity Falls
+title: Der Krieg um Prismeer
 ---
 
 # Gravity Falls
