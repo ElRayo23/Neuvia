@@ -12,7 +12,7 @@ title: Karte
 </iframe>
 
 <iframe
-  src="/Neuvia/static/geography-index.html"
+  src="/static/geography-index.html"
   title="Länder- und Ortsverzeichnis"
   width="100%"
   height="760"
