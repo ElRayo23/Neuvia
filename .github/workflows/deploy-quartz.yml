@@ -157,7 +157,8 @@ jobs:
         working-directory: .quartz-runtime
         run: |
           mkdir -p public/static
-          npx esbuild ../static/neuvia-live-reader.js --bundle --minify --format=iife --target=es2022 --outfile=public/static/neuvia-live-reader.bundle.js
+          cp ../static/neuvia-live-reader.js ./neuvia-live-reader.js
+          npx esbuild neuvia-live-reader.js --bundle --minify --format=iife --target=es2022 --outfile=public/static/neuvia-live-reader.bundle.js
 
       - name: Generate editor page map
         run: |
