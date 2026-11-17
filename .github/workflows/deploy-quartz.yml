@@ -324,7 +324,7 @@ jobs:
           version = os.environ.get("GITHUB_SHA", "")
           is_cloudflare = os.environ.get("GITHUB_REF_NAME") == "main"
           admin_path = "/static/neuvia-admin.js" if is_cloudflare else "/Neuvia/static/neuvia-admin.js"
-          tags = [f'<script defer src="{admin_path}?v={version}"></script>']
+          tags = [f'<script defer src="{admin_path}?v={version}"></script>'] if is_cloudflare else []
           if is_cloudflare:
               tags.append(f'<script defer src="/static/neuvia-live-reader.bundle.js?v={version}"></script>')
               tags.append(f'<script defer src="/static/neuvia-search-boot.js?v={version}"></script>')
