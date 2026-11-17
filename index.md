@@ -29,4 +29,4 @@ Schau im Explorer oben links nach mehr Infos nach.
 </iframe>
 
 
-[Neue Karte separat öffnen](https://elrayo23.github.io/Neuvia/static/karte.html)
+
