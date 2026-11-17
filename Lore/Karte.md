@@ -10,12 +10,3 @@ title: Karte
   style="border: 0; border-radius: 10px;"
   loading="eager">
 </iframe>
-
-<iframe
-  src="/static/geography-index.html"
-  title="Länder- und Ortsverzeichnis"
-  width="100%"
-  height="760"
-  style="border: 0; border-radius: 10px; background: #17191d;"
-  loading="lazy">
-</iframe>
