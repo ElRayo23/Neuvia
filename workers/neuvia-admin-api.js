@@ -414,8 +414,8 @@ async function deleteVaultPath(path, mode, token) {
             readFile(target, token),
             readFile(entry.path, token),
           ]);
-          const sourceBody = sourceFile.content.replace(/^---\\r?\\n[\\s\\S]*?\\r?\\n---\\s*(?:\\r?\\n|$)/, "").trim();
-          const mergedContent = targetFile.content.trimEnd() + (sourceBody ? "\\n\\n---\\n\\n" + sourceBody : "") + "\\n";
+          const sourceBody = sourceFile.content.replace(/^---\r?\n[\\s\\S]*?\r?\n---\\s*(?:\r?\n|$)/, "").trim();
+          const mergedContent = targetFile.content.trimEnd() + (sourceBody ? "\n\n---\n\n" + sourceBody : "") + "\n";
           const blob = await githubJson("/repos/" + OWNER + "/" + REPO + "/git/blobs", token, "POST", {
             content: mergedContent,
             encoding: "utf-8",
