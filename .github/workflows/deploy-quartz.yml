@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - map-geo-structure
+      - neuvia-editor-test
   workflow_dispatch:
 
 permissions:
@@ -13,11 +14,71 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  # Preview runs should not queue behind stale builds; production deploys stay serialized.
+  group: pages-${{ github.ref_name }}-v3
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 jobs:
+  check-preview-content:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/neuvia-editor-test'
+    runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.filter.outputs.should_build }}
+      deploy_worker: ${{ steps.filter.outputs.deploy_worker }}
+    steps:
+      - name: Check out Neuvia history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check whether this push contains website code
+        id: filter
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import PurePosixPath
+          changed = set()
+          before = os.environ.get("BEFORE_SHA", "")
+          after = os.environ.get("AFTER_SHA", "")
+          if before and before != "0" * 40 and after:
+              diff = subprocess.run(
+                  ["git", "diff", "--name-only", before, after],
+                  check=False, capture_output=True, text=True
+              )
+              if diff.returncode == 0:
+                  changed.update(path for path in diff.stdout.splitlines() if path)
+          if not changed:
+              with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as event_file:
+                  event = json.load(event_file)
+              for commit in event.get("commits") or []:
+                  changed.update(commit.get("added") or [])
+                  changed.update(commit.get("modified") or [])
+                  changed.update(commit.get("removed") or [])
+          content_extensions = {".md", ".pdf", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"}
+          content_only = bool(changed) and all(PurePosixPath(path).suffix.lower() in content_extensions and path not in {"Lore/Karte.md", "index.md"} for path in changed)
+          worker_only = bool(changed) and all(path == "workers/neuvia-admin-api.js" for path in changed)
+          should_build = not content_only and not worker_only
+          deploy_worker = "workers/neuvia-admin-api.js" in changed or ".github/workflows/deploy-quartz.yml" in changed
+          print(f"Changed files: {len(changed)}; preview build required: {should_build}; Worker deploy required: {deploy_worker}")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"should_build={str(should_build).lower()}\n")
+              output.write(f"deploy_worker={str(deploy_worker).lower()}\n")
+          PY
   build:
+    needs: check-preview-content
+    if: >-
+      always() &&
+      (
+        needs.check-preview-content.result == 'skipped' ||
+        (
+          needs.check-preview-content.result == 'success' &&
+          (github.event_name != 'push' || github.ref != 'refs/heads/neuvia-editor-test' || needs.check-preview-content.outputs.should_build == 'true')
+        )
+      )
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - name: Check out Neuvia
@@ -37,9 +98,27 @@ jobs:
           cache: npm
           cache-dependency-path: .quartz-runtime/package-lock.json
 
+      - name: Validate Neuvia admin script
+        run: node --check static/neuvia-admin.js
+
+      - name: Validate Neuvia workspace script
+        run: node --check static/neuvia-workspace.js
+
+      - name: Validate Neuvia live reader script
+        run: node --check static/neuvia-live-reader.js
+
+      - name: Validate Neuvia search boot script
+        run: node --check static/neuvia-search-boot.js
+
+      - name: Validate Neuvia admin API Worker
+        run: node --input-type=module --check < workers/neuvia-admin-api.js
+
       - name: Prepare Quartz site
         run: |
           cp .github/quartz/quartz.config.yaml .quartz-runtime/quartz.config.yaml
+          if [ "$GITHUB_REF_NAME" = "main" ] || [ "$GITHUB_REF_NAME" = "neuvia-editor-test" ]; then
+            sed -i 's#baseUrl: elrayo23.github.io/Neuvia#baseUrl: neuvia-editor-preview.pages.dev#' .quartz-runtime/quartz.config.yaml
+          fi
           mkdir -p .quartz-runtime/content
           rsync -a \
             --exclude='.git/' \
@@ -77,26 +156,277 @@ jobs:
         working-directory: .quartz-runtime
         run: npm run install-plugins
 
+      - name: Install live-reader dependencies
+        working-directory: .quartz-runtime
+        run: npm install --no-save --package-lock=false marked@18.2.0 dompurify@3.4.18
+
       - name: Build website
         working-directory: .quartz-runtime
         run: npx quartz build
 
-      - name: Publish interactive map HTML with its original extension
-        run: cp .quartz-runtime/content/static/karte.html .quartz-runtime/public/static/karte.html
+      - name: Bundle live reader
+        working-directory: .quartz-runtime
+        run: |
+          mkdir -p public/static
+          cp ../static/neuvia-live-reader.js ./neuvia-live-reader.js
+          npx esbuild neuvia-live-reader.js --bundle --minify --format=iife --target=es2022 --outfile=public/static/neuvia-live-reader.bundle.js
+
+      - name: Generate editor page map
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, unicodedata, re, os
+          content = Path(".quartz-runtime/content")
+          public = Path(".quartz-runtime/public/static")
+          public.mkdir(parents=True, exist_ok=True)
+          mapping = {}
+          collisions = set()
+          link_entries = []
+          
+          def slugify(value):
+              value = unicodedata.normalize("NFC", value)
+              parts = value.split("/")
+              parts = [p.replace("&", "-and-").replace("%", "-percent").replace("?", "").replace("#", "").translate(str.maketrans("", "", '<>:"|*')).lower() for p in parts]
+              return "/".join("-".join(p.split()) for p in parts).rstrip("/")
+          
+          def clean_yaml_scalar(value):
+              value = value.strip()
+              value = re.sub(r"\s+#.*$", "", value).strip()
+              if len(value) >= 2 and value[0] == value[-1] == '"':
+                  try:
+                      return json.loads(value)
+                  except Exception:
+                      return value[1:-1]
+              if len(value) >= 2 and value[0] == value[-1] == "'":
+                  return value[1:-1].replace("''", "'")
+              return value
+          
+          def frontmatter_data(file):
+              raw = file.read_text(encoding="utf-8", errors="replace")
+              title = None
+              aliases = []
+              lines = raw.splitlines()
+              if not lines or lines[0].strip() != "---":
+                  return title, aliases
+              end = next((i for i in range(1, len(lines)) if lines[i].strip() in {"---", "..."}), len(lines))
+              fm = lines[1:end]
+              for i, line in enumerate(fm):
+                  if line.startswith("title:"):
+                      title = clean_yaml_scalar(line.split(":", 1)[1])
+                  if line.startswith("aliases:"):
+                      value = line.split(":", 1)[1].strip()
+                      if value.startswith("[") and value.endswith("]"):
+                          for item in re.findall(r"""'(?:[^']|'')*'|"(?:\\.|[^"\\])*"|[^,]+""", value[1:-1]):
+                              item = clean_yaml_scalar(item)
+                              if item:
+                                  aliases.append(item)
+                      elif value:
+                          item = clean_yaml_scalar(value)
+                          if item:
+                              aliases.append(item)
+                      else:
+                          for child in fm[i + 1:]:
+                              if child.strip() and not child[:1].isspace():
+                                  break
+                              match = re.match(r"^\s+-\s+(.+?)\s*$", child)
+                              if match:
+                                  item = clean_yaml_scalar(match.group(1))
+                                  if item:
+                                      aliases.append(item)
+              return title, aliases
+          
+          for file in content.rglob("*.md"):
+              rel = file.relative_to(content)
+              if any(part.startswith(".") or part in {"private", "templates"} for part in rel.parts):
+                  continue
+              rel_path = rel.as_posix()
+              stem = rel_path[:-3]
+              slug = slugify(stem)
+              parts = slug.split("/")
+              if len(parts) >= 2 and parts[-1] == parts[-2]:
+                  parts[-1] = "index"
+                  slug = "/".join(parts)
+              keys = {slug}
+              if slug == "index":
+                  keys.add("")
+              if slug.endswith("/index"):
+                  keys.add(slug[:-6])
+              for key in keys:
+                  if key in mapping and mapping[key] != rel_path:
+                      collisions.add(key)
+                  else:
+                      mapping[key] = rel_path
+          
+              title, aliases = frontmatter_data(file)
+              if not title:
+                  for line in file.read_text(encoding="utf-8", errors="replace").splitlines():
+                      if line.startswith("# "):
+                          title = line[2:].strip()
+                          break
+              if not title:
+                  title = file.parent.name if file.stem.lower() == "index" and file.parent != content else (file.stem if file.stem.lower() != "index" else "Neuvia")
+              candidate = file.parent.name if file.stem.lower() == "index" and file.parent != content else (file.stem if file.stem.lower() != "index" else "index")
+              link_entries.append({
+                  "title": title,
+                  "candidate": candidate,
+                  "path": rel_path,
+                  "aliases": aliases
+              })
+          
+          for key in collisions:
+              mapping.pop(key, None)
+          
+          from collections import Counter
+          candidate_counts = Counter(item["candidate"].casefold() for item in link_entries)
+          for item in link_entries:
+              if candidate_counts[item["candidate"].casefold()] == 1:
+                  item["target"] = item["candidate"]
+              else:
+                  item["target"] = item["path"][:-3]
+                  if item["target"].lower().endswith("/index"):
+                      item["target"] = item["target"][:-6]
+              del item["candidate"]
+          
+          link_entries.sort(key=lambda item: (item["title"].casefold(), item["path"].casefold()))
+          (public / "neuvia-content-map.json").write_text(json.dumps(mapping, ensure_ascii=False), encoding="utf-8")
+          (public / "neuvia-link-index.json").write_text(json.dumps(link_entries, ensure_ascii=False), encoding="utf-8")
+          asset_extensions = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif", ".svg", ".pdf"}
+          asset_files = []
+          asset_names = {}
+          for asset in content.rglob("*"):
+              if not asset.is_file() or asset.suffix.lower() not in asset_extensions:
+                  continue
+              rel_asset = asset.relative_to(content).as_posix()
+              if any(part.startswith(".") or part in {"private", "templates"} for part in asset.relative_to(content).parts):
+                  continue
+              asset_files.append(rel_asset)
+              asset_names.setdefault(asset.name.casefold(), []).append(rel_asset)
+          (public / "neuvia-asset-index.json").write_text(
+              json.dumps({"files": asset_files, "byName": asset_names}, ensure_ascii=False),
+              encoding="utf-8"
+          )
+          print(f"Indexed {len(asset_files)} visible image and document assets.")
+          build_info = {
+              "commit": os.environ.get("GITHUB_SHA", ""),
+              "branch": os.environ.get("GITHUB_REF_NAME", "")
+          }
+          (public / "neuvia-build.json").write_text(json.dumps(build_info), encoding="utf-8")
+          print(f"Mapped {len(mapping)} unique Markdown page routes; omitted {len(collisions)} collisions.")
+          print(f"Generated {len(link_entries)} Markdown link suggestions.")
+          PY
+
+      - name: Inject Neuvia admin interface and live reader into preview pages
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          root = Path(".quartz-runtime/public")
+          version = os.environ.get("GITHUB_SHA", "")
+          is_cloudflare = os.environ.get("GITHUB_REF_NAME") == "main"
+          admin_path = "/static/neuvia-admin.js" if is_cloudflare else "/Neuvia/static/neuvia-admin.js"
+          tags = [f'<script defer src="{admin_path}?v={version}"></script>'] if is_cloudflare else []
+          if is_cloudflare:
+              tags.append(f'<script defer src="/static/neuvia-live-reader.bundle.js?v={version}"></script>')
+              tags.append(f'<script defer src="/static/neuvia-search-boot.js?v={version}"></script>')
+          for page in root.rglob("*.html"):
+              html = page.read_text(encoding="utf-8")
+              if "</head>" not in html:
+                  continue
+              changed = False
+              for tag in tags:
+                  if tag not in html:
+                      html = html.replace("</head>", tag + "</head>", 1)
+                      changed = True
+              if changed:
+                  page.write_text(html, encoding="utf-8")
+          PY
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: .quartz-runtime/public
 
-  deploy:
+  deploy-worker:
+    needs: check-preview-content
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      (
+        github.ref == 'refs/heads/main'
+      )
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Neuvia
+        uses: actions/checkout@v4
+
+      - name: Validate Neuvia admin API Worker
+        run: node --input-type=module --check < workers/neuvia-admin-api.js
+
+      - name: Deploy Neuvia admin API Worker
+        run: npx wrangler deploy workers/neuvia-admin-api.js --name=neuvia-admin-api --compatibility-date=2026-11-15
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
+
+  deploy-cloudflare-production:
     if: github.ref == 'refs/heads/main'
     needs: build
+    timeout-minutes: 10
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Check whether this commit is still the main branch head
+        id: latest
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const current = await github.rest.repos.getBranch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: "main"
+            });
+            const isLatest = current.data.commit.sha === context.sha;
+            core.setOutput("is_latest", String(isLatest));
+            if (!isLatest) core.notice("A newer main commit exists; skipping this outdated deployment.");
+
+      - name: Check out Neuvia
+        if: steps.latest.outputs.is_latest == 'true'
+        uses: actions/checkout@v4
+
+      - name: Download Pages artifact for Cloudflare production
+        if: steps.latest.outputs.is_latest == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: .quartz-runtime/public
+
+      - name: Extract website from GitHub Pages artifact
+        if: steps.latest.outputs.is_latest == 'true'
+        run: |
+          tar -xf .quartz-runtime/public/artifact.tar -C .quartz-runtime/public
+          rm .quartz-runtime/public/artifact.tar
+
+      - name: Deploy Neuvia main to Cloudflare Pages
+        if: steps.latest.outputs.is_latest == 'true'
+        run: npx wrangler pages deploy .quartz-runtime/public --project-name=neuvia-editor-preview --branch=main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
+
+  deploy-retired-preview-redirect:
+    if: github.ref == 'refs/heads/main'
+    needs: deploy-cloudflare-production
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare redirect for the retired Cloudflare preview address
+        run: |
+          mkdir -p retired-preview
+          cat > retired-preview/_redirects <<'EOF'
+          /* https://neuvia-editor-preview.pages.dev/:splat 301
+          EOF
+      - name: Redirect the old preview branch alias
+        run: npx wrangler pages deploy retired-preview --project-name=neuvia-editor-preview --branch=neuvia-editor-test
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
