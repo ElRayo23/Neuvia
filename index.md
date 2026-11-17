@@ -28,12 +28,4 @@ Schau im Explorer oben links nach mehr Infos nach.
   loading="lazy">
 </iframe>
 
-<iframe
-  src="https://www.youtube.com/watch?v=0OicKBHbLZ8&list=RD0OicKBHbLZ8&start_radio=1"
-  title="Music"
-  width="100%"
-  height="750"
-  style="border: none; border-radius: 8px;">
-</iframe>
-
 
