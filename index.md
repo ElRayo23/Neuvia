@@ -29,4 +29,13 @@ Schau im Explorer oben links nach mehr Infos nach.
 </iframe>
 
 
-(https://elrayo23.github.io/Neuvia/static/karte.html)
+<iframe
+  src="static/karte.html"
+  title="Neuvia Struktur"
+  width="100%"
+  height="900"
+  style="border: 0; border-radius: 10px; background: #17191d;"
+  loading="lazy">
+</iframe>
+
+[Neue Karte separat öffnen](https://elrayo23.github.io/Neuvia/static/karte.html)
