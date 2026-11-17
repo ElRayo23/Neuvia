@@ -105,6 +105,14 @@ const MIME_BY_EXTENSION = {
   png: ["image/png"], jpg: ["image/jpeg"], jpeg: ["image/jpeg"],
   webp: ["image/webp"], gif: ["image/gif"], avif: ["image/avif"],
 };
+function safePublicAssetPath(path) {
+  if (typeof path !== "string" || !path || path.length > 500 || path.startsWith("/") || path.indexOf(String.fromCharCode(92)) !== -1) return false;
+  const parts = path.split("/");
+  if (!parts.every((part) => part && part !== "." && part !== ".." && !part.startsWith("."))) return false;
+  if (parts.some((part) => ["private", "templates"].includes(part.toLowerCase()))) return false;
+  return ["png", "jpg", "jpeg", "webp", "gif", "avif", "pdf"].includes(path.split(".").pop().toLowerCase());
+}
+
 function visibleFile(path) {
   const ext = path.split(".").pop().toLowerCase();
   return ext === "md" || ext === "pdf" || IMAGE_EXTENSIONS.has(ext);
@@ -392,6 +400,41 @@ export default {
       } catch (error) {
         const status = /nicht gefunden/i.test(error.message) ? 404 : 502;
         return send({ error: error.message }, status);
+      }
+    }
+
+    // Public delivery of visible images and PDFs from the current test-branch source.
+    if (url.pathname === "/api/public-asset" && request.method === "GET") {
+      if (!env.GITHUB_TOKEN) return send({ error: "GitHub-Zugriff ist nicht konfiguriert." }, 503);
+      const path = url.searchParams.get("path") || "";
+      if (!safePublicAssetPath(path) || !visiblePath(path)) return send({ error: "Diese Datei darf nicht öffentlich geladen werden." }, 400);
+      const extension = path.split(".").pop().toLowerCase();
+      try {
+        const result = await fetch(githubUrl(path) + "?ref=" + encodeURIComponent(BRANCH), {
+          headers: {
+            "Authorization": "Bearer " + env.GITHUB_TOKEN,
+            "Accept": "application/vnd.github.raw",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "User-Agent": "Neuvia-Public-Reader",
+          },
+        });
+        if (!result.ok) return send({ error: result.status === 404 ? "Datei nicht gefunden." : "Datei konnte nicht geladen werden." }, result.status === 404 ? 404 : 502);
+        const mime = {
+          png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
+          webp: "image/webp", gif: "image/gif", avif: "image/avif", pdf: "application/pdf",
+        }[extension];
+        return new Response(result.body, {
+          headers: {
+            "Content-Type": mime,
+            "Cache-Control": "no-store",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,OPTIONS",
+            "X-Content-Type-Options": "nosniff",
+            "Content-Disposition": "inline",
+          },
+        });
+      } catch (error) {
+        return send({ error: error.message || "Datei konnte nicht geladen werden." }, 502);
       }
     }
 
