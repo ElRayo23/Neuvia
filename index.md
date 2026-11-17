@@ -16,7 +16,7 @@ Willkommen zum Neuvia Wiki.
 - [[Lore]]
 - [[Musik]]
 
-Schau im Explorer oben links nach mehr Infos nach.
+Schau im Explorer oben links nach mehr Infos und Funfacts nach.
 
 
 ## Karte
