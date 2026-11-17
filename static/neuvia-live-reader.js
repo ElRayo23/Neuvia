@@ -159,6 +159,7 @@ import createDOMPurify from "dompurify";
       paragraph.classList.add("callout-title");
       paragraph.textContent = match[2].trim() || match[1].toLowerCase();
     });
+    container.querySelectorAll("pre code.language-mermaid").forEach((code) => code.classList.add("mermaid"));
     const seen = new Set();
     container.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach((heading) => {
       const base = slugify(heading.textContent);
@@ -196,6 +197,8 @@ import createDOMPurify from "dompurify";
         await render(child, nested, nestedPath, [...stack, nestedPath], depth + 1);
       } catch { placeholder.textContent = "Eingebettete Notiz nicht verfügbar."; }
     }
+    // Quartz's Obsidian plugin listens for this event to render Mermaid diagrams.
+    document.dispatchEvent(new Event("render"));
   }
 
   async function refresh() {
