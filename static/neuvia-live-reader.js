@@ -183,7 +183,7 @@ import createDOMPurify from "dompurify";
     currentPath = path;
     let markdown = stripFrontmatter(source);
     markdown = markdown.replace(/^(\s*>\s*)\[!(\w+)\]([^\r\n]*)/gm, (all, prefix, type, rest) => prefix + "[" + type.toUpperCase() + "]" + rest);
-    const html = marked.parse(markdown, { gfm: true, breaks: false });
+    const html = marked.parse(markdown, { gfm: true, breaks: true });
     container.innerHTML = purifier.sanitize(String(html), { ADD_ATTR: ["loading", "target", "rel"] });
     decorate(container);
     for (const placeholder of Array.from(container.querySelectorAll(".neuvia-live-transclude"))) {
