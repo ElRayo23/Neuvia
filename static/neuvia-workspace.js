@@ -846,8 +846,8 @@
 
   function openWikiLinkAtCursor() {
     const editor = overlay.querySelector(".nw-editor");
-    const cursor = editor.selectionStart;
-    const value = editor.value;
+    const cursor = editorSelection(editor).start;
+    const value = getEditorContent(editor);
     const start = value.lastIndexOf("[[", cursor);
     if (start < 0) return;
     const end = value.indexOf("]]", start + 2);
@@ -1324,7 +1324,7 @@
     editor.setAttribute("aria-label", "Markdown-Notiz");
     editor.setAttribute("aria-disabled", "true");
     editor.dataset.placeholder = "Wähle links eine Notiz aus oder erstelle eine neue …";
-    editor.placeholder = "Wähle links eine Notiz aus oder erstelle eine neue …";
+    editor.dataset.placeholder = "Wähle links eine Notiz aus oder erstelle eine neue …";
     const suggestions = element("div", "nw-suggestions");
     suggestions.hidden = true;
     editorWrap.append(editor, dropHint, suggestions);
