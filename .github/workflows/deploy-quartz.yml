@@ -288,18 +288,29 @@ jobs:
           print(f"Generated {len(link_entries)} Markdown link suggestions.")
           PY
 
-      - name: Inject Neuvia admin interface into every page
+      - name: Inject Neuvia admin interface and live reader into preview pages
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import os
           root = Path(".quartz-runtime/public")
           version = os.environ.get("GITHUB_SHA", "")
-          tag = f'<script defer src="/Neuvia/static/neuvia-admin.js?v={version}"></script>' if os.environ.get("GITHUB_REF_NAME") == "main" else f'<script defer src="/static/neuvia-admin.js?v={version}"></script>'
+          is_preview = os.environ.get("GITHUB_REF_NAME") == "neuvia-editor-test"
+          admin_path = "/Neuvia/static/neuvia-admin.js" if not is_preview else "/static/neuvia-admin.js"
+          tags = [f'<script defer src="{admin_path}?v={version}"></script>']
+          if is_preview:
+              tags.append(f'<script defer src="/static/neuvia-live-reader.bundle.js?v={version}"></script>')
           for page in root.rglob("*.html"):
               html = page.read_text(encoding="utf-8")
-              if tag not in html and "</head>" in html:
-                  page.write_text(html.replace("</head>", tag + "</head>", 1), encoding="utf-8")
+              if "</head>" not in html:
+                  continue
+              changed = False
+              for tag in tags:
+                  if tag not in html:
+                      html = html.replace("</head>", tag + "</head>", 1)
+                      changed = True
+              if changed:
+                  page.write_text(html, encoding="utf-8")
           PY
 
       - name: Publish interactive map HTML with its original extension
