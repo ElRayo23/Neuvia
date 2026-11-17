@@ -74,12 +74,22 @@ import createDOMPurify from "dompurify";
   }
 
   function assetPath(value) {
-    let path = String(value || "").trim().replace(/^\.\//, "");
+    let path = String(value || "").trim();
     try { path = decodeURIComponent(path); } catch {}
-    if (/^(https?:|data:|blob:|\/)/i.test(path)) return path;
-    if (/^(files|assets)\//i.test(path)) return path;
-    const folder = currentPath.includes("/") ? currentPath.slice(0, currentPath.lastIndexOf("/") + 1) : "";
-    return folder + path;
+    if (/^(https?:|data:|blob:)/i.test(path)) return path;
+    const absolute = path.startsWith("/");
+    const parts = absolute || /^(files|assets)\//i.test(path)
+      ? []
+      : currentPath.includes("/") ? currentPath.split("/").slice(0, -1) : [];
+    for (const segment of path.replace(/^\/+/, "").split("/")) {
+      if (!segment || segment === ".") continue;
+      if (segment === "..") {
+        if (parts.length) parts.pop();
+        continue;
+      }
+      parts.push(segment);
+    }
+    return parts.join("/");
   }
 
   const markdownRenderer = new marked.Renderer();
@@ -108,8 +118,11 @@ import createDOMPurify from "dompurify";
       const [target, ...anchorParts] = token.target.split("#");
       const anchor = anchorParts.join("#");
       if (token.embed && /\.(png|jpe?g|webp|gif|avif|pdf)$/i.test(target)) {
-        const url = apiUrl("/api/public-asset", assetPath(target));
-        if (/\.pdf$/i.test(target)) return '<a href="' + url + '" target="_blank" rel="noopener">' + esc(token.alias || target.split("/").pop()) + "</a>";
+        const resolvedAsset = assetPath(target);
+        const url = /^(https?:|data:|blob:)/i.test(resolvedAsset)
+          ? resolvedAsset
+          : apiUrl("/api/public-asset", resolvedAsset);
+        if (/\.pdf$/i.test(target)) return '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(token.alias || target.split("/").pop()) + "</a>";
         return '<img loading="lazy" class="neuvia-live-image" src="' + esc(url) + '" alt="' + esc(token.alias || target.split("/").pop()) + '">';
       }
       const item = resolveLink(target, data);
