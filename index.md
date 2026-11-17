@@ -43,4 +43,3 @@ Die neue Karte mit anklickbaren Ländern und Siedlungen.
 </iframe>
 
 [Neue Karte separat öffnen](https://elrayo23.github.io/Neuvia/static/karte.html)
-![[Files/20261117095426-ea1d9e6f-f388154e19856a7fbca577834e82c882.jpg]]
