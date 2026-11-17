@@ -430,3 +430,45 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
+
+  deploy-github-pages-redirect:
+    if: ${{ github.ref == 'refs/heads/main' && needs.deploy-cloudflare-production.result == 'success' }}
+    needs: deploy-cloudflare-production
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare GitHub Pages redirect
+        run: |
+          mkdir -p github-pages-redirect
+          cat > github-pages-redirect/index.html <<'EOF'
+          <!doctype html>
+          <html lang="de">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Neuvia – neue Adresse</title>
+            <meta http-equiv="refresh" content="0;url=https://neuvia-editor-preview.pages.dev/">
+            <script>
+              (function () {
+                var path = window.location.pathname.replace(/^\\/Neuvia(?=\\/|$)/i, "");
+                var target = "https://neuvia-editor-preview.pages.dev" + (path || "/") + window.location.search + window.location.hash;
+                window.location.replace(target);
+              })();
+            </script>
+          </head>
+          <body><p>Neuvia ist umgezogen. <a href="https://neuvia-editor-preview.pages.dev/">Zur neuen Neuvia-Seite</a></p></body>
+          </html>
+          EOF
+          cp github-pages-redirect/index.html github-pages-redirect/404.html
+      - name: Upload redirect artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: github-pages-redirect
+          name: github-pages-redirect
+      - name: Deploy GitHub Pages redirect
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-redirect
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
