@@ -2,7 +2,6 @@
 title: Neuvia
 updated: 2026-11-15T01:41:56.855Z
 editedBy: ElRayo23
-generator: https://www.forkleaf.in
 ---
 
 # Neuvia
