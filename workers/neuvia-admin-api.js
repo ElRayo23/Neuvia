@@ -138,9 +138,11 @@ async function githubContentsWrite(path, body, token) {
   const data = await result.json().catch(() => ({}));
   if (!result.ok) {
     const detail = data.message || result.statusText || "Unbekannte GitHub-Antwort";
-    throw new Error((result.status === 409 || result.status === 422)
+    const error = new Error((result.status === 409 || result.status === 422)
       ? "Die Datei konnte nicht gespeichert werden, weil sie bereits existiert oder zwischenzeitlich geändert wurde."
       : "GitHub-API Fehler " + result.status + ": " + detail);
+    error.status = result.status;
+    throw error;
   }
   return data;
 }
@@ -751,12 +753,24 @@ export default {
           + String(now.getUTCHours()).padStart(2, "0")
           + String(now.getUTCMinutes()).padStart(2, "0")
           + String(now.getUTCSeconds()).padStart(2, "0");
-        const path = "Files/" + stamp + "-" + crypto.randomUUID().slice(0, 8) + "-" + filename;
         const bytes = new Uint8Array(await file.arrayBuffer());
-        const data = await githubContentsWrite(path, {
-          message: "Bild hochgeladen: " + filename.slice(0, 70),
-          content: encodeBase64Bytes(bytes),
-        }, env.GITHUB_TOKEN);
+        const content = encodeBase64Bytes(bytes);
+        let path = "";
+        let data = null;
+        for (let attempt = 0; attempt < 5; attempt++) {
+          path = "Files/" + stamp + "-" + crypto.randomUUID().slice(0, 8) + "-" + filename;
+          try {
+            data = await githubContentsWrite(path, {
+              message: "Bild hochgeladen: " + filename.slice(0, 70),
+              content,
+            }, env.GITHUB_TOKEN);
+            break;
+          } catch (error) {
+            if ((error.status === 409 || error.status === 422) && attempt < 4) continue;
+            throw error;
+          }
+        }
+        if (!data) throw new Error("Für das Bild konnte kein freier Dateiname gefunden werden.");
         return send({
           ok: true,
           path,
