@@ -667,31 +667,50 @@
       status("Es wurden keine unterstützten Bilddateien gefunden.", "error");
       return;
     }
+
     let uploaded = 0;
-    try {
-      for (const file of images) {
+    const failures = [];
+    for (const file of images) {
+      try {
         status("Lade Bild hoch: " + file.name);
         const form = new FormData();
         form.append("file", file, file.name);
         const result = await request("/api/upload", { method: "POST", body: form });
-        treeItems.push({
-          name: basename(result.path),
-          path: result.path,
-          type: "file",
-          extension: extension(result.path),
-          size: result.size || file.size,
-        });
-        uploaded++;
-        renderTree();
+
+        if (!treeItems.some((item) => item.path === result.path)) {
+          treeItems.push({
+            name: basename(result.path),
+            path: result.path,
+            type: "file",
+            extension: extension(result.path),
+            size: result.size || file.size,
+          });
+          renderTree();
+        }
         insertAtCursor(result.embed + "\n");
+        uploaded++;
+      } catch (error) {
+        failures.push(file.name + ": " + error.message);
       }
-      status(images.length + (images.length === 1 ? " Bild hochgeladen" : " Bilder hochgeladen") + " – synchronisiere Notiz …", "success");
-      await saveCurrent();
-    } catch (error) {
-      if (uploaded && currentIsDirty()) {
-        try { await saveCurrent(); } catch {}
+    }
+
+    if (uploaded) {
+      status(uploaded + (uploaded === 1 ? " Bild hochgeladen" : " Bilder hochgeladen") + " – synchronisiere Notiz …", "success");
+      try {
+        await saveCurrent();
+      } catch (error) {
+        failures.push("Notiz konnte nicht synchronisiert werden: " + error.message);
       }
-      status(error.message + (uploaded ? " Bereits hochgeladene Bilder wurden eingefügt." : ""), "error");
+    }
+
+    if (failures.length) {
+      status(
+        (uploaded ? uploaded + " Bild(er) eingefügt. " : "") +
+        failures.length + " Upload-/Speicherfehler: " + failures.join(" | "),
+        "error"
+      );
+    } else {
+      status(uploaded + (uploaded === 1 ? " Bild hochgeladen und eingefügt." : " Bilder hochgeladen und eingefügt."), "success");
     }
   }
 
