@@ -307,6 +307,7 @@
   let saveTimer = null;
   let savingPromise = null;
   let activeFolder = "";
+  const expandedFolders = new Set();
   let suggestionItems = [];
   let selectedSuggestion = 0;
   let isClosing = false;
@@ -440,6 +441,7 @@
     if (!overlay) return;
     const container = overlay.querySelector(".nw-tree");
     const query = normalize(overlay.querySelector(".nw-search").value);
+    const scrollTop = container.scrollTop;
     container.replaceChildren();
 
     if (query) {
@@ -462,6 +464,7 @@
         pathLine.style.padding = "0 8px 5px 27px";
         container.append(pathLine);
       }
+      container.scrollTop = scrollTop;
       return;
     }
 
@@ -483,16 +486,20 @@
       const wrapper = element("div", "nw-tree-folder");
       const row = element("button", "nw-tree-row");
       row.type = "button";
-      const arrow = element("span", "", "▸");
+      const isExpanded = expandedFolders.has(folder.path);
+      const arrow = element("span", "", isExpanded ? "▾" : "▸");
       const name = element("span", "nw-name", folder.name);
       row.append(arrow, name);
       row.title = folder.path;
       const children = element("div", "nw-tree-children");
-      children.hidden = true;
+      children.hidden = !isExpanded;
       row.title = folder.path + " · Rechtsklick zum Verschieben/Umbenennen";
       row.addEventListener("click", () => {
-        children.hidden = !children.hidden;
-        arrow.textContent = children.hidden ? "▸" : "▾";
+        const opening = children.hidden;
+        children.hidden = !opening;
+        arrow.textContent = opening ? "▾" : "▸";
+        if (opening) expandedFolders.add(folder.path);
+        else expandedFolders.delete(folder.path);
         activeFolder = folder.path;
       });
       bindContextActions(row, folder.path, true);
@@ -506,6 +513,7 @@
     root.files.sort((a,b)=>a.name.localeCompare(b.name,"de",{sensitivity:"base",numeric:true}));
     for (const file of root.files) addFile(file, container);
     if (!container.childElementCount) container.appendChild(element("div", "nw-empty", "Keine Notizen gefunden."));
+    container.scrollTop = scrollTop;
   }
 
 
