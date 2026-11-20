@@ -159,7 +159,17 @@
   }
 
   async function loadCatalogEntries() {
-    const response = await fetch(CATALOG_API + "/catalog", { cache: "no-store" });
+    const controller = typeof AbortController === "function" ? new AbortController() : null;
+    const timeout = controller ? setTimeout(() => controller.abort(), 30000) : null;
+    let response;
+    try {
+      response = await fetch(CATALOG_API + "/catalog", {
+        cache: "no-store",
+        ...(controller ? { signal: controller.signal } : {})
+      });
+    } finally {
+      if (timeout) clearTimeout(timeout);
+    }
     if (!response.ok) throw new Error("Der Czepeku-Katalog konnte nicht geladen werden.");
     const data = await response.json();
     if (!Array.isArray(data.items)) throw new Error("Czepeku hat keine Katalogdaten geliefert.");
@@ -188,12 +198,7 @@
   }
 
   async function loadEntries() {
-    const [notes, catalog] = await Promise.all([
-      loadNoteEntries().catch(() => []),
-      loadCatalogEntries().catch(() => [])
-    ]);
-    return [...notes, ...catalog].sort((a, b) =>
-      a.title.localeCompare(b.title, "de", { sensitivity: "base" }));
+    return loadCatalogEntries();
   }
 
   function status(root, message, error) {
@@ -688,9 +693,27 @@
       entries = loaded;
       refreshCategories();
       draw();
+
+      // Personal uploads and manually added entries are loaded after the Czepeku catalogue.
+      // A slow or unavailable legacy index must never hold the main gallery open.
+      loadNoteEntries().then((notes) => {
+        const known = new Set(entries.map((entry) => entry.path));
+        const additional = notes.filter((entry) => !known.has(entry.path));
+        if (!additional.length) return;
+        entries = [...entries, ...additional].sort((a, b) =>
+          a.title.localeCompare(b.title, "de", { sensitivity: "base" }));
+        refreshCategories();
+        draw();
+      }).catch(() => {});
     }).catch((error) => {
-      grid.innerHTML = '<div class="nm-empty">Die Mood-Bibliothek konnte nicht geladen werden.</div>';
+      grid.innerHTML = '<div class="nm-empty">Der Czepeku-Katalog konnte nicht geladen werden. Eigene Einträge werden separat geladen.</div>';
       status(root, error.message, true);
+      loadNoteEntries().then((notes) => {
+        entries = notes;
+        refreshCategories();
+        draw();
+        status(root, "Czepeku konnte nicht geladen werden; " + entries.length + " eigene Einträge verfügbar.", true);
+      }).catch(() => {});
     });
   }
 
