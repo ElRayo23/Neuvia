@@ -29,16 +29,6 @@ Schau im Explorer oben links nach mehr Infos und Funfacts nach.
   loading="eager">
 </iframe>
 
-<video
-  width="100%"
-  autoplay
-  loop
-  muted
-  playsinline
-  controls
->
-  <source
-    src="https://content.encounterkit.com/animated/generated/e8d61272-ddf3-4bd1-9807-d0a36751afac-preview.webm"
-    type="video/webm"
-  >
+<video width="100%" autoplay loop muted playsinline controls>
+  <source src="https://content.encounterkit.com/animated/generated/e8d61272-ddf3-4bd1-9807-d0a36751afac-preview.webm" type="video/webm">
 </video>
