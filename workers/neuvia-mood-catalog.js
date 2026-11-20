@@ -44,38 +44,31 @@ function slugify(value) {
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 function imageUrlsFromTag(tag) {
-  const candidates = [];
-  const seen = new Set();
-  const add = (url, descriptor = "") => {
-    if (!/^https?:\/\//i.test(url) || seen.has(url)) return;
-    seen.add(url);
-    const urlWidth = Number((url.match(/width=(\d+)/i) || [])[1]) || 0;
-    const descriptorWidth = Number((String(descriptor).match(/(\d+(?:\.\d+)?)w\b/i) || [])[1]) || 0;
-    candidates.push({ url, width: urlWidth || descriptorWidth });
-  };
-
-  // Do not split srcset on commas: Czepeku's CDN transformation URLs contain commas.
   const srcset = attr(tag, "srcset");
   if (srcset) {
-    for (const match of srcset.matchAll(/(https?:\/\/\S+?\.(?:webp|png|jpe?g|avif|gif))\s*(\d+(?:\.\d+)?w)?/gi)) {
-      add(match[1], match[2] || "");
+    // Keep the same URL extraction and preview ranking that produced the full catalogue.
+    const urls = [...srcset.matchAll(/https?:\/\/\S+?\.(?:webp|png|jpe?g|avif|gif)(?=\s|$)/gi)]
+      .map(item => item[0]);
+    if (urls.length) {
+      const previewUrls = [...urls].sort((a, b) => {
+        const aw = Number((a.match(/width=(\d+)/i) || [])[1]) || 99999;
+        const bw = Number((b.match(/width=(\d+)/i) || [])[1]) || 99999;
+        return (aw <= 828 ? 0 : 1) - (bw <= 828 ? 0 : 1) || aw - bw;
+      });
+      const fullUrls = [...urls].sort((a, b) => {
+        const aw = Number((a.match(/width=(\d+)/i) || [])[1]) || 0;
+        const bw = Number((b.match(/width=(\d+)/i) || [])[1]) || 0;
+        return aw - bw;
+      });
+      return {
+        previewUrl: previewUrls[0],
+        fullUrl: fullUrls[fullUrls.length - 1] || previewUrls[0]
+      };
     }
   }
   const src = attr(tag, "src");
-  add(src);
-
-  if (!candidates.length) return { previewUrl: "", fullUrl: "" };
-  const sized = candidates.filter(candidate => candidate.width > 0);
-  const previewCandidates = sized.filter(candidate => candidate.width <= 828);
-  const preview = previewCandidates.length
-    ? previewCandidates.sort((a, b) => b.width - a.width)[0]
-    : sized.length
-      ? sized.sort((a, b) => a.width - b.width)[0]
-      : candidates[0];
-  const full = sized.length
-    ? [...sized].sort((a, b) => b.width - a.width)[0]
-    : candidates.find(candidate => candidate.url === src) || candidates[0];
-  return { previewUrl: preview.url, fullUrl: full.url };
+  const fallback = /^https?:\/\//i.test(src) ? src : "";
+  return { previewUrl: fallback, fullUrl: fallback };
 }
 async function fetchHtml(path) {
   const absolute = new URL(path, SITE).href;
