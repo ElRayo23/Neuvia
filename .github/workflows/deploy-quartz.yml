@@ -6,6 +6,122 @@ on:
       - main
       - map-geo-structure
       - neuvia-editor-test
+      - mood-full-catalog
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  # Preview runs should not queue behind stale builds; production deploys stay serialized.
+  group: pages-${{ github.ref_name }}-v3
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
+
+jobs:
+  check-preview-content:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/neuvia-editor-test'
+    runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.filter.outputs.should_build }}
+      deploy_worker: ${{ steps.filter.outputs.deploy_worker }}
+    steps:
+      - name: Check out Neuvia history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check whether this push contains website code
+        id: filter
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import PurePosixPath
+          changed = set()
+          before = os.environ.get("BEFORE_SHA", "")
+          after = os.environ.get("AFTER_SHA", "")
+          if before and before != "0" * 40 and after:
+              diff = subprocess.run(
+                  ["git", "diff", "--name-only", before, after],
+                  check=False, capture_output=True, text=True
+              )
+              if diff.returncode == 0:
+                  changed.update(path for path in diff.stdout.splitlines() if path)
+          if not changed:
+              with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as event_file:
+                  event = json.load(event_file)
+              for commit in event.get("commits") or []:
+                  changed.update(commit.get("added") or [])
+                  changed.update(commit.get("modified") or [])
+                  changed.update(commit.get("removed") or [])
+          content_extensions = {".md", ".pdf", ".png", ".jpg", ".jpeg", ".webp", ".gif", ".avif"}
+          content_only = bool(changed) and all(PurePosixPath(path).suffix.lower() in content_extensions and path not in {"Lore/Karte.md", "index.md"} for path in changed)
+          worker_only = bool(changed) and all(path == "workers/neuvia-admin-api.js" for path in changed)
+          should_build = not content_only and not worker_only
+          deploy_worker = "workers/neuvia-admin-api.js" in changed or ".github/workflows/deploy-quartz.yml" in changed
+          print(f"Changed files: {len(changed)}; preview build required: {should_build}; Worker deploy required: {deploy_worker}")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"should_build={str(should_build).lower()}\n")
+              output.write(f"deploy_worker={str(deploy_worker).lower()}\n")
+          PY
+  build:
+    needs: check-preview-content
+    if: >-
+      always() &&
+      (
+        needs.check-preview-content.result == 'skipped' ||
+        (
+          needs.check-preview-content.result == 'success' &&
+          (github.event_name != 'push' || github.ref != 'refs/heads/neuvia-editor-test' || needs.check-preview-content.outputs.should_build == 'true')
+        )
+      )
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Neuvia
+        uses: actions/checkout@v4
+
+      - name: Check out Quartz v5
+        uses: actions/checkout@v4
+        with:
+          repository: jackyzha0/quartz
+          ref: v5
+          path: .quartz-runtime
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: .quartz-runtime/package-lock.json
+
+      - name: Validate Neuvia admin script
+        run: node --check static/neuvia-admin.js
+
+      - name: Validate Neuvia workspace script
+        run: node --check static/neuvia-workspace.js
+
+      - name: Validate Neuvia live reader script
+        run: node --check static/neuvia-live-reader.js
+
+      - name: Validate Neuvia search boot script
+        run: node --check static/neuvia-search-boot.js
+      - name: Validate Neuvia Mood library script
+        run: node --check static/neuvia-mood.js
+
+name: Build and deploy Neuvia with Quartz
+
+on:
+  push:
+    branches:
+      - main
+      - map-geo-structure
+      - neuvia-editor-test
+      - mood-full-catalog
   workflow_dispatch:
 
 permissions:
@@ -115,10 +231,13 @@ jobs:
       - name: Validate Neuvia admin API Worker
         run: node --input-type=module --check < workers/neuvia-admin-api.js
 
+      - name: Validate Neuvia Mood catalogue Worker
+        run: node --input-type=module --check < workers/neuvia-mood-catalog.js
+
       - name: Prepare Quartz site
         run: |
           cp .github/quartz/quartz.config.yaml .quartz-runtime/quartz.config.yaml
-          if [ "$GITHUB_REF_NAME" = "main" ] || [ "$GITHUB_REF_NAME" = "neuvia-editor-test" ]; then
+          if [ "$GITHUB_REF_NAME" = "main" ] || [ "$GITHUB_REF_NAME" = "neuvia-editor-test" ] || [ "$GITHUB_REF_NAME" = "mood-full-catalog" ]; then
             sed -i 's#baseUrl: elrayo23.github.io/Neuvia#baseUrl: neuvia-editor-preview.pages.dev#' .quartz-runtime/quartz.config.yaml
           fi
           mkdir -p .quartz-runtime/content
@@ -324,7 +443,7 @@ jobs:
           import os
           root = Path(".quartz-runtime/public")
           version = os.environ.get("GITHUB_SHA", "")
-          is_cloudflare = os.environ.get("GITHUB_REF_NAME") == "main"
+          is_cloudflare = os.environ.get("GITHUB_REF_NAME") in {"main", "mood-full-catalog"}
           admin_path = "/static/neuvia-admin.js" if is_cloudflare else "/Neuvia/static/neuvia-admin.js"
           tags = [f'<script defer src="{admin_path}?v={version}"></script>'] if is_cloudflare else []
           if is_cloudflare:
@@ -368,6 +487,32 @@ jobs:
 
       - name: Deploy Neuvia admin API Worker
         run: npx wrangler deploy workers/neuvia-admin-api.js --name=neuvia-admin-api --compatibility-date=2026-11-15
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
+
+  deploy-cloudflare-preview:
+    if: ${{ github.ref == 'refs/heads/mood-full-catalog' && needs.build.result == 'success' }}
+    needs: build
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Neuvia
+        uses: actions/checkout@v4
+
+      - name: Download Pages artifact for Mood preview
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: .quartz-runtime/public
+
+      - name: Extract website from Pages artifact
+        run: |
+          tar -xf .quartz-runtime/public/artifact.tar -C .quartz-runtime/public
+          rm .quartz-runtime/public/artifact.tar
+
+      - name: Deploy Mood feature branch to Cloudflare Pages preview
+        run: npx wrangler pages deploy .quartz-runtime/public --project-name=neuvia-editor-preview --branch=mood-full-catalog
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
