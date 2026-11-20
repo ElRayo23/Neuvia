@@ -4,6 +4,7 @@
   window.__neuviaMoodLoaded = true;
 
   const API = "https://neuvia-admin-api.forkleafcustom.workers.dev";
+  const CATALOG_API = "https://neuvia-mood-catalog.forkleafcustom.workers.dev";
   const SESSION_KEY = "neuviaAdminSession";
   const STATIC_BASE = new URL("/static/", window.location.origin).href;
   const VIDEO_EXTENSIONS = new Set(["webm", "mp4", "m4v", "mov", "ogv"]);
@@ -122,7 +123,7 @@
     return parseFrontmatter(data.content);
   }
 
-  async function loadEntries() {
+  async function loadNoteEntries() {
     const response = await fetch(STATIC_BASE + "neuvia-link-index.json?v=" + Date.now(), { cache: "no-store" });
     if (!response.ok) throw new Error("Der Mood-Index konnte nicht geladen werden.");
     const links = await response.json();
@@ -154,7 +155,45 @@
       }));
       entries.push(...results.filter(Boolean));
     }
-    return entries.sort((a, b) => a.title.localeCompare(b.title, "de", { sensitivity: "base" }));
+    return entries;
+  }
+
+  async function loadCatalogEntries() {
+    const response = await fetch(CATALOG_API + "/catalog", { cache: "no-store" });
+    if (!response.ok) throw new Error("Der Czepeku-Katalog konnte nicht geladen werden.");
+    const data = await response.json();
+    if (!Array.isArray(data.items)) throw new Error("Czepeku hat keine Katalogdaten geliefert.");
+    return data.items.map((item) => {
+      const animated = /animated/i.test(String(item.defaultVariant || ""));
+      return {
+        path: "czepeku-parent:" + item.id,
+        catalogId: String(item.id),
+        catalogPath: String(item.catalogPath || ""),
+        isCatalog: true,
+        title: String(item.title || "Unbenannte Map / Scene"),
+        moodType: String(item.moodType || "Map"),
+        category: String(item.category || ""),
+        mediaType: animated ? "video" : "image",
+        source: "Czepeku · " + String(item.universe || ""),
+        universe: String(item.universe || ""),
+        media: String(item.previewUrl || ""),
+        preview: String(item.previewUrl || ""),
+        sourceUrl: String(item.sourceUrl || ""),
+        defaultVariant: String(item.defaultVariant || ""),
+        animated,
+        tags: Array.isArray(item.tags) ? item.tags.map(String) : [],
+        variants: null
+      };
+    });
+  }
+
+  async function loadEntries() {
+    const [notes, catalog] = await Promise.all([
+      loadNoteEntries(),
+      loadCatalogEntries().catch(() => [])
+    ]);
+    return [...notes, ...catalog].sort((a, b) =>
+      a.title.localeCompare(b.title, "de", { sensitivity: "base" }));
   }
 
   function status(root, message, error) {
@@ -192,7 +231,16 @@
       #neuvia-mood .nm-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,235px),1fr)); gap:14px; margin-top:16px; }
       #neuvia-mood .nm-card { overflow:hidden; border:1px solid var(--lightgray); border-radius:10px; background:var(--light); min-width:0; }
       #neuvia-mood .nm-preview { position:relative; display:flex; align-items:center; justify-content:center; aspect-ratio:16/10; overflow:hidden; background:#15171b; }
-      #neuvia-mood .nm-preview img, #neuvia-mood .nm-preview video { display:block; width:100%; height:100%; object-fit:cover; }
+      #neuvia-mood .nm-preview img { display:block; width:100%; height:100%; object-fit:cover; }
+      #neuvia-mood .nm-variant-panel { border-top:1px solid var(--lightgray); padding:11px; }
+      #neuvia-mood .nm-variant-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px; font-size:.88em; }
+      #neuvia-mood .nm-variant-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(105px,1fr)); gap:8px; }
+      #neuvia-mood .nm-variant { display:flex; flex-direction:column; gap:5px; min-width:0; padding:5px; text-align:left; }
+      #neuvia-mood .nm-variant-image { position:relative; display:block; width:100%; aspect-ratio:4/3; overflow:hidden; border-radius:5px; background:#17191d; }
+      #neuvia-mood .nm-variant-image img { width:100%; height:100%; object-fit:cover; display:block; }
+      #neuvia-mood .nm-variant-name { overflow-wrap:anywhere; font-size:.82em; line-height:1.2; }
+      #neuvia-mood .nm-variant-badge { position:absolute; left:4px; top:4px; border-radius:4px; padding:2px 5px; color:white; background:#000b; font-size:10px; }
+      #neuvia-mood .nm-load-more-wrap { grid-column:1/-1; display:flex; justify-content:center; padding:8px; }
       #neuvia-mood .nm-preview .nm-preview-badge { position:absolute; left:9px; top:9px; border-radius:5px; padding:3px 7px; color:white; background:#0009; font-size:11px; }
       #neuvia-mood .nm-card-body { padding:11px 12px 12px; }
       #neuvia-mood .nm-card-title { font-weight:650; line-height:1.3; margin:0 0 5px; }
@@ -206,7 +254,7 @@
       #neuvia-mood-player .nm-player-bar { z-index:2; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 14px; background:linear-gradient(#000b,#0000); }
       #neuvia-mood-player .nm-player-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; }
       #neuvia-mood-player .nm-player-buttons { display:flex; gap:7px; flex-shrink:0; }
-      #neuvia-mood-player button { border:1px solid #ffffff55; border-radius:7px; color:white; background:#17191dcc; padding:8px 10px; cursor:pointer; }
+      #neuvia-mood-player button, #neuvia-mood-player .nm-source-link { border:1px solid #ffffff55; border-radius:7px; color:white; background:#17191dcc; padding:8px 10px; cursor:pointer; text-decoration:none; font:inherit; }
       #neuvia-mood-player .nm-stage { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
       #neuvia-mood-player .nm-stage img, #neuvia-mood-player .nm-stage video { display:block; width:100%; height:100%; object-fit:contain; }
       #neuvia-mood-player .nm-player-message { color:#ddd; padding:24px; text-align:center; }
@@ -214,6 +262,7 @@
       @media (max-width:600px) {
         #neuvia-mood .nm-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
         #neuvia-mood .nm-card-body { padding:9px; }
+        #neuvia-mood .nm-variant-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       }
     `;
     document.head.appendChild(style);
@@ -221,18 +270,28 @@
 
   function openPlayer(entry) {
     const url = new URL("/mood/player/", window.location.origin);
-    url.searchParams.set("path", entry.path);
-    window.open(url.href, "_blank");
+    if (entry.isCatalog || entry.isCatalogVariant) {
+      if (entry.sourceUrl) url.searchParams.set("source", entry.sourceUrl);
+      if (entry.preview) url.searchParams.set("preview", entry.preview);
+      if (entry.mediaUrl) url.searchParams.set("media", entry.mediaUrl);
+      if (entry.animated) url.searchParams.set("animated", "1");
+      url.searchParams.set("title", entry.title || "Czepeku");
+    } else {
+      url.searchParams.set("path", entry.path);
+    }
+    window.open(url.href, "_blank", "noopener");
   }
 
   function renderPreview(entry) {
-    const previewValue = entry.preview || entry.media;
+    const animatedAsset = entry.mediaType === "video" || getExtension(entry.media || "") === "gif";
+    const previewValue = entry.preview || (entry.isCatalog || entry.isCatalogVariant || animatedAsset ? "" : entry.media);
     const previewUrl = resolveMedia(previewValue);
-    if (!previewUrl) return '<div class="nm-preview"><span class="nm-preview-badge">Keine Vorschau</span></div>';
-    if (isVideo(previewValue)) {
-      return '<div class="nm-preview"><video muted loop playsinline preload="none" data-nm-preview="' + esc(previewUrl) + '"></video><span class="nm-preview-badge">Animation</span></div>';
+    if (!previewUrl || isVideo(previewValue) || getExtension(previewValue) === "gif") {
+      return '<div class="nm-preview"><span class="nm-preview-badge">' +
+        (entry.animated || animatedAsset ? "Animation beim Öffnen" : "Keine Vorschau") + '</span></div>';
     }
-    return '<div class="nm-preview"><img loading="lazy" src="' + esc(previewUrl) + '" alt="' + esc(entry.title) + '"><span class="nm-preview-badge">' + (entry.moodType === "Scene" ? "Scene" : "Map") + '</span></div>';
+    return '<div class="nm-preview"><img loading="lazy" src="' + esc(previewUrl) + '" alt="' + esc(entry.title) + '"><span class="nm-preview-badge">' +
+      (entry.universe ? esc(entry.universe) + " · " : "") + (entry.moodType === "Scene" ? "Scene" : "Map") + '</span></div>';
   }
 
   function mountLibrary(root) {
@@ -244,6 +303,7 @@
       '<div class="nm-toolbar">',
       '<input class="nm-search" type="search" placeholder="Name, Kategorie oder Tag suchen …" aria-label="Mood durchsuchen">',
       '<select class="nm-type" aria-label="Art filtern"><option value="">Maps und Scenes</option><option value="Map">Maps</option><option value="Scene">Scenes</option></select>',
+      '<select class="nm-universe" aria-label="Universum filtern"><option value="">Fantasy und Sci-Fi</option><option value="Fantasy">Fantasy</option><option value="Sci-Fi">Sci-Fi</option></select>',
       '<select class="nm-category" aria-label="Kategorie filtern"><option value="">Alle Kategorien</option></select>',
       '<select class="nm-media-type" aria-label="Medienart filtern"><option value="">Alle Medien</option><option value="video">Animationen</option><option value="image">Bilder</option></select>',
       '</div>',
@@ -262,6 +322,10 @@
     const grid = $(root, ".nm-grid");
     const search = $(root, ".nm-search");
     const typeFilter = $(root, ".nm-type");
+    const universeFilter = $(root, ".nm-universe");
+    const variantLookup = new Map();
+    const expandedVariants = new Set();
+    let visibleLimit = 60;
     const categoryFilter = $(root, ".nm-category");
     const mediaFilter = $(root, ".nm-media-type");
     const formSlot = $(root, ".nm-form-slot");
@@ -291,18 +355,72 @@
       categoryFilter.value = categories.includes(current) ? current : "";
     }
 
+    function renderVariantPanel(entry) {
+      if (!expandedVariants.has(entry.catalogId)) return "";
+      if (!Array.isArray(entry.variants)) {
+        return '<div class="nm-variant-panel"><p class="nm-card-meta">Varianten werden geladen …</p></div>';
+      }
+      if (!entry.variants.length) {
+        return '<div class="nm-variant-panel"><p class="nm-card-meta">Für diesen Eintrag wurden keine Varianten gefunden.</p></div>';
+      }
+      const variants = entry.variants.map((variant) => {
+        const variantEntry = {
+          path: "czepeku-variant:" + entry.catalogId + "::" + variant.slug,
+          isCatalogVariant: true,
+          title: variant.title,
+          moodType: entry.moodType,
+          universe: entry.universe,
+          preview: variant.previewUrl,
+          media: variant.mediaUrl || variant.previewUrl,
+          mediaUrl: variant.mediaUrl || "",
+          sourceUrl: variant.sourceUrl,
+          animated: Boolean(variant.animated),
+          tags: entry.tags || [],
+          source: entry.source
+        };
+        variantLookup.set(variantEntry.path, variantEntry);
+        return '<button type="button" class="nm-variant" data-nm-variant-open="' + esc(variantEntry.path) + '" title="Öffnen: ' + esc(variant.title) + '">' +
+          '<span class="nm-variant-image"><img loading="lazy" src="' + esc(variant.previewUrl) + '" alt="' + esc(variant.title) + '">' +
+          (variantEntry.animated ? '<span class="nm-variant-badge">Animation</span>' : '') + '</span>' +
+          '<span class="nm-variant-name">' + esc(variant.name) + '</span>' +
+          '</button>';
+      }).join("");
+      return '<div class="nm-variant-panel"><div class="nm-variant-heading">' +
+        '<strong>' + entry.variants.length + ' Varianten</strong>' +
+        '<button type="button" data-nm-variants="' + esc(entry.catalogId) + '">Schließen</button>' +
+        '</div><div class="nm-variant-grid">' + variants + '</div></div>';
+    }
+
+    async function fetchVariants(entry) {
+      const response = await fetch(CATALOG_API + "/variants?path=" + encodeURIComponent(entry.catalogPath), { cache: "no-store" });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !Array.isArray(data.variants)) {
+        throw new Error(data.error || "Die Varianten konnten nicht geladen werden.");
+      }
+      entry.variants = data.variants;
+      entry.variantsCount = data.variants.length;
+      if (Array.isArray(data.tags) && data.tags.length) {
+        entry.tags = Array.from(new Set([...(entry.tags || []), ...data.tags]));
+      }
+      return entry.variants;
+    }
+
     function draw() {
       const query = search.value.trim().toLocaleLowerCase("de");
       const wantedType = typeFilter.value;
+      const wantedUniverse = universeFilter.value;
       const wantedCategory = categoryFilter.value;
       const wantedMedia = mediaFilter.value;
       const visible = entries.filter((entry) => {
-        const haystack = [entry.title, entry.category, entry.source, ...(entry.tags || [])].join(" ").toLocaleLowerCase("de");
+        const haystack = [entry.title, entry.category, entry.source, entry.universe, entry.defaultVariant, ...(entry.tags || [])]
+          .join(" ").toLocaleLowerCase("de");
         return (!query || haystack.includes(query))
           && (!wantedType || entry.moodType === wantedType)
+          && (!wantedUniverse || entry.universe === wantedUniverse)
           && (!wantedCategory || entry.category === wantedCategory)
           && (!wantedMedia || entry.mediaType === wantedMedia);
       });
+      variantLookup.clear();
       if (!visible.length) {
         grid.innerHTML = '<div class="nm-empty">' + (entries.length
           ? "Keine passenden Maps oder Scenes gefunden."
@@ -310,38 +428,30 @@
         status(root, entries.length ? "0 Treffer" : "Die Bibliothek ist bereit.");
         return;
       }
-      grid.innerHTML = visible.map((entry) => {
+      const shown = visible.slice(0, visibleLimit);
+      const cards = shown.map((entry) => {
         const tags = (entry.tags || []).slice(0, 5).map((tag) => '<span class="nm-tag">' + esc(tag) + '</span>').join("");
-        const meta = [entry.moodType || "Map", entry.category, entry.source].filter(Boolean).join(" · ");
+        const meta = [entry.moodType || "Map", entry.universe, entry.category, entry.source].filter(Boolean).join(" · ");
+        const action = entry.isCatalog
+          ? '<div class="nm-card-actions"><button type="button" data-nm-variants="' + esc(entry.catalogId) + '">' +
+              (Array.isArray(entry.variants) ? (expandedVariants.has(entry.catalogId) ? "Varianten schließen" : "Varianten (" + entry.variants.length + ")") : "Varianten anzeigen") +
+            '</button><button type="button" data-nm-open-button="' + esc(entry.path) + '">Öffnen ↗</button></div>'
+          : '<div class="nm-card-actions"><button type="button" data-nm-open-button="' + esc(entry.path) + '">Öffnen ↗</button></div>';
         return '<article class="nm-card" tabindex="0" role="button" data-nm-open="' + esc(entry.path) + '" title="Doppelklick zum Öffnen">' +
           renderPreview(entry) +
           '<div class="nm-card-body">' +
           '<p class="nm-card-title">' + esc(entry.title) + '</p>' +
           '<p class="nm-card-meta">' + esc(meta) + '</p>' +
           (tags ? '<div class="nm-tags">' + tags + '</div>' : '') +
-          '<div class="nm-card-actions"><button type="button" data-nm-open-button="' + esc(entry.path) + '">Öffnen ↗</button></div>' +
-          '</div></article>';
+          action +
+          '</div>' +
+          (entry.isCatalog ? renderVariantPanel(entry) : '') +
+          '</article>';
       }).join("");
-      status(root, visible.length + " von " + entries.length + " Einträgen");
-      startPreviewVideos(grid);
-    }
-
-    function startPreviewVideos(container) {
-      const videos = Array.from(container.querySelectorAll("video[data-nm-preview]"));
-      for (const video of videos) video.src = video.dataset.nmPreview;
-      if (!videos.length) return;
-      if (!("IntersectionObserver" in window)) {
-        videos.forEach((video) => video.play().catch(() => {}));
-        return;
-      }
-      const observer = new IntersectionObserver((changes) => {
-        for (const change of changes) {
-          const video = change.target;
-          if (change.isIntersecting) video.play().catch(() => {});
-          else video.pause();
-        }
-      }, { rootMargin: "120px" });
-      videos.forEach((video) => observer.observe(video));
+      grid.innerHTML = cards + (visible.length > visibleLimit
+        ? '<div class="nm-load-more-wrap"><button type="button" data-nm-load-more>Mehr laden (' + (visible.length - visibleLimit) + ' verbleibend)</button></div>'
+        : '');
+      status(root, shown.length + " von " + visible.length + " Treffern · " + entries.length + " insgesamt");
     }
 
     function showForm(mode) {
@@ -510,6 +620,41 @@
         return;
       }
       if (event.target.closest("[data-nm-cancel]")) return;
+      const loadMore = event.target.closest("[data-nm-load-more]");
+      if (loadMore) {
+        visibleLimit += 60;
+        draw();
+        return;
+      }
+      const variantToggle = event.target.closest("[data-nm-variants]");
+      if (variantToggle) {
+        const entry = entries.find((item) => item.isCatalog && item.catalogId === variantToggle.dataset.nmVariants);
+        if (!entry) return;
+        if (expandedVariants.has(entry.catalogId)) {
+          expandedVariants.delete(entry.catalogId);
+          draw();
+          return;
+        }
+        expandedVariants.add(entry.catalogId);
+        if (!Array.isArray(entry.variants)) {
+          variantToggle.disabled = true;
+          variantToggle.textContent = "Lade Varianten …";
+          fetchVariants(entry).then(() => draw()).catch((error) => {
+            expandedVariants.delete(entry.catalogId);
+            status(root, error.message || "Varianten konnten nicht geladen werden.", true);
+            draw();
+          });
+        } else {
+          draw();
+        }
+        return;
+      }
+      const variantButton = event.target.closest("[data-nm-variant-open]");
+      if (variantButton) {
+        const variant = variantLookup.get(variantButton.dataset.nmVariantOpen);
+        if (variant) openPlayer(variant);
+        return;
+      }
       const openButton = event.target.closest("[data-nm-open-button]");
       if (openButton) {
         const entry = entries.find((item) => item.path === openButton.dataset.nmOpenButton);
@@ -531,9 +676,9 @@
       const entry = entries.find((item) => item.path === card.dataset.nmOpen);
       if (entry) openPlayer(entry);
     });
-    [search, typeFilter, categoryFilter, mediaFilter].forEach((control) => {
-      control.addEventListener("input", draw);
-      control.addEventListener("change", draw);
+    [search, typeFilter, universeFilter, categoryFilter, mediaFilter].forEach((control) => {
+      control.addEventListener("input", () => { visibleLimit = 60; draw(); });
+      control.addEventListener("change", () => { visibleLimit = 60; draw(); });
     });
 
     refreshAuth();
@@ -561,6 +706,10 @@
     const stage = $(root, ".nm-stage");
     const params = new URLSearchParams(window.location.search);
     const path = params.get("path") || "";
+    const sourceUrl = params.get("source") || "";
+    const previewParam = params.get("preview") || "";
+    const mediaParam = params.get("media") || "";
+    const animatedParam = params.get("animated") === "1";
     root.querySelector("[data-nm-fullscreen]").addEventListener("click", async () => {
       try {
         if (!document.fullscreenElement) await root.requestFullscreen();
@@ -572,6 +721,57 @@
     root.querySelector("[data-nm-close]").addEventListener("click", () => {
       window.location.href = "/mood/";
     });
+    if (sourceUrl) {
+      let parsedSource;
+      try { parsedSource = new URL(sourceUrl); } catch {}
+      if (!parsedSource || parsedSource.protocol !== "https:" || parsedSource.hostname !== "www.czepeku.com") {
+        stage.innerHTML = '<div class="nm-player-message">Ungültiger Czepeku-Link.</div>';
+        return;
+      }
+      title.textContent = params.get("title") || "Czepeku";
+      stage.replaceChildren();
+      if (mediaParam && isVideo(mediaParam)) {
+        const video = document.createElement("video");
+        video.src = mediaParam;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.controls = true;
+        video.preload = "auto";
+        video.addEventListener("error", () => {
+          stage.innerHTML = '<div class="nm-player-message">Die Animation konnte nicht geladen werden. Öffne die Originalseite.</div>';
+        });
+        stage.appendChild(video);
+        video.play().catch(() => {});
+      } else if (animatedParam) {
+        const iframe = document.createElement("iframe");
+        iframe.src = sourceUrl;
+        iframe.title = title.textContent;
+        iframe.allow = "autoplay; fullscreen; picture-in-picture";
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        iframe.style.cssText = "border:0;width:100%;height:100%;background:#07080b";
+        stage.appendChild(iframe);
+      } else {
+        const image = document.createElement("img");
+        image.src = previewParam;
+        image.alt = title.textContent;
+        image.draggable = false;
+        image.addEventListener("error", () => {
+          stage.innerHTML = '<div class="nm-player-message">Das Bild konnte nicht geladen werden. Öffne die Originalseite.</div>';
+        });
+        stage.appendChild(image);
+      }
+      const openSource = document.createElement("a");
+      openSource.href = sourceUrl;
+      openSource.target = "_blank";
+      openSource.rel = "noopener noreferrer";
+      openSource.textContent = "Original bei Czepeku öffnen";
+      openSource.className = "nm-source-link";
+      root.querySelector(".nm-player-buttons").prepend(openSource);
+      return;
+    }
     if (!path) {
       stage.innerHTML = '<div class="nm-player-message">Kein Mood-Eintrag angegeben.</div>';
       return;
