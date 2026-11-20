@@ -14,6 +14,7 @@ Willkommen zum Neuvia Wiki.
 - [[Regelbuch]]
 - [[Lore]]
 - [[Musik]]
+- [[Mood]]
 
 Schau im Explorer oben links nach mehr Infos und Funfacts nach.
 

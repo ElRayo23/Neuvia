@@ -109,6 +109,8 @@ jobs:
 
       - name: Validate Neuvia search boot script
         run: node --check static/neuvia-search-boot.js
+      - name: Validate Neuvia Mood library script
+        run: node --check static/neuvia-mood.js
 
       - name: Validate Neuvia admin API Worker
         run: node --input-type=module --check < workers/neuvia-admin-api.js
@@ -328,6 +330,7 @@ jobs:
           if is_cloudflare:
               tags.append(f'<script defer src="/static/neuvia-live-reader.bundle.js?v={version}"></script>')
               tags.append(f'<script defer src="/static/neuvia-search-boot.js?v={version}"></script>')
+              tags.append(f'<script defer src="/static/neuvia-mood.js?v={version}"></script>')
           for page in root.rglob("*.html"):
               html = page.read_text(encoding="utf-8")
               if "</head>" not in html:
