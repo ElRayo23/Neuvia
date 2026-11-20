@@ -259,8 +259,14 @@
       #neuvia-mood-player .nm-player { position:absolute; inset:0; display:flex; flex-direction:column; }
       #neuvia-mood-player .nm-player-bar { z-index:2; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 14px; background:linear-gradient(#000b,#0000); }
       #neuvia-mood-player .nm-player-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; }
-      #neuvia-mood-player .nm-player-buttons { display:flex; gap:7px; flex-shrink:0; }
+      #neuvia-mood-player .nm-player-buttons { display:flex; align-items:center; flex-wrap:wrap; gap:7px; flex-shrink:0; }
+      #neuvia-mood-player .nm-zoom-level { min-width:42px; text-align:center; color:#ddd; font-size:.82em; font-variant-numeric:tabular-nums; }
       #neuvia-mood-player button, #neuvia-mood-player .nm-source-link { border:1px solid #ffffff55; border-radius:7px; color:white; background:#17191dcc; padding:8px 10px; cursor:pointer; text-decoration:none; font:inherit; }
+      #neuvia-mood-player .nm-stage { touch-action:none; }
+      @media (max-width:700px) {
+        #neuvia-mood-player .nm-player-bar { align-items:flex-start; flex-direction:column; gap:7px; }
+        #neuvia-mood-player .nm-player-buttons { width:100%; }
+      }
       #neuvia-mood-player .nm-stage { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
       #neuvia-mood-player .nm-stage img, #neuvia-mood-player .nm-stage video { display:block; width:100%; height:100%; object-fit:contain; }
       #neuvia-mood-player .nm-player-message { color:#ddd; padding:24px; text-align:center; }
