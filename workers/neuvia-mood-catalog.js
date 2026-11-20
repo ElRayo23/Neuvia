@@ -53,7 +53,7 @@ function imageUrlsFromTag(tag) {
       const previewUrls = [...urls].sort((a, b) => {
         const aw = Number((a.match(/width=(\d+)/i) || [])[1]) || 99999;
         const bw = Number((b.match(/width=(\d+)/i) || [])[1]) || 99999;
-        return (aw <= 828 ? 0 : 1) - (bw <= 828 ? 0 : 1) || aw - bw;
+        return (aw <= 828 ? 0 : 1) - (bw <= 828 ? 0 : 1) || bw - aw;
       });
       const fullUrls = [...urls].sort((a, b) => {
         const aw = Number((a.match(/width=(\d+)/i) || [])[1]) || 0;
