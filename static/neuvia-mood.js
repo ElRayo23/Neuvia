@@ -189,7 +189,7 @@
 
   async function loadEntries() {
     const [notes, catalog] = await Promise.all([
-      loadNoteEntries(),
+      loadNoteEntries().catch(() => []),
       loadCatalogEntries().catch(() => [])
     ]);
     return [...notes, ...catalog].sort((a, b) =>
