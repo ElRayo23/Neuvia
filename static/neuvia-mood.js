@@ -220,7 +220,7 @@
   }
 
   function openPlayer(entry) {
-    const url = new URL("/mood/player", window.location.origin);
+    const url = new URL("/mood/player/", window.location.origin);
     url.searchParams.set("path", entry.path);
     window.open(url.href, "_blank");
   }
@@ -276,7 +276,7 @@
           authenticated = Boolean(data.authenticated);
         } catch {}
       }
-      buttons.forEach((button) => { button.disabled = !authenticated; });
+      buttons.forEach((button) => { button.disabled = false; });
       authNote.textContent = authenticated
         ? "Administrator angemeldet – du kannst Medien hinzufügen."
         : "Zum Hinzufügen oder Hochladen oben rechts über „Bearbeiten“ anmelden.";
@@ -349,6 +349,7 @@
         status(root, "Bitte zuerst oben rechts über „Bearbeiten“ anmelden.", true);
         return;
       }
+      authNote.textContent = "Administrator angemeldet – du kannst Medien hinzufügen.";
       if (mode === "external") {
         formSlot.innerHTML = [
           '<form class="nm-form" id="nm-external-form">',
@@ -569,7 +570,7 @@
       }
     });
     root.querySelector("[data-nm-close]").addEventListener("click", () => {
-      window.location.href = "/mood";
+      window.location.href = "/mood/";
     });
     if (!path) {
       stage.innerHTML = '<div class="nm-player-message">Kein Mood-Eintrag angegeben.</div>';
