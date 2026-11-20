@@ -377,7 +377,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
 
   deploy-cloudflare-preview:
-    if: ${{ github.ref == 'refs/heads/mood-full-catalog' && needs.build.result == 'success' }}
+    if: ${{ always() && github.ref == 'refs/heads/mood-full-catalog' && needs.build.result == 'success' }}
     needs: build
     timeout-minutes: 10
     runs-on: ubuntu-latest
