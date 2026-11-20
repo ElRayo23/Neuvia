@@ -726,12 +726,21 @@
     root.innerHTML = [
       '<div class="nm-player">',
       '<div class="nm-player-bar"><div class="nm-player-title">Mood</div>',
-      '<div class="nm-player-buttons"><button type="button" data-nm-fullscreen>Vollbild</button><button type="button" data-nm-close>Zur Mood-Bibliothek</button></div></div>',
+      '<div class="nm-player-buttons">',
+      '<button type="button" data-nm-zoom-out aria-label="Verkleinern">−</button>',
+      '<span class="nm-zoom-level" aria-live="polite">100%</span>',
+      '<button type="button" data-nm-zoom-in aria-label="Vergrößern">+</button>',
+      '<button type="button" data-nm-zoom-fit>Anpassen</button>',
+      '<button type="button" data-nm-fullscreen>Vollbild</button>',
+      '<button type="button" data-nm-close>Zur Mood-Bibliothek</button>',
+      '</div></div>',
       '<div class="nm-stage"><div class="nm-player-message">Lade Medium …</div></div>',
       '</div>'
     ].join("");
+
     const title = $(root, ".nm-player-title");
     const stage = $(root, ".nm-stage");
+    const zoomLabel = $(root, ".nm-zoom-level");
     const params = new URLSearchParams(window.location.search);
     const path = params.get("path") || "";
     const sourceUrl = params.get("source") || "";
@@ -739,6 +748,114 @@
     const fullParam = params.get("full") || "";
     const mediaParam = params.get("media") || "";
     const animatedParam = params.get("animated") === "1";
+
+    let zoomImage = null;
+    let zoomLevel = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+    let dragging = false;
+    let dragPointer = null;
+    let lastPointerX = 0;
+    let lastPointerY = 0;
+
+    const applyZoom = () => {
+      if (!zoomImage) return;
+      zoomImage.style.transform = "translate3d(" + offsetX + "px," + offsetY + "px,0) scale(" + zoomLevel + ")";
+      zoomImage.style.cursor = zoomLevel > 1 ? (dragging ? "grabbing" : "grab") : "zoom-in";
+      zoomLabel.textContent = Math.round(zoomLevel * 100) + "%";
+    };
+
+    const setZoom = (next, clientX, clientY) => {
+      if (!zoomImage) return;
+      const nextZoom = Math.max(1, Math.min(8, next));
+      if (clientX != null && clientY != null && nextZoom !== zoomLevel) {
+        const rect = stage.getBoundingClientRect();
+        const px = clientX - rect.left - rect.width / 2;
+        const py = clientY - rect.top - rect.height / 2;
+        offsetX = px - ((px - offsetX) / zoomLevel) * nextZoom;
+        offsetY = py - ((py - offsetY) / zoomLevel) * nextZoom;
+      }
+      zoomLevel = nextZoom;
+      if (zoomLevel === 1) {
+        offsetX = 0;
+        offsetY = 0;
+      }
+      applyZoom();
+    };
+
+    const showImage = (image, fallbackUrl, errorMessage) => {
+      zoomImage = image;
+      zoomLevel = 1;
+      offsetX = 0;
+      offsetY = 0;
+      dragging = false;
+      image.style.cssText = "display:block;width:100%;height:100%;object-fit:contain;max-width:none;max-height:none;user-select:none;touch-action:none;will-change:transform;transform-origin:center center;";
+      image.draggable = false;
+      image.addEventListener("error", () => {
+        if (fallbackUrl && image.src !== fallbackUrl && !image.dataset.fallbackTried) {
+          image.dataset.fallbackTried = "yes";
+          image.src = fallbackUrl;
+          return;
+        }
+        zoomImage = null;
+        zoomLabel.textContent = "—";
+        stage.innerHTML = '<div class="nm-player-message">' + esc(errorMessage) + '</div>';
+      });
+      stage.replaceChildren(image);
+      applyZoom();
+    };
+
+    stage.addEventListener("wheel", (event) => {
+      if (!zoomImage) return;
+      event.preventDefault();
+      const factor = Math.pow(1.0018, -event.deltaY);
+      setZoom(zoomLevel * factor, event.clientX, event.clientY);
+    }, { passive: false });
+
+    stage.addEventListener("pointerdown", (event) => {
+      if (!zoomImage || zoomLevel <= 1) return;
+      dragging = true;
+      dragPointer = event.pointerId;
+      lastPointerX = event.clientX;
+      lastPointerY = event.clientY;
+      stage.setPointerCapture(event.pointerId);
+      applyZoom();
+    });
+
+    stage.addEventListener("pointermove", (event) => {
+      if (!dragging || event.pointerId !== dragPointer) return;
+      offsetX += event.clientX - lastPointerX;
+      offsetY += event.clientY - lastPointerY;
+      lastPointerX = event.clientX;
+      lastPointerY = event.clientY;
+      applyZoom();
+    });
+
+    const stopDragging = (event) => {
+      if (!dragging || (event && event.pointerId !== dragPointer)) return;
+      dragging = false;
+      dragPointer = null;
+      applyZoom();
+    };
+    stage.addEventListener("pointerup", stopDragging);
+    stage.addEventListener("pointercancel", stopDragging);
+    stage.addEventListener("lostpointercapture", stopDragging);
+
+    stage.addEventListener("dblclick", (event) => {
+      if (!zoomImage) return;
+      event.preventDefault();
+      setZoom(zoomLevel > 1 ? 1 : 2.5, event.clientX, event.clientY);
+    });
+
+    root.querySelector("[data-nm-zoom-in]").addEventListener("click", () => setZoom(zoomLevel * 1.4));
+    root.querySelector("[data-nm-zoom-out]").addEventListener("click", () => setZoom(zoomLevel / 1.4));
+    root.querySelector("[data-nm-zoom-fit]").addEventListener("click", () => {
+      zoomLevel = 1;
+      offsetX = 0;
+      offsetY = 0;
+      applyZoom();
+    });
+
     root.querySelector("[data-nm-fullscreen]").addEventListener("click", async () => {
       try {
         if (!document.fullscreenElement) await root.requestFullscreen();
@@ -750,6 +867,7 @@
     root.querySelector("[data-nm-close]").addEventListener("click", () => {
       window.location.href = "/mood/";
     });
+
     if (sourceUrl) {
       let parsedSource;
       try { parsedSource = new URL(sourceUrl); } catch {}
@@ -759,6 +877,7 @@
       }
       title.textContent = params.get("title") || "Czepeku";
       stage.replaceChildren();
+
       if (mediaParam && isVideo(mediaParam)) {
         const video = document.createElement("video");
         video.src = mediaParam;
@@ -782,18 +901,14 @@
         iframe.referrerPolicy = "strict-origin-when-cross-origin";
         iframe.style.cssText = "border:0;width:100%;height:100%;background:#07080b";
         stage.appendChild(iframe);
+        zoomLabel.textContent = "—";
       } else {
         const image = document.createElement("img");
-        // The gallery keeps a lightweight thumbnail; the player loads the largest
-        // image candidate supplied by Czepeku's srcset.
         image.src = fullParam || previewParam;
         image.alt = title.textContent;
-        image.draggable = false;
-        image.addEventListener("error", () => {
-          stage.innerHTML = '<div class="nm-player-message">Das Bild konnte nicht geladen werden. Öffne die Originalseite.</div>';
-        });
-        stage.appendChild(image);
+        showImage(image, previewParam && previewParam !== fullParam ? previewParam : "", "Das Bild konnte nicht geladen werden. Öffne die Originalseite.");
       }
+
       const openSource = document.createElement("a");
       openSource.href = sourceUrl;
       openSource.target = "_blank";
@@ -803,16 +918,19 @@
       root.querySelector(".nm-player-buttons").prepend(openSource);
       return;
     }
+
     if (!path) {
       stage.innerHTML = '<div class="nm-player-message">Kein Mood-Eintrag angegeben.</div>';
       return;
     }
+
     try {
       const meta = await fetchNote(path);
       if (!meta.media) throw new Error("Für diesen Eintrag ist keine Medien-URL hinterlegt.");
       title.textContent = meta.title || path.split("/").pop().replace(/\.md$/i, "");
       stage.replaceChildren();
       const mediaUrl = resolveMedia(meta.media);
+
       if (isVideo(meta.media, String(meta.mediaType || ""))) {
         const video = document.createElement("video");
         video.src = mediaUrl;
@@ -827,21 +945,17 @@
         });
         stage.appendChild(video);
         video.play().catch(() => {});
+        zoomLabel.textContent = "—";
       } else {
         const image = document.createElement("img");
         image.src = mediaUrl;
         image.alt = title.textContent;
-        image.draggable = false;
-        image.addEventListener("error", () => {
-          stage.innerHTML = '<div class="nm-player-message">Das Bild konnte nicht geladen werden. Prüfe die URL oder den Zugriff auf die Quelldatei.</div>';
-        });
-        stage.appendChild(image);
+        showImage(image, resolveMedia(meta.preview || ""), "Das Bild konnte nicht geladen werden. Prüfe die URL oder den Zugriff auf die Quelldatei.");
       }
     } catch (error) {
       stage.innerHTML = '<div class="nm-player-message">' + esc(error.message) + '</div>';
     }
   }
-
   let mountQueued = false;
   function mountCurrentPage() {
     mountQueued = false;
