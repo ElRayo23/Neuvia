@@ -401,6 +401,8 @@
       entry.variantsCount = data.variants.length;
       if (Array.isArray(data.tags) && data.tags.length) {
         entry.tags = Array.from(new Set([...(entry.tags || []), ...data.tags]));
+        entry.category = entry.category || data.tags[0] || "";
+        refreshCategories();
       }
       return entry.variants;
     }
