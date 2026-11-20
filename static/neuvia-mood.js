@@ -188,6 +188,7 @@
         universe: String(item.universe || ""),
         media: String(item.previewUrl || ""),
         preview: String(item.previewUrl || ""),
+        full: String(item.fullUrl || item.previewUrl || ""),
         sourceUrl: String(item.sourceUrl || ""),
         defaultVariant: String(item.defaultVariant || ""),
         animated,
@@ -278,6 +279,7 @@
     if (entry.isCatalog || entry.isCatalogVariant) {
       if (entry.sourceUrl) url.searchParams.set("source", entry.sourceUrl);
       if (entry.preview) url.searchParams.set("preview", entry.preview);
+      if (entry.full) url.searchParams.set("full", entry.full);
       if (entry.mediaUrl) url.searchParams.set("media", entry.mediaUrl);
       if (entry.animated) url.searchParams.set("animated", "1");
       url.searchParams.set("title", entry.title || "Czepeku");
@@ -376,6 +378,7 @@
           moodType: entry.moodType,
           universe: entry.universe,
           preview: variant.previewUrl,
+          full: variant.fullUrl || variant.previewUrl,
           media: variant.mediaUrl || variant.previewUrl,
           mediaUrl: variant.mediaUrl || "",
           sourceUrl: variant.sourceUrl,
@@ -733,6 +736,7 @@
     const path = params.get("path") || "";
     const sourceUrl = params.get("source") || "";
     const previewParam = params.get("preview") || "";
+    const fullParam = params.get("full") || "";
     const mediaParam = params.get("media") || "";
     const animatedParam = params.get("animated") === "1";
     root.querySelector("[data-nm-fullscreen]").addEventListener("click", async () => {
@@ -780,7 +784,9 @@
         stage.appendChild(iframe);
       } else {
         const image = document.createElement("img");
-        image.src = previewParam;
+        // The gallery keeps a lightweight thumbnail; the player loads the largest
+        // image candidate supplied by Czepeku's srcset.
+        image.src = fullParam || previewParam;
         image.alt = title.textContent;
         image.draggable = false;
         image.addEventListener("error", () => {
