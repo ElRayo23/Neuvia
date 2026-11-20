@@ -403,7 +403,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: d6e55c097c01617680ef4e9c13f70af7
 
   deploy-mood-catalog-worker:
-    if: ${{ github.ref == 'refs/heads/mood-full-catalog' }}
+    if: ${{ github.ref == 'refs/heads/mood-full-catalog' || github.ref == 'refs/heads/main' }}
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
