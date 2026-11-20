@@ -43,21 +43,39 @@ function slugify(value) {
     .replace(/ß/g, "ss").toLowerCase().replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
-function imageUrlFromTag(tag) {
+function imageUrlsFromTag(tag) {
+  const candidates = [];
+  const seen = new Set();
+  const add = (url, descriptor = "") => {
+    if (!/^https?:\/\//i.test(url) || seen.has(url)) return;
+    seen.add(url);
+    const urlWidth = Number((url.match(/width=(\d+)/i) || [])[1]) || 0;
+    const descriptorWidth = Number((String(descriptor).match(/(\d+(?:\.\d+)?)w\b/i) || [])[1]) || 0;
+    candidates.push({ url, width: urlWidth || descriptorWidth });
+  };
+
+  // Do not split srcset on commas: Czepeku's CDN transformation URLs contain commas.
   const srcset = attr(tag, "srcset");
   if (srcset) {
-    const urls = [...srcset.matchAll(/https?:\/\/\S+?\.(?:webp|png|jpe?g|avif|gif)(?=\s|$)/gi)].map(item => item[0]);
-    if (urls.length) {
-      urls.sort((a, b) => {
-        const aw = Number((a.match(/width=(\d+)/i) || [])[1]) || 99999;
-        const bw = Number((b.match(/width=(\d+)/i) || [])[1]) || 99999;
-        return (aw <= 828 ? 0 : 1) - (bw <= 828 ? 0 : 1) || aw - bw;
-      });
-      return urls[0];
+    for (const match of srcset.matchAll(/(https?:\/\/\S+?\.(?:webp|png|jpe?g|avif|gif))\s*(\d+(?:\.\d+)?w)?/gi)) {
+      add(match[1], match[2] || "");
     }
   }
   const src = attr(tag, "src");
-  return /^https?:\/\//i.test(src) ? src : "";
+  add(src);
+
+  if (!candidates.length) return { previewUrl: "", fullUrl: "" };
+  const sized = candidates.filter(candidate => candidate.width > 0);
+  const previewCandidates = sized.filter(candidate => candidate.width <= 828);
+  const preview = previewCandidates.length
+    ? previewCandidates.sort((a, b) => b.width - a.width)[0]
+    : sized.length
+      ? sized.sort((a, b) => a.width - b.width)[0]
+      : candidates[0];
+  const full = sized.length
+    ? [...sized].sort((a, b) => b.width - a.width)[0]
+    : candidates.find(candidate => candidate.url === src) || candidates[0];
+  return { previewUrl: preview.url, fullUrl: full.url };
 }
 async function fetchHtml(path) {
   const absolute = new URL(path, SITE).href;
@@ -97,7 +115,8 @@ function parseDirectory(html, source) {
     const fallback = collapseDuplicateText(stripHtml(inner));
     const title = (altMatch && altMatch[1] || fallback || parts[2].replace(/-/g, " ")).trim();
     const defaultVariant = altMatch && altMatch[2] ? altMatch[2].trim() : "";
-    const previewUrl = imageUrlFromTag(imageTag);
+    const imageUrls = imageUrlsFromTag(imageTag);
+    const previewUrl = imageUrls.previewUrl;
     if (!previewUrl) continue;
     const path = "/" + parts.join("/");
     const id = "cz-" + slugify(source.universe) + "-" + source.section + "-" + parts[2];
@@ -109,6 +128,7 @@ function parseDirectory(html, source) {
         category: "",
         tags: ["Czepeku", source.universe, source.section === "scenes" ? "Scene" : "Map"],
         previewUrl,
+        fullUrl: imageUrls.fullUrl || previewUrl,
         sourceUrl: SITE + (defaultSlug ? path + "/" + defaultSlug : path),
         catalogPath: path, defaultVariant, variantsCount: null
       });
@@ -154,14 +174,15 @@ function parseVariants(html, basePath, type) {
     const altMatch = alt.match(pattern);
     if (!altMatch) continue;
     const name = altMatch[1].trim();
-    const previewUrl = imageUrlFromTag(tag);
+    const imageUrls = imageUrlsFromTag(tag);
+    const previewUrl = imageUrls.previewUrl;
     if (!name || !previewUrl) continue;
     const slug = slugify(name);
     if (!slug || variants.has(slug)) continue;
     variants.set(slug, {
       id: basePath + "/" + slug, name, slug,
       title: parentTitle + " – " + name, moodType: type,
-      previewUrl, mediaUrl: mediaUrl || "",
+      previewUrl, fullUrl: imageUrls.fullUrl || previewUrl, mediaUrl: mediaUrl || "",
       animated: /animated/i.test(name) || Boolean(mediaUrl),
       sourceUrl: SITE + basePath + "/" + slug
     });
@@ -171,13 +192,14 @@ function parseVariants(html, basePath, type) {
     const variantName = stripHtml(subtitleMatch && subtitleMatch[1] || "");
     const imageTags = [...html.matchAll(/<img\b[^>]*>/gi)].map(match => match[0]);
     const image = imageTags.find(tag => /variant/i.test(attr(tag, "alt"))) || imageTags[0] || "";
-    const previewUrl = imageUrlFromTag(image);
+    const imageUrls = imageUrlsFromTag(image);
+    const previewUrl = imageUrls.previewUrl;
     if (previewUrl) {
       const name = variantName || "Standard";
       const slug = slugify(name) || "standard";
       variants.set(slug, {
         id: basePath + "/" + slug, name, slug, title: title + " – " + name,
-        moodType: type, previewUrl, mediaUrl: mediaUrl || "",
+        moodType: type, previewUrl, fullUrl: imageUrls.fullUrl || previewUrl, mediaUrl: mediaUrl || "",
         animated: /animated/i.test(name) || Boolean(mediaUrl),
         sourceUrl: SITE + basePath + "/" + slug
       });
