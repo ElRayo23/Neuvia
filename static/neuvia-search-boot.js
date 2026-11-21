@@ -48,7 +48,8 @@
     const container = findActiveContainer();
     const target = event.target instanceof Element ? event.target : null;
     if (!container || !target) return;
-    if (container.contains(target)) return;
+    const searchPanel = container.querySelector(".search-space");
+    if (searchPanel?.contains(target)) return;
 
     // The toolbar button opens the panel; it is not considered an outside click.
     if (target.closest(".search .search-button")) return;
