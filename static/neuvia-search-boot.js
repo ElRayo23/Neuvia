@@ -158,6 +158,7 @@
     if (!layout) return;
 
     const results = ensureResultsContainer(layout);
+    results.dataset.neuviaFallback = "true";
     layout.classList.add("display-results");
 
     try {
@@ -263,6 +264,28 @@
         if (results && results.childElementCount > 0) return;
         void runFallbackSearch(input, term, generation);
       }, 700);
+    },
+    true,
+  );
+
+  // Android/iOS keyboard "Search" should open the first fallback result as well.
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const input = target?.closest(".search .search-bar");
+      if (!(input instanceof HTMLInputElement) || event.key !== "Enter" || event.isComposing) {
+        return;
+      }
+
+      const results = input.closest(".search")?.querySelector(".results-container");
+      if (results?.dataset.neuviaFallback !== "true") return;
+      const firstResult = results.querySelector("a.result-card:not(.no-match)");
+      if (!firstResult) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      firstResult.click();
     },
     true,
   );
