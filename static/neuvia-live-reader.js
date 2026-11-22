@@ -48,11 +48,22 @@ import createDOMPurify from "dompurify";
     return indexesPromise;
   }
 
-  function canonicalRoute(path) {
+  function quartzFullSlug(path) {
     let stem = String(path || "").replace(/\.md$/i, "");
-    if (stem.toLowerCase() === "index") return "";
-    if (stem.toLowerCase().endsWith("/index")) stem = stem.slice(0, -6);
-    return slugify(stem);
+    if (stem.toLowerCase() === "_index") stem = "index";
+    else if (stem.toLowerCase().endsWith("/_index")) stem = stem.slice(0, -6) + "index";
+    const parts = slugify(stem).split("/");
+    // Match Quartz's Folder Notes rule: folder/folder.md becomes folder/index.
+    if (parts.length >= 2 && parts[parts.length - 1] === parts[parts.length - 2]) {
+      parts[parts.length - 1] = "index";
+    }
+    return parts.join("/");
+  }
+
+  function canonicalRoute(path) {
+    const fullSlug = quartzFullSlug(path);
+    if (fullSlug === "index") return "";
+    return fullSlug.endsWith("/index") ? fullSlug.slice(0, -5) : fullSlug;
   }
 
   function contextScore(itemPath, sourcePath) {
@@ -79,11 +90,11 @@ import createDOMPurify from "dompurify";
   }
 
   function resolvePath(slug, data) {
-    const wanted = normalize(slug);
-    const candidates = [slug, wanted, slugify(slug)];
+    const wanted = normalize(slug).replace(/\/+$/, "");
+    const candidates = [slug, normalize(slug), wanted, slugify(wanted)];
     for (const key of candidates) if (data.map[key]) return data.map[key];
     const matches = data.links.filter((item) =>
-      normalize(item.route || canonicalRoute(item.path)) === wanted
+      normalize(item.route || canonicalRoute(item.path)).replace(/\/+$/, "") === wanted
       || normalize(item.target) === wanted
     );
     return chooseContextual(matches, "")?.path || "";
@@ -179,7 +190,11 @@ import createDOMPurify from "dompurify";
 
   function routeFor(item, data, anchor) {
     const slug = String(item.route || canonicalRoute(item.path));
-    const route = slug ? "/" + slug.split("/").map(encodeURIComponent).join("/") : "/";
+    const hasTrailingSlash = slug.endsWith("/");
+    const segments = slug.split("/").filter(Boolean).map(encodeURIComponent);
+    const route = segments.length
+      ? "/" + segments.join("/") + (hasTrailingSlash ? "/" : "")
+      : "/";
     return basePath.replace(/\/$/, "") + route
       + (anchor ? "#" + encodeURIComponent(slugify(anchor)) : "");
   }
