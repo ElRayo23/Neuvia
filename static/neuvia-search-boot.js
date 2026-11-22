@@ -202,9 +202,8 @@
         const link = document.createElement("a");
         link.className = "result-card";
         link.setAttribute("role", "option");
-        const basePath = document.body?.dataset?.basepath || "";
         const slug = entry.slug.replace(/^\/+/, "");
-        link.href = basePath + "/" + encodeURI(slug);
+        link.href = "/" + slug.split("/").map((segment) => encodeURIComponent(segment)).join("/");
 
         const heading = document.createElement("h3");
         heading.className = "card-title";
