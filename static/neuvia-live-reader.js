@@ -48,30 +48,154 @@ import createDOMPurify from "dompurify";
     return indexesPromise;
   }
 
-  function resolvePath(slug, data) {
-    const candidates = [slug, normalize(slug), slugify(slug)];
-    for (const key of candidates) if (data.map[key]) return data.map[key];
-    const matches = data.links.filter((item) => normalize(item.target) === normalize(slug));
-    return matches.length === 1 ? matches[0].path : "";
+  function quartzFullSlug(path) {
+    let stem = String(path || "").replace(/\.md$/i, "");
+    if (stem.toLowerCase() === "_index") stem = "index";
+    else if (stem.toLowerCase().endsWith("/_index")) stem = stem.slice(0, -6) + "index";
+    const parts = slugify(stem).split("/");
+    // Match Quartz's Folder Notes rule: folder/folder.md becomes folder/index.
+    if (parts.length >= 2 && parts[parts.length - 1] === parts[parts.length - 2]) {
+      parts[parts.length - 1] = "index";
+    }
+    return parts.join("/");
   }
 
-  function resolveLink(target, data) {
-    const wanted = normalize(target.split("#")[0]);
+  function canonicalRoute(path) {
+    const fullSlug = quartzFullSlug(path);
+    if (fullSlug === "index") return "";
+    return fullSlug.endsWith("/index") ? fullSlug.slice(0, -5) : fullSlug;
+  }
+
+  function contextScore(itemPath, sourcePath) {
+    if (!sourcePath) return -1;
+    const sourceFolders = sourcePath.split("/").slice(0, -1).map(normalize);
+    const targetFolders = itemPath.split("/").slice(0, -1).map(normalize);
+    let common = 0;
+    while (common < sourceFolders.length && common < targetFolders.length
+      && sourceFolders[common] === targetFolders[common]) common++;
+    const sameRoot = sourceFolders[0] && sourceFolders[0] === targetFolders[0];
+    return common * 100 + (sameRoot ? 20 : 0) - Math.abs(sourceFolders.length - targetFolders.length);
+  }
+
+  function chooseContextual(matches, sourcePath) {
+    const unique = Array.from(new Map(matches.map((item) => [item.path, item])).values());
+    if (unique.length === 1) return unique[0];
+    if (!unique.length || !sourcePath) return null;
+    const ranked = unique.map((item) => ({
+      item,
+      score: contextScore(item.path, sourcePath),
+    })).sort((a, b) => b.score - a.score || a.item.path.localeCompare(b.item.path, "de"));
+    if (ranked.length > 1 && ranked[0].score === ranked[1].score) return null;
+    return ranked[0].score >= 0 ? ranked[0].item : null;
+  }
+
+  function resolvePath(slug, data) {
+    const wanted = normalize(slug).replace(/\/+$/, "");
+    const candidates = [slug, normalize(slug), wanted, slugify(wanted)];
+    for (const key of candidates) if (data.map[key]) return data.map[key];
     const matches = data.links.filter((item) =>
-      [item.target, item.path, item.title, ...(item.aliases || [])].some((value) => normalize(value) === wanted)
+      normalize(item.route || canonicalRoute(item.path)).replace(/\/+$/, "") === wanted
+      || normalize(item.target) === wanted
     );
+    return chooseContextual(matches, "")?.path || "";
+  }
+
+  function resolveLink(target, data, sourcePath = currentPath) {
+    const wanted = normalize(String(target || "").split("#")[0]);
+    if (!wanted) return null;
+    const matches = data.links.filter((item) =>
+      [item.target, item.path, item.title, ...(item.aliases || [])]
+        .some((value) => normalize(value) === wanted)
+    );
+    const exact = chooseContextual(matches, sourcePath);
+    if (exact) return exact;
     if (matches.length === 1) return matches[0];
+
     const tail = wanted.split("/").pop();
     const byName = data.links.filter((item) =>
-      [item.title, item.path.split("/").pop().replace(/\.md$/i, "")].some((value) => normalize(value) === tail)
+      [item.title, item.path.split("/").pop().replace(/\.md$/i, "")]
+        .some((value) => normalize(value) === tail)
     );
-    return byName.length === 1 ? byName[0] : null;
+    return chooseContextual(byName, sourcePath);
+  }
+
+  function normalizeVaultPath(value) {
+    const parts = [];
+    for (const raw of String(value || "").split("/")) {
+      if (!raw || raw === ".") continue;
+      if (raw === "..") { parts.pop(); continue; }
+      parts.push(raw);
+    }
+    return parts.join("/");
+  }
+
+  function resolveMarkdownPage(href, sourcePath, data) {
+    const raw = String(href || "").trim();
+    if (!raw || /^(https?:|mailto:|tel:|data:|blob:|javascript:|\/\/)/i.test(raw)) return null;
+
+    const hashAt = raw.indexOf("#");
+    const anchorRaw = hashAt >= 0 ? raw.slice(hashAt + 1) : "";
+    const beforeHash = hashAt >= 0 ? raw.slice(0, hashAt) : raw;
+    const queryAt = beforeHash.indexOf("?");
+    const pathRaw = queryAt >= 0 ? beforeHash.slice(0, queryAt) : beforeHash;
+    let anchor = anchorRaw;
+    try { anchor = decodeURIComponent(anchorRaw); } catch {}
+    if (!pathRaw) {
+      const self = data.links.find((item) => item.path === sourcePath);
+      return self ? { item: self, anchor } : null;
+    }
+
+    let decoded = pathRaw;
+    try { decoded = decodeURIComponent(pathRaw); } catch {}
+    const absolute = decoded.startsWith("/");
+    decoded = decoded.replace(/^\/+/, "");
+    const sourceParts = sourcePath.split("/");
+    sourceParts.pop();
+    const sourceFolder = sourceParts.join("/");
+    const candidates = [];
+    const addCandidate = (value) => {
+      const clean = normalizeVaultPath(value);
+      if (!clean) return;
+      const values = [];
+      if (/\.html?$/i.test(clean)) values.push(clean.replace(/\.html?$/i, ".md"));
+      else if (/\.md$/i.test(clean)) values.push(clean);
+      else {
+        values.push(clean + ".md");
+        values.push(clean.replace(/\/+$/, "") + "/index.md");
+      }
+      for (const path of values) if (!candidates.includes(path)) candidates.push(path);
+    };
+
+    // The SRD uses links relative to the root of its imported vault, not to
+    // the individual spell/class file. Honour that convention before normal
+    // source-relative Markdown resolution.
+    const srdRoot = "Regelbuch/dnd5e-markdown-main";
+    if (!absolute && sourcePath.startsWith(srdRoot + "/")
+      && /^(compendium|rules|templates|tools)\//i.test(decoded)) {
+      addCandidate(srdRoot + "/" + decoded);
+    }
+    if (!absolute && sourceFolder) addCandidate(sourceFolder + "/" + decoded);
+    addCandidate(decoded);
+
+    for (const candidate of candidates) {
+      const matches = data.links.filter((item) => normalize(item.path) === normalize(candidate));
+      const item = chooseContextual(matches, sourcePath);
+      if (item) return { item, anchor };
+      if (matches.length === 1) return { item: matches[0], anchor };
+    }
+
+    const fallback = resolveLink(decoded.replace(/\.md$/i, "").replace(/\/+$/, ""), data, sourcePath);
+    return fallback ? { item: fallback, anchor } : null;
   }
 
   function routeFor(item, data, anchor) {
-    const key = Object.keys(data.map).find((slug) => slug && data.map[slug] === item.path);
-    const slug = key || slugify(item.path.replace(/\.md$/i, "").replace(/\/index$/i, ""));
-    return basePath + "/" + slug.split("/").map(encodeURIComponent).join("/")
+    const slug = String(item.route || canonicalRoute(item.path));
+    const hasTrailingSlash = slug.endsWith("/");
+    const segments = slug.split("/").filter(Boolean).map(encodeURIComponent);
+    const route = segments.length
+      ? "/" + segments.join("/") + (hasTrailingSlash ? "/" : "")
+      : "/";
+    return basePath.replace(/\/$/, "") + route
       + (anchor ? "#" + encodeURIComponent(slugify(anchor)) : "");
   }
 
@@ -106,6 +230,15 @@ import createDOMPurify from "dompurify";
   }
 
   const markdownRenderer = new marked.Renderer();
+  const defaultLinkRenderer = markdownRenderer.link.bind(markdownRenderer);
+  markdownRenderer.link = (token) => {
+    const data = window.__neuviaIndexes;
+    const resolved = data ? resolveMarkdownPage(token.href, currentPath, data) : null;
+    if (!resolved) return defaultLinkRenderer(token);
+    const href = routeFor(resolved.item, data, resolved.anchor);
+    return defaultLinkRenderer({ ...token, href }).replace("<a ", '<a class="internal" ');
+  };
+
   const defaultImageRenderer = markdownRenderer.image.bind(markdownRenderer);
   markdownRenderer.image = (token) => {
     const href = String(token.href || "");
@@ -138,7 +271,7 @@ import createDOMPurify from "dompurify";
         if (/\.pdf$/i.test(target)) return '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(token.alias || target.split("/").pop()) + "</a>";
         return '<img loading="lazy" class="neuvia-live-image" src="' + esc(url) + '" alt="' + esc(token.alias || target.split("/").pop()) + '">';
       }
-      const item = resolveLink(target, data);
+      const item = resolveLink(target, data, currentPath);
       if (!item) return esc(token.alias || target);
       if (token.embed) return '<div class="neuvia-live-transclude" data-path="' + esc(item.path) + '"></div>';
       return '<a class="internal" href="' + esc(routeFor(item, data, anchor)) + '">' + esc(token.alias || item.title || target) + "</a>";

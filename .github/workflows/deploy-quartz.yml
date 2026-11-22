@@ -8,6 +8,7 @@ on:
       - neuvia-editor-test
       - mood-full-catalog
       - search-fix-preview
+      - neuvia-link-repair
   workflow_dispatch:
 
 permissions:
@@ -123,7 +124,7 @@ jobs:
       - name: Prepare Quartz site
         run: |
           cp .github/quartz/quartz.config.yaml .quartz-runtime/quartz.config.yaml
-          if [ "$GITHUB_REF_NAME" = "main" ] || [ "$GITHUB_REF_NAME" = "neuvia-editor-test" ] || [ "$GITHUB_REF_NAME" = "mood-full-catalog" ] || [ "$GITHUB_REF_NAME" = "search-fix-preview" ]; then
+          if [ "$GITHUB_REF_NAME" = "main" ] || [ "$GITHUB_REF_NAME" = "neuvia-editor-test" ] || [ "$GITHUB_REF_NAME" = "mood-full-catalog" ] || [ "$GITHUB_REF_NAME" = "search-fix-preview" ] || [ "$GITHUB_REF_NAME" = "neuvia-link-repair" ]; then
             sed -i 's#baseUrl: elrayo23.github.io/Neuvia#baseUrl: neuvia-editor-preview.pages.dev#' .quartz-runtime/quartz.config.yaml
           fi
           mkdir -p .quartz-runtime/content
@@ -196,6 +197,29 @@ jobs:
               parts = [p.replace("&", "-and-").replace("%", "-percent").replace("?", "").replace("#", "").translate(str.maketrans("", "", '<>:"|*')).lower() for p in parts]
               return "/".join("-".join(p.split()) for p in parts).rstrip("/")
           
+          def quartz_slug(rel_path):
+              stem = rel_path[:-3]
+              if stem.lower() == "_index":
+                  stem = "index"
+              elif stem.lower().endswith("/_index"):
+                  stem = stem[:-6] + "index"
+              slug = slugify(stem)
+              parts = slug.split("/")
+              # Quartz treats folder/folder.md as the folder's index page.
+              if len(parts) >= 2 and parts[-1] == parts[-2]:
+                  parts[-1] = "index"
+              return "/".join(parts)
+
+          def canonical_route(rel_path):
+              slug = quartz_slug(rel_path)
+              if slug == "index":
+                  return ""
+              # Quartz simplifies a terminal /index to the folder URL,
+              # retaining the trailing slash (e.g. spells/index -> spells/).
+              if slug.endswith("/index"):
+                  return slug[:-5]
+              return slug
+
           def clean_yaml_scalar(value):
               value = value.strip()
               value = re.sub(r"\s+#.*$", "", value).strip()
@@ -248,22 +272,17 @@ jobs:
                   continue
               rel_path = rel.as_posix()
               stem = rel_path[:-3]
-              slug = slugify(stem)
-              parts = slug.split("/")
-              if len(parts) >= 2 and parts[-1] == parts[-2]:
-                  parts[-1] = "index"
-                  slug = "/".join(parts)
-              keys = {slug}
-              if slug == "index":
-                  keys.add("")
-              if slug.endswith("/index"):
-                  keys.add(slug[:-6])
+              full_slug = quartz_slug(rel_path)
+              route = canonical_route(rel_path)
+              keys = {full_slug, route.rstrip("/")}
+              if route == "":
+                  keys.add("index")
               for key in keys:
                   if key in mapping and mapping[key] != rel_path:
                       collisions.add(key)
                   else:
                       mapping[key] = rel_path
-          
+
               title, aliases = frontmatter_data(file)
               if not title:
                   for line in file.read_text(encoding="utf-8", errors="replace").splitlines():
@@ -277,12 +296,14 @@ jobs:
                   "title": title,
                   "candidate": candidate,
                   "path": rel_path,
+                  "route": route,
                   "aliases": aliases
               })
-          
-          for key in collisions:
-              mapping.pop(key, None)
-          
+
+          if collisions:
+              details = ", ".join(sorted(collisions))
+              raise SystemExit("Duplicate generated page routes: " + details + ". Resolve these collisions before publishing.")
+
           from collections import Counter
           candidate_counts = Counter(item["candidate"].casefold() for item in link_entries)
           for item in link_entries:
@@ -313,6 +334,56 @@ jobs:
               encoding="utf-8"
           )
           print(f"Indexed {len(asset_files)} visible image and document assets.")
+
+          # Regression guard: every existing spell must have a deterministic
+          # public route and must be present in Quartz's actual search index.
+          spell_dir = content / "Regelbuch/dnd5e-markdown-main/compendium/spells"
+          spell_files = sorted(spell_dir.glob("*.md"))
+          if not spell_files:
+              raise SystemExit("No spell Markdown files were found in the SRD compendium.")
+          missing_spell_routes = []
+          for spell in spell_files:
+              rel_path = spell.relative_to(content).as_posix()
+              full_slug = quartz_slug(rel_path)
+              if mapping.get(full_slug) != rel_path:
+                  missing_spell_routes.append(rel_path)
+          if missing_spell_routes:
+              raise SystemExit("Spell routes missing from the page map: " + ", ".join(missing_spell_routes[:20]))
+
+          search_index_path = public / "static/contentIndex.json"
+          if not search_index_path.is_file():
+              raise SystemExit("Quartz did not emit static/contentIndex.json; spell search cannot be verified.")
+          search_data = json.loads(search_index_path.read_text(encoding="utf-8"))
+          search_root = search_data.get("content", search_data) if isinstance(search_data, dict) else {}
+          indexed_routes = set()
+          if isinstance(search_root, dict):
+              for key, item in search_root.items():
+                  if isinstance(item, dict):
+                      indexed_routes.add(str(item.get("slug") or key).strip("/").casefold())
+          missing_spell_search = [
+              spell.relative_to(content).as_posix()
+              for spell in spell_files
+              if quartz_slug(spell.relative_to(content).as_posix()).casefold() not in indexed_routes
+          ]
+          if missing_spell_search:
+              raise SystemExit("Existing spells missing from Quartz search index: " + ", ".join(missing_spell_search[:20]))
+          print(f"Verified {len(spell_files)} spell pages in the route map and Quartz search index.")
+          folder_notes = []
+          for page in content.rglob("*.md"):
+              rel = page.relative_to(content).as_posix()
+              parts = rel[:-3].split("/")
+              if len(parts) >= 2 and parts[-1].casefold() == parts[-2].casefold():
+                  folder_notes.append(rel)
+          malformed_folder_routes = [
+              rel for rel in folder_notes
+              if not canonical_route(rel).endswith("/")
+          ]
+          if malformed_folder_routes:
+              raise SystemExit("Quartz Folder Note routes must end with '/': " + ", ".join(malformed_folder_routes[:20]))
+          spell_list_path = "Regelbuch/dnd5e-markdown-main/compendium/spells/spells.md"
+          if canonical_route(spell_list_path) != "regelbuch/dnd5e-markdown-main/compendium/spells/":
+              raise SystemExit("The SRD spell-list page must resolve to the canonical /compendium/spells/ folder route.")
+          print(f"Verified {len(folder_notes)} Quartz Folder Note routes, including the spell-list landing page.")
           build_info = {
               "commit": os.environ.get("GITHUB_SHA", ""),
               "branch": os.environ.get("GITHUB_REF_NAME", "")
@@ -329,7 +400,7 @@ jobs:
           import os
           root = Path(".quartz-runtime/public")
           version = os.environ.get("GITHUB_SHA", "")
-          is_cloudflare = os.environ.get("GITHUB_REF_NAME") in {"main", "mood-full-catalog", "search-fix-preview"}
+          is_cloudflare = os.environ.get("GITHUB_REF_NAME") in {"main", "mood-full-catalog", "search-fix-preview", "neuvia-link-repair"}
           admin_path = "/static/neuvia-admin.js" if is_cloudflare else "/Neuvia/static/neuvia-admin.js"
           tags = [f'<script defer src="{admin_path}?v={version}"></script>'] if is_cloudflare else []
           if is_cloudflare:
