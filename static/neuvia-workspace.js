@@ -868,7 +868,24 @@
     if (!candidates.length) return null;
     const bestScore = candidates[0].score;
     const best = Array.from(new Set(candidates.filter((x)=>x.score===bestScore).map((x)=>x.path)));
-    return best.length === 1 ? best[0] : null;
+    if (best.length === 1) return best[0];
+
+    // When an old short Wikilink has duplicate names, prefer the match in the
+    // current note's folder hierarchy. This mirrors the public live reader.
+    const sourceFolders = currentPath.split("/").slice(0, -1).map(normalize);
+    const ranked = best.map((path) => {
+      const targetFolders = path.split("/").slice(0, -1).map(normalize);
+      let common = 0;
+      while (common < sourceFolders.length && common < targetFolders.length
+        && sourceFolders[common] === targetFolders[common]) common++;
+      const sameRoot = sourceFolders[0] && sourceFolders[0] === targetFolders[0];
+      return {
+        path,
+        score: common * 100 + (sameRoot ? 20 : 0) - Math.abs(sourceFolders.length - targetFolders.length)
+      };
+    }).sort((a,b)=>b.score-a.score||a.path.localeCompare(b.path,"de"));
+    if (ranked.length > 1 && ranked[0].score === ranked[1].score) return null;
+    return ranked[0].score >= 0 ? ranked[0].path : null;
   }
 
   function openWikiLinkAtCursor() {
