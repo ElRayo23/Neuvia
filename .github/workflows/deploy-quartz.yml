@@ -197,13 +197,28 @@ jobs:
               parts = [p.replace("&", "-and-").replace("%", "-percent").replace("?", "").replace("#", "").translate(str.maketrans("", "", '<>:"|*')).lower() for p in parts]
               return "/".join("-".join(p.split()) for p in parts).rstrip("/")
           
-          def canonical_slug(rel_path):
+          def quartz_slug(rel_path):
               stem = rel_path[:-3]
-              if stem.lower() == "index":
+              if stem.lower() == "_index":
+                  stem = "index"
+              elif stem.lower().endswith("/_index"):
+                  stem = stem[:-6] + "index"
+              slug = slugify(stem)
+              parts = slug.split("/")
+              # Quartz treats folder/folder.md as the folder's index page.
+              if len(parts) >= 2 and parts[-1] == parts[-2]:
+                  parts[-1] = "index"
+              return "/".join(parts)
+
+          def canonical_route(rel_path):
+              slug = quartz_slug(rel_path)
+              if slug == "index":
                   return ""
-              if stem.lower().endswith("/index"):
-                  stem = stem[:-6]
-              return slugify(stem)
+              # Quartz simplifies a terminal /index to the folder URL,
+              # retaining the trailing slash (e.g. spells/index -> spells/).
+              if slug.endswith("/index"):
+                  return slug[:-5]
+              return slug
 
           def clean_yaml_scalar(value):
               value = value.strip()
@@ -257,13 +272,9 @@ jobs:
                   continue
               rel_path = rel.as_posix()
               stem = rel_path[:-3]
-              slug = slugify(stem)
-              parts = slug.split("/")
-              if len(parts) >= 2 and parts[-1] == parts[-2]:
-                  parts[-1] = "index"
-                  slug = "/".join(parts)
-              route = canonical_slug(rel_path)
-              keys = {slug, route}
+              full_slug = quartz_slug(rel_path)
+              route = canonical_route(rel_path)
+              keys = {full_slug, route.rstrip("/")}
               if route == "":
                   keys.add("index")
               for key in keys:
@@ -333,8 +344,8 @@ jobs:
           missing_spell_routes = []
           for spell in spell_files:
               rel_path = spell.relative_to(content).as_posix()
-              route = canonical_slug(rel_path)
-              if mapping.get(route) != rel_path:
+              full_slug = quartz_slug(rel_path)
+              if mapping.get(full_slug) != rel_path:
                   missing_spell_routes.append(rel_path)
           if missing_spell_routes:
               raise SystemExit("Spell routes missing from the page map: " + ", ".join(missing_spell_routes[:20]))
@@ -352,7 +363,7 @@ jobs:
           missing_spell_search = [
               spell.relative_to(content).as_posix()
               for spell in spell_files
-              if canonical_slug(spell.relative_to(content).as_posix()).casefold() not in indexed_routes
+              if quartz_slug(spell.relative_to(content).as_posix()).casefold() not in indexed_routes
           ]
           if missing_spell_search:
               raise SystemExit("Existing spells missing from Quartz search index: " + ", ".join(missing_spell_search[:20]))
