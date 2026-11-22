@@ -360,12 +360,67 @@ async function moveVaultPath(source, destination, token) {
     treeChanges.set(target.path, { path: target.path, mode: target.mode, type: target.type, sha: target.sha });
     treeChanges.set(target.source, { path: target.source, mode: target.mode, type: target.type, sha: null });
   }
+  const markdownPathSet = new Set(markdownPaths.map((path) => path.toLocaleLowerCase("de")));
+  function normalizeRepoPath(value) {
+    let decoded = String(value || "");
+    try { decoded = decodeURIComponent(decoded); } catch {}
+    const parts = [];
+    for (const segment of decoded.replace(/^\/+/, "").split("/")) {
+      if (!segment || segment === ".") continue;
+      if (segment === "..") { parts.pop(); continue; }
+      parts.push(segment);
+    }
+    return parts.join("/");
+  }
+  function resolveMarkdownDestination(rawHref, sourcePath) {
+    const href = String(rawHref || "").trim();
+    if (!href || /^(https?:|mailto:|tel:|data:|blob:|javascript:|\/\/|#)/i.test(href)) return "";
+    const suffixAt = href.search(/[?#]/);
+    const pathPart = suffixAt >= 0 ? href.slice(0, suffixAt) : href;
+    let decoded = pathPart;
+    try { decoded = decodeURIComponent(pathPart); } catch {}
+    const sourceParts = sourcePath.split("/");
+    sourceParts.pop();
+    const sourceFolder = sourceParts.join("/");
+    const candidates = [];
+    const add = (value) => {
+      const clean = normalizeRepoPath(value);
+      if (!clean) return;
+      const variants = [];
+      if (/\.html?$/i.test(clean)) variants.push(clean.replace(/\.html?$/i, ".md"));
+      else if (/\.md$/i.test(clean)) variants.push(clean);
+      else variants.push(clean + ".md");
+      for (const candidate of variants) {
+        const key = candidate.toLocaleLowerCase("de");
+        if (markdownPathSet.has(key)) {
+          const actual = markdownPaths.find((path) => path.toLocaleLowerCase("de") === key);
+          if (actual) candidates.push(actual);
+        }
+      }
+    };
+    const srdRoot = "Regelbuch/dnd5e-markdown-main";
+    if (!decoded.startsWith("/") && sourcePath.startsWith(srdRoot + "/")
+      && /^(compendium|rules|templates|tools)\//i.test(decoded)) {
+      add(srdRoot + "/" + decoded);
+    }
+    if (!decoded.startsWith("/") && sourceFolder) add(sourceFolder + "/" + decoded);
+    add(decoded);
+    if (candidates.length) return candidates[0];
+
+    // A bare filename is safe to resolve only when it is unique in the vault.
+    const tail = normalizeRepoPath(decoded).split("/").pop().toLocaleLowerCase("de");
+    const byName = markdownPaths.filter((path) =>
+      path.split("/").pop().replace(/\.md$/i, "").toLocaleLowerCase("de") === tail.replace(/\.md$/i, "")
+    );
+    return byName.length === 1 ? byName[0] : "";
+  }
+
   let rewrittenNotes = 0;
   const wikilink = /(!?\[\[)([^\]|#]+)(#[^\]|]*)?(\|[^\]]*)?(\]\])/g;
+  const markdownLink = /(!?\[[^\]]*\]\()(<[^>]*>|[^\s)]+)([^)]*\))/g;
   await scanMarkdownArchive(token, parentSha, (originalPath, originalContent) => {
     const nextPath = movedPath.get(originalPath) || originalPath;
-    let changed = false;
-    const content = originalContent.replace(wikilink, (match, open, rawTarget, anchor, alias, close) => {
+    const afterWiki = originalContent.replace(wikilink, (match, open, rawTarget, anchor, alias, close) => {
       const leading = rawTarget.match(/^\s*/)?.[0] || "";
       const trailing = rawTarget.match(/\s*$/)?.[0] || "";
       const target = rawTarget.trim().replace(/^\.\//, "").replace(/\.md$/i, "");
@@ -375,10 +430,33 @@ async function moveVaultPath(source, destination, token) {
         replacementTarget = destination + target.slice(source.length);
       }
       if (!replacementTarget || replacementTarget === target) return match;
-      changed = true;
       return open + leading + replacementTarget + trailing + (anchor || "") + (alias || "") + close;
     });
-    if (changed) {
+
+    // The public renderer also resolves ordinary Markdown links. Keep those
+    // backlinks valid when the editor renames/moves either the linked page or
+    // the note containing the relative link.
+    const content = afterWiki.replace(markdownLink, (match, open, rawHref, suffix) => {
+      const angleWrapped = rawHref.startsWith("<") && rawHref.endsWith(">");
+      const href = angleWrapped ? rawHref.slice(1, -1) : rawHref;
+      const suffixAt = href.search(/[?#]/);
+      const pathPart = suffixAt >= 0 ? href.slice(0, suffixAt) : href;
+      const trailing = suffixAt >= 0 ? href.slice(suffixAt) : "";
+      const resolved = resolveMarkdownDestination(pathPart, originalPath);
+      if (!resolved) return match;
+      const nextTarget = movedPath.get(resolved) || resolved;
+      const sourceMoved = nextPath !== originalPath;
+      const targetMoved = nextTarget !== resolved;
+      if (!sourceMoved && !targetMoved) return match;
+      const originalExtension = /\.html?$/i.test(pathPart) ? ".html" : /\.md$/i.test(pathPart) ? ".md" : "";
+      const targetWithoutExtension = nextTarget.replace(/\.md$/i, "");
+      const outputPath = (targetWithoutExtension + originalExtension)
+        .split("/").map(encodeURIComponent).join("/");
+      const wrappedTarget = angleWrapped ? "<" + outputPath + trailing + ">" : outputPath + trailing;
+      return open + wrappedTarget + suffix;
+    });
+
+    if (content !== originalContent) {
       treeChanges.set(nextPath, { path: nextPath, mode: "100644", type: "blob", content });
       rewrittenNotes++;
     }
