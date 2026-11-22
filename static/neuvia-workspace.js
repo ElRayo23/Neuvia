@@ -844,34 +844,45 @@
     if (!target) return null;
     const q = normalize(target.replace(/\.md$/i, "").replace(/\/+$/, ""));
     const mdFiles = treeItems.filter((item) => item.type === "file" && extension(item.path) === "md");
-    const candidates = [];
-    const existingMarkdownPaths = new Set(mdFiles.map((item) => item.path));
-    for (const item of linkItems) {
-      if (!existingMarkdownPaths.has(item.path)) continue;
-      let score = 99;
-      if (normalize(item.target) === q) score = 0;
-      else if (normalize(String(item.path || "").replace(/\.md$/i, "")) === q) score = 1;
-      else if (normalize(item.title) === q) score = 2;
-      else if ((item.aliases || []).some((alias) => normalize(alias) === q)) score = 3;
-      if (score < 99) candidates.push({ path: item.path, score });
-    }
-    for (const item of mdFiles) {
-      const noExt = item.path.replace(/\.md$/i, "");
+    const metadata = new Map(linkItems.filter((item) => item.path).map((item) => [item.path, item]));
+    const candidateForPath = (path) => {
+      const noExt = path.replace(/\.md$/i, "");
       const base = basename(noExt);
-      const folderIndexName = base.toLowerCase() === "index" ? noExt.split("/").slice(-2, -1)[0] : "";
+      return base.toLowerCase() === "index"
+        ? noExt.split("/").slice(-2, -1)[0] || "Neuvia"
+        : base;
+    };
+    const candidates = [];
+
+    for (const item of mdFiles) {
+      const indexed = metadata.get(item.path) || {};
+      const title = indexed.title || fallbackTitle(item.path);
+      const candidate = candidateForPath(item.path);
+      const noExt = item.path.replace(/\.md$/i, "");
+      const qualified = noExt.replace(/\/index$/i, "");
+      const aliases = indexed.aliases || [];
       let score = 99;
-      if (normalize(noExt) === q) score = 1;
-      else if (normalize(base) === q || (folderIndexName && normalize(folderIndexName) === q)) score = 4;
+
+      // Full vault paths are authoritative. Short titles, aliases and file
+      // names remain contextual so a stale index cannot hide a new duplicate.
+      if (normalize(noExt) === q || normalize(qualified) === q
+        || (String(indexed.target || "").includes("/") && normalize(indexed.target) === q)) {
+        score = 0;
+      } else if (normalize(candidate) === q || normalize(title) === q
+        || aliases.some((alias) => normalize(alias) === q)
+        || (indexed.target && !String(indexed.target).includes("/") && normalize(indexed.target) === q)) {
+        score = 2;
+      }
       if (score < 99) candidates.push({ path: item.path, score });
     }
-    candidates.sort((a,b)=>a.score-b.score);
+
     if (!candidates.length) return null;
-    const bestScore = candidates[0].score;
-    const best = Array.from(new Set(candidates.filter((x)=>x.score===bestScore).map((x)=>x.path)));
+    const bestScore = Math.min(...candidates.map((item) => item.score));
+    const best = Array.from(new Set(candidates.filter((item) => item.score === bestScore).map((item) => item.path)));
     if (best.length === 1) return best[0];
 
-    // When an old short Wikilink has duplicate names, prefer the match in the
-    // current note's folder hierarchy. This mirrors the public live reader.
+    // Old short Wikilinks with duplicate names are resolved by the current
+    // note's folder hierarchy. Unclear root-level names remain a clear error.
     const sourceFolders = currentPath.split("/").slice(0, -1).map(normalize);
     const ranked = best.map((path) => {
       const targetFolders = path.split("/").slice(0, -1).map(normalize);
@@ -927,11 +938,32 @@
     const q = normalize(query);
     const entries = [];
     const seen = new Set();
-    const currentMarkdownPaths = new Set(treeItems.filter((entry) => entry.type === "file" && extension(entry.path) === "md").map((entry) => entry.path));
+    const currentMarkdown = treeItems.filter((entry) => entry.type === "file" && extension(entry.path) === "md");
+    const currentMarkdownPaths = new Set(currentMarkdown.map((entry) => entry.path));
+    const candidateForPath = (path) => {
+      const noExt = path.replace(/\.md$/i, "");
+      const base = basename(noExt);
+      return base.toLowerCase() === "index"
+        ? noExt.split("/").slice(-2, -1)[0] || "Neuvia"
+        : base;
+    };
+    const nameCounts = new Map();
+    for (const item of currentMarkdown) {
+      const key = normalize(candidateForPath(item.path));
+      nameCounts.set(key, (nameCounts.get(key) || 0) + 1);
+    }
+    const targetForPath = (path) => {
+      const candidate = candidateForPath(path);
+      if ((nameCounts.get(normalize(candidate)) || 0) > 1) {
+        return path.replace(/\.md$/i, "").replace(/\/index$/i, "");
+      }
+      return candidate;
+    };
+
     for (const item of linkItems) {
       if (!item.path || !currentMarkdownPaths.has(item.path)) continue;
       const title = item.title || fallbackTitle(item.path);
-      const target = item.target || item.path.replace(/\.md$/i, "");
+      const target = targetForPath(item.path);
       const aliases = item.aliases || [];
       const values = [title, target, item.path, ...aliases];
       let score = 99;
@@ -943,18 +975,20 @@
         entries.push({ title, target, path: item.path, score });
       }
     }
-    for (const item of treeItems) {
-      if (item.type !== "file" || extension(item.path) !== "md" || seen.has(item.path)) continue;
+
+    // New pages may already exist in the live GitHub tree while the published
+    // link index is one build behind. Include them and recalculate duplicate
+    // names against the live tree, not the stale static index.
+    for (const item of currentMarkdown) {
+      if (seen.has(item.path)) continue;
       const title = fallbackTitle(item.path);
-      if (!q || normalize(title).includes(q) || normalize(item.path).includes(q)) {
+      const target = targetForPath(item.path);
+      if (!q || normalize(title).includes(q) || normalize(target).includes(q) || normalize(item.path).includes(q)) {
         seen.add(item.path);
-        let linkTarget = item.path.replace(/\.md$/i, "");
-        if (/\/index$/i.test(linkTarget)) linkTarget = linkTarget.slice(0, -6);
-        else if (linkTarget.toLowerCase() === "index") linkTarget = "";
-        entries.push({ title, target: linkTarget, path: item.path, score: normalize(title).startsWith(q) ? 0 : 1 });
+        entries.push({ title, target, path: item.path, score: normalize(title).startsWith(q) ? 0 : 1 });
       }
     }
-    return entries.sort((a,b)=>a.score-b.score||a.title.localeCompare(b.title,"de")).slice(0,8);
+    return entries.sort((a,b)=>a.score-b.score||a.title.localeCompare(b.title,"de")||a.path.localeCompare(b.path,"de")).slice(0,8);
   }
 
   function hideSuggestions() {
