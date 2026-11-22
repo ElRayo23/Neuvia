@@ -381,7 +381,7 @@ jobs:
           if malformed_folder_routes:
               raise SystemExit("Quartz Folder Note routes must end with '/': " + ", ".join(malformed_folder_routes[:20]))
           spell_list_path = "Regelbuch/dnd5e-markdown-main/compendium/spells/spells.md"
-          if canonical_route(spell_list_path) != "Regelbuch/dnd5e-markdown-main/compendium/spells/":
+          if canonical_route(spell_list_path) != "regelbuch/dnd5e-markdown-main/compendium/spells/":
               raise SystemExit("The SRD spell-list page must resolve to the canonical /compendium/spells/ folder route.")
           print(f"Verified {len(folder_notes)} Quartz Folder Note routes, including the spell-list landing page.")
           build_info = {
