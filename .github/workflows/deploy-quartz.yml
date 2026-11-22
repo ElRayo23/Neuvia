@@ -368,6 +368,22 @@ jobs:
           if missing_spell_search:
               raise SystemExit("Existing spells missing from Quartz search index: " + ", ".join(missing_spell_search[:20]))
           print(f"Verified {len(spell_files)} spell pages in the route map and Quartz search index.")
+          folder_notes = []
+          for page in content.rglob("*.md"):
+              rel = page.relative_to(content).as_posix()
+              parts = rel[:-3].split("/")
+              if len(parts) >= 2 and parts[-1].casefold() == parts[-2].casefold():
+                  folder_notes.append(rel)
+          malformed_folder_routes = [
+              rel for rel in folder_notes
+              if not canonical_route(rel).endswith("/")
+          ]
+          if malformed_folder_routes:
+              raise SystemExit("Quartz Folder Note routes must end with '/': " + ", ".join(malformed_folder_routes[:20]))
+          spell_list_path = "Regelbuch/dnd5e-markdown-main/compendium/spells/spells.md"
+          if canonical_route(spell_list_path) != "Regelbuch/dnd5e-markdown-main/compendium/spells/":
+              raise SystemExit("The SRD spell-list page must resolve to the canonical /compendium/spells/ folder route.")
+          print(f"Verified {len(folder_notes)} Quartz Folder Note routes, including the spell-list landing page.")
           build_info = {
               "commit": os.environ.get("GITHUB_SHA", ""),
               "branch": os.environ.get("GITHUB_REF_NAME", "")
