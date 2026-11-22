@@ -202,8 +202,12 @@
         const link = document.createElement("a");
         link.className = "result-card";
         link.setAttribute("role", "option");
-        const slug = entry.slug.replace(/^\/+/, "");
-        link.href = "/" + slug.split("/").map((segment) => encodeURIComponent(segment)).join("/");
+        const fullSlug = entry.slug.replace(/^\/+/, "");
+        let simpleSlug = fullSlug;
+        if (simpleSlug === "index") simpleSlug = "";
+        else if (simpleSlug.endsWith("/index")) simpleSlug = simpleSlug.slice(0, -5);
+        const segments = simpleSlug.split("/").filter(Boolean).map((segment) => encodeURIComponent(segment));
+        link.href = "/" + segments.join("/") + (segments.length && simpleSlug.endsWith("/") ? "/" : "");
 
         const heading = document.createElement("h3");
         heading.className = "card-title";
