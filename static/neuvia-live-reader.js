@@ -214,7 +214,12 @@ import createDOMPurify from "dompurify";
       } catch { placeholder.textContent = "Eingebettete Notiz nicht verfügbar."; }
     }
     // Quartz's Obsidian plugin listens for this event to render Mermaid diagrams.
-    document.dispatchEvent(new Event("render"));
+    // The SPA router must have installed its cleanup hook before plugins handle "render".
+    if (typeof window.addCleanup === "function") {
+      document.dispatchEvent(new Event("render"));
+    } else {
+      console.warn("[Neuvia] Skipped a Quartz render notification before SPA initialization.");
+    }
   }
 
   async function refresh() {
@@ -241,8 +246,7 @@ import createDOMPurify from "dompurify";
   style.textContent = ".neuvia-live-image{max-width:100%;height:auto;border-radius:6px}.neuvia-live-transclude{margin:1rem 0;padding-left:1rem;border-left:3px solid var(--secondary)}article .callout{padding:.75rem 1rem;border-left:4px solid var(--secondary);background:var(--highlight);border-radius:4px}article .callout-title{font-weight:700;margin-top:0}";
   document.head.appendChild(style);
 
-  const start = () => refresh();
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
-  else start();
+  // Quartz emits the initial "nav" after the SPA router defines window.addCleanup.
+  // Waiting for it avoids running Quartz render handlers before their lifecycle is ready.
   document.addEventListener("nav", () => setTimeout(refresh, 0));
 })();
