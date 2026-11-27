@@ -186,16 +186,21 @@ jobs:
 
           path = bundles[0]
           source = path.read_text(encoding="utf-8")
-          pattern = re.compile(
-              r',\\s*document\\.addEventListener\\(["\\']render["\\'],\\s*[A-Za-z_$][\\w$]*\\)'
-          )
-          patched, count = pattern.subn("", source)
-          if count != 2:
-              raise SystemExit(f"Expected two Darkmode/ReaderMode render listeners, removed {count}")
+          removed = 0
+          for callback in ("e", "m"):
+              needle = f',document.addEventListener("render",{callback})'
+              count = source.count(needle)
+              if count != 1:
+                  raise SystemExit(f"Expected one render handler for {callback}, found {count}")
+              source = source.replace(needle, "", 1)
+              removed += count
+          if removed != 2:
+              raise SystemExit(f"Expected two toolbar render listeners, removed {removed}")
 
-          path.write_text(patched, encoding="utf-8")
-          if pattern.search(path.read_text(encoding="utf-8")):
-              raise SystemExit("Quartz toolbar render listeners remain")
+          path.write_text(source, encoding="utf-8")
+          for callback in ("e", "m"):
+              if f',document.addEventListener("render",{callback})' in path.read_text(encoding="utf-8"):
+                  raise SystemExit("Quartz toolbar render listeners remain")
           print("Darkmode and ReaderMode now bind once per SPA navigation.")
           PY
           node --check "$(find .quartz-runtime/public -maxdepth 1 -name 'prescript-*.js' -print -quit)"
