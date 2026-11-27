@@ -171,6 +171,35 @@ jobs:
         working-directory: .quartz-runtime
         run: npx quartz build
 
+      # Darkmode and ReaderMode toolbar buttons persist while the live reader
+      # refreshes article content. Rebinding them on every "render" event
+      # duplicates click handlers and can call addCleanup before SPA setup.
+      - name: Keep Quartz toolbar initialization navigation-scoped
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          bundles = sorted(Path(".quartz-runtime/public").glob("prescript-*.js"))
+          if len(bundles) != 1:
+              raise SystemExit(f"Expected one Quartz prescript bundle, found {len(bundles)}")
+
+          path = bundles[0]
+          source = path.read_text(encoding="utf-8")
+          pattern = re.compile(
+              r',\\s*document\\.addEventListener\\(["\\']render["\\'],\\s*[A-Za-z_$][\\w$]*\\)'
+          )
+          patched, count = pattern.subn("", source)
+          if count != 2:
+              raise SystemExit(f"Expected two Darkmode/ReaderMode render listeners, removed {count}")
+
+          path.write_text(patched, encoding="utf-8")
+          if pattern.search(path.read_text(encoding="utf-8")):
+              raise SystemExit("Quartz toolbar render listeners remain")
+          print("Darkmode and ReaderMode now bind once per SPA navigation.")
+          PY
+          node --check "$(find .quartz-runtime/public -maxdepth 1 -name 'prescript-*.js' -print -quit)"
+
       - name: Bundle live reader
         working-directory: .quartz-runtime
         run: |
